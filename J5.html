@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J5 — Évaluation finale · B3 Dev Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#1e40af;--pl:#3b82f6;--pll:#93c5fd;
+  --g:#059669;--gl:#34d399;
+  --a:#d97706;--al:#fbbf24;
+  --r:#dc2626;--rl:#fca5a5;
+  --v:#7c3aed;--vl:#c4b5fd;
+  --teal:#0d9488;--teall:#5eead4;
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#162032;--bg4:#0d1117;
+  --bd:#334155;
+  --tx:#f1f5f9;--txm:#94a3b8;--txd:#64748b;
+  --ff:'Sora',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--ff);background:var(--bg);color:var(--tx);line-height:1.65;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#0f172a 0%,#042f2e 55%,#134e4a 100%);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;border-bottom:1px solid rgba(13,148,136,.3)}
+.hdr::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 75% 40%,rgba(13,148,136,.15),transparent)}
+.hdr-in{max-width:1160px;margin:0 auto;position:relative}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(13,148,136,.25);border:1px solid rgba(13,148,136,.4);border-radius:999px;padding:.3rem .9rem;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#5eead4;margin-bottom:1.1rem}
+.badge b{color:#fbbf24}
+h1{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:.5rem}
+h1 em{font-style:normal;color:#2dd4bf}
+.hdr-sub{font-size:.9rem;color:var(--txm);margin-bottom:1.4rem;font-weight:300}
+.pills{display:flex;flex-wrap:wrap;gap:.45rem}
+.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .8rem;border-radius:999px;font-size:.75rem;font-weight:500;font-family:var(--fm)}
+.pb{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+.pg{background:rgba(5,150,105,.25);border:1px solid rgba(16,185,129,.35);color:#6ee7b7}
+.pa{background:rgba(217,119,6,.25);border:1px solid rgba(245,158,11,.35);color:#fcd34d}
+.pp{background:rgba(124,58,237,.25);border:1px solid rgba(139,92,246,.35);color:#c4b5fd}
+.pteal{background:rgba(13,148,136,.25);border:1px solid rgba(13,148,136,.4);color:#5eead4}
+.nav-wrap{background:rgba(15,23,42,.9);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;backdrop-filter:blur(14px)}
+.nav-tabs{max-width:1160px;margin:0 auto;display:flex;padding:0 1rem;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tb{padding:.9rem 1.15rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--txm);font-family:var(--ff);font-size:.79rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:.35rem}
+.tb:hover{color:var(--tx)}.tb.active{color:#2dd4bf;border-bottom-color:var(--teal);font-weight:600}
+.main{max-width:1160px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.pan{display:none}.pan.active{display:block}
+.sh{display:flex;align-items:center;gap:.9rem;margin-bottom:1.6rem;padding-bottom:.9rem;border-bottom:1px solid var(--bd)}
+.ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.ib{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3)}
+.ig{background:rgba(5,150,105,.3);border:1px solid rgba(16,185,129,.3)}
+.ia{background:rgba(217,119,6,.3);border:1px solid rgba(245,158,11,.3)}
+.ip{background:rgba(124,58,237,.3);border:1px solid rgba(139,92,246,.3)}
+.iteal{background:rgba(13,148,136,.25);border:1px solid rgba(13,148,136,.35)}
+.si h2{font-size:1.2rem;font-weight:700}.si p{font-size:.8rem;color:var(--txm);margin-top:.1rem}
+.pw{background:rgba(255,255,255,.05);border-radius:999px;height:3px;margin-bottom:1.8rem}
+.pb2{height:100%;background:linear-gradient(90deg,var(--teal),var(--teall));border-radius:999px}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem;transition:border-color .2s}
+.card:hover{border-color:rgba(13,148,136,.25)}
+.ct{font-size:.93rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+ul.cl{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+ul.cl li{display:flex;align-items:flex-start;gap:.55rem;font-size:.87rem;color:#cbd5e1;line-height:1.55}
+ul.cl li::before{content:'▸';color:var(--teall);font-size:.72rem;margin-top:.25rem;flex-shrink:0}
+ul.cl li b{color:var(--tx)}
+code{font-family:var(--fm);font-size:.81em;background:rgba(13,148,136,.1);color:#5eead4;padding:.1em .38em;border-radius:4px;border:1px solid rgba(13,148,136,.2)}
+code.r{background:rgba(220,38,38,.12);color:#fca5a5;border-color:rgba(220,38,38,.2)}
+code.g{background:rgba(5,150,105,.12);color:#6ee7b7;border-color:rgba(16,185,129,.2)}
+code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,246,.2)}
+code.a{background:rgba(217,119,6,.12);color:#fcd34d;border-color:rgba(245,158,11,.2)}
+.cb{background:var(--bg4);border:1px solid rgba(13,148,136,.15);border-radius:10px;padding:1.1rem 1.3rem;margin:.8rem 0;overflow-x:auto}
+.cb pre{font-family:var(--fm);font-size:.81rem;line-height:1.75;color:#e2e8f0;white-space:pre}
+.cb .kw{color:#c792ea}.cb .fn{color:#82aaff}.cb .st{color:#c3e88d}.cb .cm{color:#4a5568;font-style:italic}
+.cb .tg{color:#f07178}.cb .at{color:#ffcb6b}.cb .nm{color:#f78c6c}.cb .cp{color:#89ddff}
+.cl2{font-family:var(--fm);font-size:.68rem;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.cl2::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0}
+.call{border-radius:10px;padding:.95rem 1.1rem;margin:.9rem 0;display:flex;gap:.75rem;align-items:flex-start;font-size:.86rem;line-height:1.55}
+.ci{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.cbl{background:rgba(30,64,175,.15);border:1px solid rgba(59,130,246,.25)}
+.cam{background:rgba(217,119,6,.15);border:1px solid rgba(245,158,11,.25)}
+.cgr{background:rgba(5,150,105,.15);border:1px solid rgba(16,185,129,.25)}
+.crd{background:rgba(220,38,38,.15);border:1px solid rgba(239,68,68,.25)}
+.cpu{background:rgba(124,58,237,.15);border:1px solid rgba(139,92,246,.25)}
+.cteal{background:rgba(13,148,136,.1);border:1px solid rgba(13,148,136,.25)}
+.tbl{width:100%;border-collapse:collapse;font-size:.83rem;margin:.8rem 0}
+.tbl th{background:rgba(13,148,136,.15);padding:.6rem .9rem;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#5eead4;border-bottom:1px solid rgba(13,148,136,.2)}
+.tbl td{padding:.55rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);color:#cbd5e1;vertical-align:top}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.ok{color:var(--gl)}.ko{color:var(--rl)}.am{color:var(--al)}
+.steps{counter-reset:st;display:flex;flex-direction:column;gap:.65rem}
+.step{counter-increment:st;display:flex;align-items:flex-start;gap:.75rem;font-size:.87rem;color:#cbd5e1}
+.step::before{content:counter(st);min-width:24px;height:24px;background:rgba(13,148,136,.25);border:1px solid rgba(13,148,136,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#5eead4;flex-shrink:0;margin-top:.12rem}
+.sw{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1.2rem;margin:.8rem 0;overflow:hidden}
+.sw svg{display:block;max-width:100%;height:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+@media(max-width:720px){.g2,.g3{grid-template-columns:1fr}}
+.accordion{margin:.9rem 0;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.acc-item{border-bottom:1px solid var(--bd)}.acc-item:last-child{border-bottom:none}
+.acc-btn{width:100%;background:var(--bg3);border:none;padding:.85rem 1.1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--tx);font-family:var(--ff);font-size:.86rem;font-weight:600;transition:background .2s;text-align:left;gap:.5rem}
+.acc-btn:hover{background:rgba(13,148,136,.06)}
+.acc-btn .acc-arrow{font-size:.75rem;color:var(--txm);transition:transform .25s;flex-shrink:0}
+.acc-btn.open{background:rgba(13,148,136,.06);color:#2dd4bf}
+.acc-btn.open .acc-arrow{transform:rotate(90deg);color:#2dd4bf}
+.acc-content{display:none;padding:1rem 1.2rem;border-top:1px solid var(--bd);background:var(--bg4)}
+.acc-content.open{display:block}
+/* QCM */
+.qcm-wrap{display:flex;flex-direction:column;gap:1.2rem}
+.qcm-item{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1.2rem 1.4rem}
+.qcm-num{font-family:var(--fm);font-size:.68rem;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.qcm-q{font-size:.9rem;font-weight:600;color:var(--tx);margin-bottom:.8rem;line-height:1.5}
+.qopt{display:flex;flex-direction:column;gap:.35rem}
+.qo{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:.6rem 1rem;font-size:.84rem;color:#cbd5e1;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;font-family:var(--ff);text-align:left;width:100%}
+.qo:hover{border-color:var(--teal);background:rgba(13,148,136,.07)}
+.qo.selected{border-color:var(--teal);background:rgba(13,148,136,.15);color:#5eead4;font-weight:500}
+.qo.ok2{border-color:var(--gl);background:rgba(5,150,105,.18);color:#6ee7b7}
+.qo.ko2{border-color:var(--rl);background:rgba(220,38,38,.18);color:#fca5a5}
+.qo:disabled{cursor:default}
+.qo .mk{margin-left:auto;flex-shrink:0}
+.qexpl{font-size:.81rem;color:var(--txm);margin-top:.6rem;padding:.7rem 1rem;background:rgba(255,255,255,.03);border-radius:8px;border-left:3px solid var(--teal);line-height:1.55;display:none}
+.qcm-submit{background:linear-gradient(135deg,rgba(13,148,136,.4),rgba(94,234,212,.25));border:1px solid rgba(13,148,136,.4);color:#5eead4;font-family:var(--ff);font-size:.85rem;font-weight:600;padding:.75rem 2rem;border-radius:8px;cursor:pointer;margin-top:1.4rem;transition:all .2s;display:block;width:100%}
+.qcm-submit:hover{background:linear-gradient(135deg,rgba(13,148,136,.6),rgba(94,234,212,.4))}
+.qcm-submit:disabled{opacity:.4;cursor:default}
+.qcm-score{background:var(--bg);border:1px solid rgba(13,148,136,.3);border-radius:14px;padding:2rem;text-align:center;margin-top:1.5rem;display:none}
+.score-big{font-size:3rem;font-weight:800;color:#2dd4bf;font-family:var(--fm);line-height:1;margin-bottom:.5rem}
+.score-pct{font-size:1rem;color:var(--txm);margin-bottom:.8rem}
+.score-msg{font-size:.9rem;color:var(--tx);font-weight:500}
+/* GRILLE ÉVAL */
+.eval-grid{display:flex;flex-direction:column;gap:.7rem;margin:.8rem 0}
+.eval-row{display:grid;grid-template-columns:2.5fr .8fr 1.5fr;gap:.7rem;align-items:start}
+@media(max-width:680px){.eval-row{grid-template-columns:1fr}}
+.eval-label{font-size:.88rem;color:#cbd5e1;line-height:1.45}
+.eval-pts{font-family:var(--fm);font-weight:700;color:#2dd4bf;font-size:.9rem;text-align:center;background:rgba(13,148,136,.15);border:1px solid rgba(13,148,136,.3);border-radius:8px;padding:.35rem .6rem}
+.eval-criteres{font-size:.78rem;color:var(--txm);line-height:1.5}
+.eval-header{display:grid;grid-template-columns:2.5fr .8fr 1.5fr;gap:.7rem;padding:.4rem 0;border-bottom:1px solid var(--bd);margin-bottom:.4rem}
+.eval-header span{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txd)}
+/* SUJET MINI-APP */
+.sujet-card{background:linear-gradient(135deg,rgba(13,148,136,.1),rgba(94,234,212,.04));border:2px solid rgba(13,148,136,.3);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem}
+.sujet-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(13,148,136,.25);border:1px solid rgba(13,148,136,.4);border-radius:999px;padding:.25rem .75rem;font-size:.7rem;font-weight:700;color:#5eead4;margin-bottom:.8rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:.06em}
+/* GLOSS */
+.gloss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-top:.5rem}
+.gc{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1.2rem;transition:border-color .2s}
+.gc:hover{border-color:rgba(13,148,136,.25)}
+.gt{font-family:var(--fm);font-size:.88rem;font-weight:700;color:#2dd4bf;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.gcat{font-size:.62rem;background:rgba(13,148,136,.2);border:1px solid rgba(13,148,136,.3);color:#5eead4;padding:.1rem .42rem;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;font-family:var(--ff)}
+.gd{font-size:.84rem;color:#cbd5e1;line-height:1.55;margin-bottom:.5rem}
+.ge{font-size:.78rem;color:var(--txm);font-style:italic;border-left:2px solid rgba(13,148,136,.3);padding-left:.6rem}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="badge">📱 React Native &nbsp;·&nbsp; <b>B3 Dev Web 2025-2026</b></div>
+    <h1>J5 — <em>Évaluation</em> finale</h1>
+    <p class="hdr-sub">Rendu App Quiz · Soutenance · Mini-app pratique · Bilan de cours</p>
+    <div class="pills">
+      <span class="pill pteal">🕐 7h — Journée d'évaluation</span>
+      <span class="pill pg">S9 · Rendu App Quiz + Soutenance</span>
+      <span class="pill pa">S10 · Mini-app pratique individuelle</span>
+      <span class="pill pp">📊 Barème complet · 20 pts</span>
+    </div>
+  </div>
+</header>
+
+<div class="nav-wrap">
+  <nav class="nav-tabs">
+    <button class="tb active" onclick="sw('s9',this)">🎓 S9 · Soutenance App Quiz</button>
+    <button class="tb" onclick="sw('s10',this)">💻 S10 · Mini-app pratique</button>
+    <button class="tb" onclick="sw('bareme',this)">📊 Barème & critères</button>
+    <button class="tb" onclick="sw('pratique',this)">🧩 QCM Bilan</button>
+    <button class="tb" onclick="sw('recap',this)">📚 Récap 5 jours</button>
+  </nav>
+</div>
+
+<main class="main">
+
+<!-- ══════ S9 — SOUTENANCE ══════ -->
+<div id="tab-s9" class="pan active">
+  <div class="sh"><div class="ico iteal">🎓</div>
+    <div class="si"><h2>S9 · Soutenance App Quiz</h2><p>Rendu GitHub · APK · Firebase · Présentation 5 min · Questions 5 min</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <!-- Déroulé -->
+  <div class="card">
+    <div class="ct">📋 Déroulé de la soutenance</div>
+    <div class="call cteal"><span class="ci">⏱</span><span>Chaque étudiant dispose de <b>10 minutes au total</b> : 5 min de présentation + 5 min de questions. L'ordre de passage est tiré au sort. Le formateur évalue pendant la démonstration.</span></div>
+    <div class="eval-grid" style="margin-top:1rem">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="card" style="margin:0;border-color:rgba(13,148,136,.3)">
+          <div class="ct" style="font-size:.85rem;color:#5eead4">⏱ 5 min — Démonstration</div>
+          <ul class="cl">
+            <li>Lancer l'APK sur un device Android physique</li>
+            <li>Parcourir le flux complet : inscription → quiz → score → historique</li>
+            <li>Montrer la déconnexion et la reconnexion (session persistée)</li>
+            <li>Ouvrir Firebase Console → Auth (comptes créés) + Firestore (scores)</li>
+          </ul>
+        </div>
+        <div class="card" style="margin:0;border-color:rgba(217,119,6,.3)">
+          <div class="ct" style="font-size:.85rem;color:#fcd34d">❓ 5 min — Questions formateur</div>
+          <ul class="cl">
+            <li>Expliquer un choix d'architecture (navigation, modèle Firestore…)</li>
+            <li>Lire et expliquer un extrait de code montré par le formateur</li>
+            <li>Décrire comment tu résoudrais un bug ou une amélioration</li>
+            <li>Justifier les règles de sécurité Firestore mises en place</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Livrables à vérifier -->
+    <div class="ct" style="margin-top:1.3rem">✅ Checklist livrables — à vérifier avant de passer</div>
+    <div class="cb">
+      <div class="cl2">Vérification finale avant soutenance</div>
+      <pre><span class="cm">✅ GitHub</span>
+□ Dépôt public — URL partagée avec le formateur
+□ README.md : description + screenshots + stack + instructions install
+□ .gitignore inclut node_modules/ et .env (pas de clé Firebase commitée)
+□ Dernier commit propre — pas de fichiers de debug ou logs inutiles
+
+<span class="cm">✅ APK</span>
+□ Fichier .apk généré avec eas build -p android --profile preview
+□ APK testé et fonctionnel sur device Android (pas seulement émulateur)
+□ Version : 1.0.0, versionCode: 1 dans app.json
+□ Nom de l'app affiché correctement sur l'écran d'accueil
+
+<span class="cm">✅ Firebase</span>
+□ Formateur invité sur Firebase Console (Paramètres → Utilisateurs)
+□ Auth : au moins 2 comptes de test créés et visibles
+□ Firestore : collections themes, questions, users bien structurées
+□ Règles de sécurité appliquées (pas en mode test ouvert)
+
+<span class="cm">✅ Fonctionnalités core</span>
+□ Inscription avec email/password → profil Firestore créé
+□ Connexion → session persistée (AsyncStorage)
+□ Quiz : questions chargées depuis Firestore, score calculé
+□ Résultats : score sauvegardé dans users/{uid}/history
+□ Profil : historique affiché, déconnexion fonctionnelle</pre>
+    </div>
+  </div>
+
+  <!-- Questions types -->
+  <div class="card">
+    <div class="ct">💬 Questions fréquentes en soutenance</div>
+    <p style="font-size:.83rem;color:var(--txm);margin-bottom:.9rem">Prépare des réponses courtes et précises à ces questions — elles reviennent souvent.</p>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>Pourquoi avoir utilisé une sous-collection <code>users/{'{uid}'}/history</code> plutôt qu'un tableau dans le document utilisateur ?</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);line-height:1.6">Les documents Firestore sont limités à 1 Mo. Un tableau dans le document grossit indéfiniment avec chaque partie jouée. La sous-collection évite cette limite, permet des requêtes ciblées (tri par date, limite à 10), et s'aligne avec les règles de sécurité (chaque utilisateur n'accède qu'à son sous-arbre).</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>Pourquoi retourner la fonction <code>unsub</code> dans le <code>return</code> du <code>useEffect</code> ?</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);line-height:1.6"><code>onSnapshot</code> ouvre une connexion WebSocket persistante. Si on ne la ferme pas quand le composant est démonté, la callback continue de s'exécuter en mémoire — fuite mémoire garantie. <code>return unsub</code> dans <code>useEffect</code> est le mécanisme de cleanup de React : il appelle cette fonction automatiquement au démontage.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>Comment la session est-elle conservée entre les redémarrages de l'app ?</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);line-height:1.6">Via <code>initializeAuth</code> avec <code>getReactNativePersistence(AsyncStorage)</code>. Firebase stocke le token d'authentification dans AsyncStorage au lieu de la mémoire. Au redémarrage, <code>onAuthStateChanged</code> le retrouve automatiquement et restaure la session sans nouvelle connexion.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>Qu'est-ce qui protège réellement Firestore — les règles ou la clé API ?</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);line-height:1.6">Les règles de sécurité Firestore, évaluées côté serveur. La clé API (<code>apiKey</code> dans <code>firebaseConfig</code>) n'est pas secrète — elle identifie le projet Firebase mais ne donne pas accès sans règles appropriées. Les règles vérifient <code>request.auth.uid</code> pour s'assurer que chaque utilisateur ne peut accéder qu'à ses propres données.</p>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>Quelle différence entre <code>getDocs</code> et <code>onSnapshot</code> dans ton app ?</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);line-height:1.6"><code>getDocs</code> fait une lecture ponctuelle — utilisé pour charger les questions du quiz (données statiques qui ne changent pas pendant la partie). <code>onSnapshot</code> maintient une connexion persistante — utilisé pour l'historique dans ProfileScreen, pour que les nouveaux scores apparaissent en temps réel sans recharger.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /s9 -->
+
+<!-- ══════ S10 — MINI-APP PRATIQUE ══════ -->
+<div id="tab-s10" class="pan">
+  <div class="sh"><div class="ico ia">💻</div>
+    <div class="si"><h2>S10 · Mini-app pratique — Évaluation individuelle</h2><p>3h · Sujet tiré au sort · App autonome · Rendu GitHub</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="sujet-card">
+    <div class="sujet-badge">💻 Épreuve pratique · 3h</div>
+    <div class="ct" style="margin-bottom:.6rem">Consignes générales</div>
+    <ul class="cl">
+      <li><b>Durée :</b> 3 heures en conditions individuelles, documentation autorisée</li>
+      <li><b>Rendu :</b> Dépôt GitHub avec README avant la fin des 3h</li>
+      <li><b>Stack obligatoire :</b> React Native + Expo + Firebase (Auth + Firestore)</li>
+      <li><b>Sujet :</b> tiré au sort parmi les 3 propositions ci-dessous</li>
+      <li><b>Connexion internet :</b> autorisée — IA générative : non autorisée</li>
+    </ul>
+  </div>
+
+  <!-- Les 3 sujets -->
+  <div class="g3" style="margin-bottom:1.2rem">
+    <div class="card" style="border-color:rgba(59,130,246,.3)">
+      <div class="ct" style="color:#93c5fd">📝 Sujet A — Liste de tâches collaborative</div>
+      <ul class="cl" style="font-size:.82rem">
+        <li>Auth Firebase email/password</li>
+        <li>Ajouter / supprimer des tâches dans Firestore</li>
+        <li>Filtrer par statut (à faire / fait)</li>
+        <li>Chaque utilisateur voit ses propres tâches</li>
+        <li>Règles Firestore : lecture/écriture = owner</li>
+      </ul>
+      <div class="call cbl" style="margin-top:.9rem"><span class="ci">⭐</span><span><b>Bonus :</b> Partager une tâche avec un autre utilisateur</span></div>
+    </div>
+    <div class="card" style="border-color:rgba(5,150,105,.3)">
+      <div class="ct" style="color:#6ee7b7">💰 Sujet B — Tracker de dépenses</div>
+      <ul class="cl" style="font-size:.82rem">
+        <li>Auth Firebase email/password</li>
+        <li>Ajouter une dépense (titre, montant, catégorie)</li>
+        <li>Afficher le total et la liste par date</li>
+        <li>Supprimer une dépense</li>
+        <li>Données dans Firestore par utilisateur</li>
+      </ul>
+      <div class="call cgr" style="margin-top:.9rem"><span class="ci">⭐</span><span><b>Bonus :</b> Graphique de répartition par catégorie</span></div>
+    </div>
+    <div class="card" style="border-color:rgba(124,58,237,.3)">
+      <div class="ct" style="color:#c4b5fd">📚 Sujet C — Journal personnel</div>
+      <ul class="cl" style="font-size:.82rem">
+        <li>Auth Firebase email/password</li>
+        <li>Créer / lire / supprimer des entrées de journal</li>
+        <li>Champ texte libre + date automatique</li>
+        <li>Entrées privées (accès owner uniquement)</li>
+        <li>Recherche dans les entrées côté client</li>
+      </ul>
+      <div class="call cpu" style="margin-top:.9rem"><span class="ci">⭐</span><span><b>Bonus :</b> Humeur du jour (emoji picker)</span></div>
+    </div>
+  </div>
+
+  <!-- Barème mini-app -->
+  <div class="card">
+    <div class="ct">📊 Barème mini-app pratique — 10 pts</div>
+    <div class="eval-grid">
+      <div class="eval-header">
+        <span>Critère</span><span style="text-align:center">Points</span><span>Ce qui est évalué</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Firebase Auth fonctionnelle</b><br><span style="font-size:.78rem;color:var(--txm)">Inscription + connexion + session persistée</span></div>
+        <div class="eval-pts">3 pts</div>
+        <div class="eval-criteres">createUserWithEmailAndPassword · signIn · onAuthStateChanged · persistance AsyncStorage · gestion erreurs en FR</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Firestore CRUD</b><br><span style="font-size:.78rem;color:var(--txm)">Au moins Create + Read + Delete opérationnels</span></div>
+        <div class="eval-pts">3 pts</div>
+        <div class="eval-criteres">addDoc / getDocs ou onSnapshot / deleteDoc · données correctement structurées · appartenance utilisateur</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Navigation & UX</b><br><span style="font-size:.78rem;color:var(--txm)">Flux utilisateur cohérent et sans crash</span></div>
+        <div class="eval-pts">2 pts</div>
+        <div class="eval-criteres">AuthStack/AppStack · états loading/error · KeyboardAvoidingView sur les formulaires · déconnexion</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Qualité du code</b><br><span style="font-size:.78rem;color:var(--txm)">Lisibilité et bonnes pratiques</span></div>
+        <div class="eval-pts">2 pts</div>
+        <div class="eval-criteres">Nommage clair · cleanup useEffect · pas de code mort · README présent sur le dépôt</div>
+      </div>
+    </div>
+    <div class="call cteal" style="margin-top:1rem"><span class="ci">💡</span><span>Le bonus (sujet A/B/C) peut rapporter jusqu'à <b>1 pt supplémentaire</b> mais ne permet pas de dépasser 10/10.</span></div>
+  </div>
+
+  <!-- Conseils tactiques -->
+  <div class="card">
+    <div class="ct">🧠 Stratégie pour les 3h</div>
+    <div class="sw">
+      <svg viewBox="0 0 720 140" xmlns="http://www.w3.org/2000/svg" font-family="'Sora',sans-serif">
+        <defs><marker id="ta" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L7,3z" fill="#5eead4"/></marker></defs>
+        <text x="360" y="20" text-anchor="middle" fill="#5eead4" font-size="13" font-weight="700">Répartition recommandée des 3h</text>
+        <rect x="15" y="34" width="130" height="80" rx="8" fill="rgba(13,148,136,.15)" stroke="#0d9488" stroke-width="1.5"/>
+        <text x="80" y="58" text-anchor="middle" fill="#5eead4" font-weight="700" font-size="11">0:00 — 0:30</text>
+        <text x="80" y="75" text-anchor="middle" fill="#94a3b8" font-size="9">Init projet</text>
+        <text x="80" y="90" text-anchor="middle" fill="#94a3b8" font-size="9">Structure dossiers</text>
+        <text x="80" y="105" text-anchor="middle" fill="#94a3b8" font-size="9">firebase.js configuré</text>
+        <path d="M145 74 L168 74" stroke="#5eead4" stroke-width="1.5" fill="none" marker-end="url(#ta)"/>
+        <rect x="170" y="34" width="130" height="80" rx="8" fill="rgba(220,38,38,.12)" stroke="#dc2626" stroke-width="1.5"/>
+        <text x="235" y="58" text-anchor="middle" fill="#fca5a5" font-weight="700" font-size="11">0:30 — 1:15</text>
+        <text x="235" y="75" text-anchor="middle" fill="#94a3b8" font-size="9">Firebase Auth</text>
+        <text x="235" y="90" text-anchor="middle" fill="#94a3b8" font-size="9">Login + Register</text>
+        <text x="235" y="105" text-anchor="middle" fill="#94a3b8" font-size="9">onAuthStateChanged</text>
+        <path d="M300 74 L323 74" stroke="#5eead4" stroke-width="1.5" fill="none" marker-end="url(#ta)"/>
+        <rect x="325" y="34" width="130" height="80" rx="8" fill="rgba(59,130,246,.12)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="390" y="58" text-anchor="middle" fill="#93c5fd" font-weight="700" font-size="11">1:15 — 2:15</text>
+        <text x="390" y="75" text-anchor="middle" fill="#94a3b8" font-size="9">Firestore CRUD</text>
+        <text x="390" y="90" text-anchor="middle" fill="#94a3b8" font-size="9">Écran principal</text>
+        <text x="390" y="105" text-anchor="middle" fill="#94a3b8" font-size="9">onSnapshot / addDoc</text>
+        <path d="M455 74 L478 74" stroke="#5eead4" stroke-width="1.5" fill="none" marker-end="url(#ta)"/>
+        <rect x="480" y="34" width="130" height="80" rx="8" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1.5"/>
+        <text x="545" y="58" text-anchor="middle" fill="#6ee7b7" font-weight="700" font-size="11">2:15 — 3:00</text>
+        <text x="545" y="75" text-anchor="middle" fill="#94a3b8" font-size="9">Finitions UX</text>
+        <text x="545" y="90" text-anchor="middle" fill="#94a3b8" font-size="9">Push GitHub</text>
+        <text x="545" y="105" text-anchor="middle" fill="#94a3b8" font-size="9">README + Bonus</text>
+      </svg>
+    </div>
+    <ul class="cl" style="margin-top:.8rem">
+      <li><b>Partir du projet App Quiz</b> comme base — copier firebase.js, AuthStack, AppStack → gagner 30 min</li>
+      <li><b>Faire fonctionner Auth en premier</b> — tout le reste dépend de l'uid utilisateur</li>
+      <li><b>Commencer par un onSnapshot simple</b> — une seule collection, sans query complexe</li>
+      <li><b>Push régulier sur GitHub</b> toutes les 30 minutes — en cas de panne, le code est sauvegardé</li>
+      <li><b>Ne pas chercher le bonus avant d'avoir les 10 pts de base</b></li>
+    </ul>
+    <div class="call crd" style="margin-top:.8rem"><span class="ci">⚠️</span><span>Un projet qui tourne avec 3 fonctionnalités bien faites vaut plus qu'un projet ambitieux qui crashe. <b>Stabilité > quantité.</b></span></div>
+  </div>
+
+</div><!-- /s10 -->
+
+<!-- ══════ BARÈME ══════ -->
+<div id="tab-bareme" class="pan">
+  <div class="sh"><div class="ico iteal">📊</div>
+    <div class="si"><h2>Barème complet — Note finale React Native</h2><p>App Quiz (10 pts) + Mini-app pratique (10 pts) = 20 pts</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <!-- App Quiz -->
+  <div class="card">
+    <div class="ct">🎯 App Quiz — Barème Soutenance (10 pts)</div>
+    <div class="eval-grid">
+      <div class="eval-header">
+        <span>Critère</span><span style="text-align:center">Points</span><span>Détail</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Fonctionnalités core complètes</b><br><span style="font-size:.78rem;color:var(--txm)">Flux Quiz fonctionnel de bout en bout</span></div>
+        <div class="eval-pts">3 pts</div>
+        <div class="eval-criteres">Inscription/connexion · Sélection thème · QCM avec score · Sauvegarde résultat · Historique affiché</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Firebase Auth</b><br><span style="font-size:.78rem;color:var(--txm)">Auth email/password opérationnelle</span></div>
+        <div class="eval-pts">2 pts</div>
+        <div class="eval-criteres">createUser + signIn + onAuthStateChanged · Session persistée · Erreurs Firebase en français</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Firestore</b><br><span style="font-size:.78rem;color:var(--txm)">Questions chargées + scores sauvegardés</span></div>
+        <div class="eval-pts">2 pts</div>
+        <div class="eval-criteres">getDocs + where() pour les questions · addDoc dans users/{uid}/history · onSnapshot pour historique · Règles sécurité en place</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>UX Mobile</b><br><span style="font-size:.78rem;color:var(--txm)">Expérience mobile soignée</span></div>
+        <div class="eval-pts">2 pts</div>
+        <div class="eval-criteres">États loading/error · KeyboardAvoidingView · Navigation fluide · Déconnexion · APK installé sur device</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Qualité code & livrables</b><br><span style="font-size:.78rem;color:var(--txm)">Propreté du dépôt</span></div>
+        <div class="eval-pts">1 pt</div>
+        <div class="eval-criteres">GitHub public · README · .gitignore propre · Cleanup onSnapshot · Code lisible</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;padding-top:.6rem;border-top:1px solid var(--bd)">
+        <div style="display:flex;gap:.8rem;align-items:center">
+          <span style="font-size:.8rem;color:var(--txm)">Bonus (dark mode, timer, leaderboard)</span>
+          <div class="eval-pts" style="color:#fcd34d;border-color:rgba(217,119,6,.4);background:rgba(217,119,6,.15)">+1 pt max</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini-app -->
+  <div class="card">
+    <div class="ct">💻 Mini-app pratique — Barème (10 pts)</div>
+    <div class="eval-grid">
+      <div class="eval-header">
+        <span>Critère</span><span style="text-align:center">Points</span><span>Détail</span>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Firebase Auth fonctionnelle</b></div>
+        <div class="eval-pts">3 pts</div>
+        <div class="eval-criteres">Inscription + connexion + persistance + erreurs gérées</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Firestore CRUD opérationnel</b></div>
+        <div class="eval-pts">3 pts</div>
+        <div class="eval-criteres">Create + Read + Delete · données liées à l'utilisateur · temps réel avec onSnapshot</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Navigation & UX</b></div>
+        <div class="eval-pts">2 pts</div>
+        <div class="eval-criteres">Flux logique sans crash · états loading/error · formulaires corrects</div>
+      </div>
+      <div class="eval-row">
+        <div class="eval-label"><b>Qualité code & README</b></div>
+        <div class="eval-pts">2 pts</div>
+        <div class="eval-criteres">Code propre et lisible · cleanup useEffect · README présent</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Récap note finale -->
+  <div class="card" style="border-color:rgba(13,148,136,.35)">
+    <div class="ct">🏆 Note finale — Récapitulatif</div>
+    <table class="tbl">
+      <thead><tr><th>Épreuve</th><th>Coeff</th><th>/ points</th><th>Modalité</th></tr></thead>
+      <tbody>
+        <tr><td><b>App Quiz</b> — Soutenance</td><td>×1</td><td><b>10 pts</b></td><td>En groupe ou binôme — à préciser</td></tr>
+        <tr><td><b>Mini-app</b> — Pratique individuelle</td><td>×1</td><td><b>10 pts</b></td><td>Individuel · 3h</td></tr>
+        <tr style="background:rgba(13,148,136,.07)"><td><b>Total</b></td><td></td><td><b>20 pts</b></td><td>Note sur 20 — coefficient selon grille B3</td></tr>
+      </tbody>
+    </table>
+    <div class="g2" style="margin-top:1rem">
+      <div class="call cgr" style="margin:0"><span class="ci">🎉</span><div><b>≥ 14/20</b> — Excellent, maîtrise solide du cours</div></div>
+      <div class="call cteal" style="margin:0"><span class="ci">👍</span><div><b>10–13/20</b> — Satisfaisant, objectifs principaux atteints</div></div>
+      <div class="call cam" style="margin:0"><span class="ci">📚</span><div><b>7–9/20</b> — Bases acquises, points à consolider</div></div>
+      <div class="call crd" style="margin:0"><span class="ci">⚠️</span><div><b>&lt; 7/20</b> — Lacunes importantes, rattrapage recommandé</div></div>
+    </div>
+  </div>
+
+</div><!-- /bareme -->
+
+<!-- ══════ QCM BILAN ══════ -->
+<div id="tab-pratique" class="pan">
+  <div class="sh"><div class="ico iteal">🧩</div>
+    <div class="si"><h2>QCM Bilan — 15 questions sur les 5 jours</h2><p>Révision complète J1→J5 · Composants · Navigation · Firebase · UX · Build</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+  <div class="call cteal"><span class="ci">📝</span><span>Révision finale couvrant l'ensemble du cours. Sélectionne une réponse par question puis clique sur <b>"Valider mes réponses"</b>.</span></div>
+
+  <div class="qcm-wrap" id="qcm-container" style="margin-top:1.2rem">
+
+    <div class="qcm-item"><div class="qcm-num">Q1 / 15 · J1 — Composants</div>
+      <div class="qcm-q">En React Native, pourquoi ne peut-on pas écrire du texte directement dans un <code>&lt;View&gt;</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. View est réservé aux images<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. React Native exige que tout texte visible soit dans un composant &lt;Text&gt; — sinon crash immédiat<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. C'est une limitation de JSX<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Ça fonctionne mais affiche un warning<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Contrairement au web où un div peut contenir du texte, React Native compile vers des vues natives. Les moteurs iOS/Android ne savent pas afficher du texte dans un conteneur générique. Tout texte doit être dans &lt;Text&gt; — c'est une règle absolue, pas une convention.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q2 / 15 · J1 — useState</div>
+      <div class="qcm-q">Que se passe-t-il si on écrit directement <code>count = count + 1</code> au lieu de <code>setCount(count + 1)</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Un crash de l'app<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. La valeur change mais React ne re-render pas — l'interface ne se met pas à jour<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Une erreur de compilation<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Ça fonctionne exactement pareil<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">React surveille les changements d'état uniquement via le setter (setCount). Muter directement la variable ne notifie pas React — la valeur change en mémoire mais l'UI reste gelée sur l'ancienne valeur. Le setter est le seul moyen de déclencher un re-render.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q3 / 15 · J1 — Flexbox</div>
+      <div class="qcm-q">Quelle est la direction par défaut de Flexbox en React Native ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. row — les enfants s'alignent horizontalement (comme CSS web)<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. column — les enfants s'empilent verticalement<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Pas de direction par défaut — il faut toujours la spécifier<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. row-reverse<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">C'est une différence fondamentale avec CSS web. En React Native, flexDirection est "column" par défaut — les éléments s'empilent de haut en bas. En CSS web, c'est "row" (horizontal). Pour mettre des éléments côte à côte en RN, il faut explicitement ajouter flexDirection: 'row'.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q4 / 15 · J2 — Navigation</div>
+      <div class="qcm-q">Pourquoi utiliser <code>navigation.replace()</code> après une connexion réussie plutôt que <code>navigate()</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="true" onclick="sel(this)">A. replace() remplace l'écran courant sans l'empiler — l'utilisateur ne peut plus revenir à l'écran de login avec le bouton retour<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. replace() est plus rapide<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. navigate() ne fonctionne pas depuis un écran d'auth<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Il n'y a pas de différence dans ce contexte<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Après une connexion réussie, on ne veut pas que l'utilisateur puisse appuyer "Retour" et retomber sur l'écran de login. navigate() empilerait l'app sur le login — le bouton retour Android/iOS ramènerait sur le login. replace() remplace dans la pile — le login n'est plus accessible.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q5 / 15 · J2 — useEffect</div>
+      <div class="qcm-q">Qu'est-ce qui se passe si on oublie le tableau de dépendances <code>[]</code> dans <code>useEffect</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. useEffect ne s'exécute jamais<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. useEffect s'exécute après chaque re-render — risque de boucle infinie si le code à l'intérieur change l'état<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. useEffect s'exécute une seule fois au montage<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Une erreur de compilation<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Sans tableau de dépendances, useEffect tourne après chaque render. Si le code dans useEffect appelle setData() (ce qui cause un re-render), ça déclenche un nouveau useEffect, qui appelle setData()… boucle infinie. Les tableaux de dépendances ne sont pas optionnels — ils contrôlent quand l'effet se déclenche.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q6 / 15 · J2 — Architecture</div>
+      <div class="qcm-q">Dans App Quiz, pourquoi sépare-t-on <code>AuthStack</code> et <code>AppStack</code> en deux navigateurs distincts plutôt qu'un seul ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. React Navigation impose cette séparation<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. Séparation claire des contextes d'auth — l'utilisateur connecté et non connecté n'ont pas accès aux mêmes écrans. onAuthStateChanged commute entre les deux<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Pour des raisons de performance<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Pour éviter les re-renders<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">La séparation AuthStack/AppStack est un pattern de sécurité. Un utilisateur non connecté ne doit jamais pouvoir naviguer vers les écrans de l'app (même via le bouton retour). En commutant entre deux Stacks distincts via onAuthStateChanged, on garantit que les écrans protégés ne sont jamais dans la pile de navigation d'un utilisateur non authentifié.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q7 / 15 · J3 — Firebase Auth</div>
+      <div class="qcm-q">Quelle est la première chose à faire après <code>createUserWithEmailAndPassword()</code> dans App Quiz ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Appeler signIn() pour connecter l'utilisateur<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. Naviguer manuellement vers AppStack<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">C. Créer le document profil dans Firestore users/{uid} — l'utilisateur est déjà connecté automatiquement<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Stocker le token dans AsyncStorage<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">createUserWithEmailAndPassword() crée le compte ET connecte l'utilisateur automatiquement. onAuthStateChanged() détecte la connexion et commute vers AppStack sans action supplémentaire. La seule chose à faire est de créer le profil Firestore (setDoc dans users/uid) pendant qu'on a accès à user.uid.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q8 / 15 · J3 — Firestore</div>
+      <div class="qcm-q">Quelle est la différence entre <code>setDoc()</code> et <code>updateDoc()</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="true" onclick="sel(this)">A. setDoc() crée ou écrase tout le document. updateDoc() modifie seulement les champs spécifiés, laisse les autres intacts<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. setDoc() est pour les nouvelles données, updateDoc() pour les existantes<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. updateDoc() est plus rapide<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Il n'y a pas de différence<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">setDoc() est destructif — il remplace tout le document. Si le document avait un champ "score" et que tu setDoc() avec juste un champ "pseudo", le champ "score" disparaît. updateDoc() est chirurgical — il ne touche qu'aux champs passés. Pour modifier le pseudo sans effacer le reste, toujours utiliser updateDoc().</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q9 / 15 · J3 — Sécurité</div>
+      <div class="qcm-q">Pourquoi la collection <code>questions</code> est en lecture seule (<code>allow write: if false</code>) dans les règles Firestore ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Les questions sont stockées en local dans le code<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. Les questions sont des données d'admin — aucun utilisateur ne doit pouvoir les modifier, ajouter ou supprimer depuis l'app<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Firestore ne supporte pas l'écriture sur cette collection<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Pour des raisons de performance<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Les questions sont gérées par l'admin (via console Firebase ou script de seed). Si l'écriture était ouverte, un utilisateur malveillant pourrait supprimer toutes les questions, modifier les bonnes réponses, ou injecter du contenu. allow write: if false garantit que les données ne peuvent être modifiées que par l'admin via la console.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q10 / 15 · J4 — AsyncStorage</div>
+      <div class="qcm-q">Tu stockes un objet <code>{'{ nom: "Alice", score: 42 }'}</code> dans AsyncStorage. Comment le récupérer correctement ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. <code>await AsyncStorage.getItem('@user')</code> — retourne directement l'objet<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. <code>JSON.parse(await AsyncStorage.getItem('@user'))</code><span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. <code>await AsyncStorage.getObject('@user')</code><span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. <code>Object.parse(await AsyncStorage.getItem('@user'))</code><span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">AsyncStorage stocke uniquement des strings. Quand tu écris setItem('@user', JSON.stringify(obj)), la valeur stockée est la string '{"nom":"Alice","score":42}'. Pour récupérer l'objet, il faut parser cette string avec JSON.parse(). Ne pas oublier de gérer le cas null (clé absente) : JSON.parse(valeur || 'null').</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q11 / 15 · J4 — UX</div>
+      <div class="qcm-q">Pourquoi désactiver le bouton "Soumettre" pendant une requête Firebase en cours ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Firebase ne supporte pas les requêtes simultanées<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. Éviter les doubles soumissions — un utilisateur impatient pourrait créer plusieurs comptes ou enregistrer plusieurs fois le même score<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Parce que c'est une obligation légale<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Pour des raisons de performance uniquement<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Le double-submit est un bug classique — l'utilisateur tape deux fois rapidement sur "S'inscrire" et deux comptes sont créés, ou le score est sauvegardé deux fois. Pattern standard : setLoading(true) au début de la requête + disabled={loading} sur le bouton + setLoading(false) dans finally.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q12 / 15 · J4 — EAS Build</div>
+      <div class="qcm-q">Quelle commande EAS génère un APK directement installable sur Android (pas pour le Play Store) ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. <code>eas build -p android --profile production</code><span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. <code>eas build -p android --profile preview</code><span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. <code>expo build:android</code><span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. <code>eas build -p android --type apk</code><span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Le profil "preview" dans eas.json est configuré avec buildType: "apk" — il génère un APK directement installable. Le profil "production" génère un AAB (Android App Bundle) requis par le Play Store mais non installable directement. expo build:android est l'ancienne commande dépréciée (Expo CLI classique).</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q13 / 15 · J5 — Mini-app</div>
+      <div class="qcm-q">Tu dois réaliser la mini-app en 3h. Quelle est la meilleure stratégie pour maximiser ta note ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Commencer par le bonus pour montrer ton niveau<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. Faire toutes les fonctionnalités en parallèle<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">C. Faire fonctionner Auth d'abord, puis CRUD Firestore, puis UX — push GitHub toutes les 30 min<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Consacrer 2h au design de l'interface avant de coder la logique<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">La stratégie optimale : Auth (base de tout, bloquant si absent) → CRUD Firestore (cœur du sujet) → UX (finitions qui améliorent la note) → Bonus (seulement si le reste est complet). Push régulier = sauvegarde contre les pannes. Un projet qui tourne avec 3 fonctionnalités bien faites > un projet ambitieux qui crashe.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q14 / 15 · Transversal</div>
+      <div class="qcm-q">Dans App Quiz, quels composants doivent obligatoirement avoir un cleanup dans leur <code>useEffect</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Tous les useEffect sans exception<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. Ceux qui utilisent onSnapshot() ou onAuthStateChanged() — ils ouvrent des connexions persistantes<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Uniquement ceux avec un tableau de dépendances non vide<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Les useEffect dans les composants de navigation<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Les listeners Firebase (onSnapshot, onAuthStateChanged) ouvrent des connexions WebSocket persistantes. Sans cleanup (return unsub), ces connexions restent actives après le démontage du composant — les callbacks continuent de s'exécuter, causant des setState sur des composants démontés et des fuites mémoire. Les getDocs() ponctuels n'ont pas besoin de cleanup.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Q15 / 15 · Transversal</div>
+      <div class="qcm-q">Quelle est la différence fondamentale entre React Native et React (web) ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. React Native utilise TypeScript obligatoirement<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. React Native ne supporte pas les hooks<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">C. React Native compile vers des composants natifs iOS/Android au lieu de DOM HTML — &lt;View&gt; et &lt;Text&gt; remplacent &lt;div&gt; et &lt;p&gt;<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. React Native ne peut pas communiquer avec une API<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">La différence fondamentale : React web cible le DOM HTML (navigateur). React Native cible les composants natifs iOS et Android. Les hooks, la syntaxe JSX, la logique d'état et le fetch sont identiques — seuls les composants de base changent. View = div, Text = p/span, Image = img, TouchableOpacity = button, FlatList = ul/li.</div>
+    </div>
+
+  </div>
+
+  <button class="qcm-submit" id="qcm-submit-btn" onclick="submitQcm()">✔ Valider mes réponses</button>
+  <div class="qcm-score" id="qcm-score">
+    <div class="score-big" id="score-n">—</div>
+    <div class="score-pct" id="score-pct">—</div>
+    <div class="score-msg" id="score-msg">—</div>
+  </div>
+</div><!-- /pratique -->
+
+<!-- ══════ RÉCAP 5 JOURS ══════ -->
+<div id="tab-recap" class="pan">
+  <div class="sh"><div class="ico iteal">📚</div>
+    <div class="si"><h2>Récap — Ce que tu sais faire après 5 jours</h2><p>Bilan compétences · Stack complète · Vers la suite</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <!-- Bilan compétences -->
+  <div class="card">
+    <div class="ct">🏆 Compétences acquises — Stack React Native complète</div>
+    <div class="g2">
+      <div>
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txm);margin-bottom:.6rem">📱 React Native Core</div>
+        <ul class="cl">
+          <li><b>Composants :</b> View, Text, Image, TouchableOpacity, FlatList, TextInput</li>
+          <li><b>Hooks :</b> useState, useEffect, useRef (navigation clavier)</li>
+          <li><b>Styles :</b> StyleSheet.create(), Flexbox mobile, styles conditionnels</li>
+          <li><b>Formulaires :</b> KeyboardAvoidingView, returnKeyType, secureTextEntry</li>
+          <li><b>Persistance locale :</b> AsyncStorage (préférences, thème)</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txm);margin-bottom:.6rem">🧭 Navigation</div>
+        <ul class="cl">
+          <li><b>Stack Navigator :</b> navigate(), goBack(), route.params, header</li>
+          <li><b>Tab Navigator :</b> onglets, Ionicons, styles actifs/inactifs</li>
+          <li><b>Navigation imbriquée :</b> Stack dans Tab</li>
+          <li><b>Architecture :</b> AuthStack / AppStack avec commutation</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txm);margin-bottom:.6rem">🌐 Données & API</div>
+        <ul class="cl">
+          <li><b>Fetch API :</b> async/await, try/catch/finally</li>
+          <li><b>États :</b> loading / data / error — pattern universel</li>
+          <li><b>Filtrage :</b> côté client avec .filter()</li>
+          <li><b>Pull-to-refresh :</b> RefreshControl</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txm);margin-bottom:.6rem">🔥 Firebase</div>
+        <ul class="cl">
+          <li><b>Auth :</b> email/password, onAuthStateChanged, persistance</li>
+          <li><b>Firestore :</b> CRUD, onSnapshot, query + where()</li>
+          <li><b>Règles :</b> sécurité par utilisateur (request.auth.uid)</li>
+          <li><b>Architecture :</b> collections / sous-collections / seeder</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txm);margin-bottom:.6rem">🚀 Déploiement</div>
+        <ul class="cl">
+          <li><b>Expo EAS Build :</b> APK Android (profil preview)</li>
+          <li><b>app.json :</b> configuration production complète</li>
+          <li><b>GitHub :</b> dépôt public + README</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--txm);margin-bottom:.6rem">♿ Qualité</div>
+        <ul class="cl">
+          <li><b>Accessibilité :</b> accessibilityLabel, Role, zones ≥44pt</li>
+          <li><b>UX :</b> états loading/error, double-submit, feedbacks</li>
+          <li><b>Cleanup :</b> onSnapshot + onAuthStateChanged</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Récap journées -->
+  <div class="card">
+    <div class="ct">📅 Les 5 journées en un coup d'œil</div>
+    <table class="tbl">
+      <thead><tr><th>Journée</th><th>Thèmes</th><th>Projet</th><th>Acquis clé</th></tr></thead>
+      <tbody>
+        <tr><td><span style="color:#3b82f6;font-weight:700">J1</span></td><td>Fondations RN · Composants · Styles · useState</td><td>MyExoApp T1+T2</td><td>JSX, Flexbox, state local</td></tr>
+        <tr><td><span style="color:#34d399;font-weight:700">J2</span></td><td>React Navigation · Fetch · useEffect</td><td>MyExoApp T3+T4 · Démarrage App Quiz</td><td>Navigation, async, 3 états</td></tr>
+        <tr><td><span style="color:#fb923c;font-weight:700">J3</span></td><td>Firebase Auth · Firestore CRUD</td><td>MyExoApp T5 · App Quiz Auth+Data</td><td>Auth, CRUD, sécurité</td></tr>
+        <tr><td><span style="color:#f472b6;font-weight:700">J4</span></td><td>UX Mobile · AsyncStorage · EAS Build</td><td>MyExoApp T6 · App Quiz finitions</td><td>Formulaires, persistance, APK</td></tr>
+        <tr><td><span style="color:#2dd4bf;font-weight:700">J5</span></td><td>Soutenance · Mini-app pratique</td><td>App Quiz rendu · Mini-app individuelle</td><td>Autonomie, intégration complète</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- La suite -->
+  <div class="card" style="border-color:rgba(13,148,136,.3)">
+    <div class="ct">🔭 Pour aller plus loin après ce cours</div>
+    <div class="g2">
+      <div>
+        <div style="font-size:.8rem;font-weight:700;color:#5eead4;margin-bottom:.6rem">📱 React Native avancé</div>
+        <ul class="cl">
+          <li>Expo Router — file-based routing (comme Next.js)</li>
+          <li>Reanimated 3 — animations performantes (60fps)</li>
+          <li>React Native Gesture Handler — gestes avancés</li>
+          <li>Zustand / Redux Toolkit — gestion d'état global</li>
+          <li>React Query — data fetching avancé avec cache</li>
+        </ul>
+      </div>
+      <div>
+        <div style="font-size:.8rem;font-weight:700;color:#5eead4;margin-bottom:.6rem">🔥 Firebase avancé</div>
+        <ul class="cl">
+          <li>Firebase Storage — upload d'images et fichiers</li>
+          <li>Firebase Functions — logique serveur serverless</li>
+          <li>Firebase App Check — protection anti-abus</li>
+          <li>Firebase Analytics — suivi comportement utilisateurs</li>
+          <li>Firebase Crashlytics — monitoring des crashs en production</li>
+        </ul>
+      </div>
+    </div>
+    <div class="call cteal" style="margin-top:1rem"><span class="ci">🎯</span><span>La stack React Native + Firebase couvre 80% des besoins des startups mobiles. Ces 5 jours vous donnent les bases pour construire des apps réelles et les déployer. La suite : pratiquer sur vos propres projets, contribuer à l'open source, et explorer les animations pour une UX au niveau pro.</span></div>
+  </div>
+
+</div><!-- /recap -->
+
+</main>
+
+<script>
+function sw(name, btn) {
+  document.querySelectorAll('.pan').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function acc(btn) {
+  const content = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  const accordion = btn.closest('.accordion');
+  accordion.querySelectorAll('.acc-btn').forEach(b => b.classList.remove('open'));
+  accordion.querySelectorAll('.acc-content').forEach(c => c.classList.remove('open'));
+  if (!isOpen) { btn.classList.add('open'); content.classList.add('open'); }
+}
+function sel(btn) {
+  const item = btn.closest('.qcm-item');
+  if (item.dataset.done) return;
+  item.querySelectorAll('.qo').forEach(b => { b.classList.remove('selected'); b.querySelector('.mk').textContent = ''; });
+  btn.classList.add('selected');
+  btn.querySelector('.mk').textContent = ' ●';
+}
+function submitQcm() {
+  const items = document.querySelectorAll('.qcm-item');
+  let correct = 0;
+  items.forEach(item => {
+    item.dataset.done = 'true';
+    const selected = item.querySelector('.qo.selected');
+    item.querySelectorAll('.qo').forEach(b => {
+      b.disabled = true; b.classList.remove('selected'); b.querySelector('.mk').textContent = '';
+      if (b.dataset.correct === 'true') { b.classList.add('ok2'); b.querySelector('.mk').textContent = ' ✅'; }
+    });
+    if (selected) {
+      if (selected.dataset.correct === 'true') correct++;
+      else { selected.classList.add('ko2'); selected.querySelector('.mk').textContent = ' ❌'; }
+    }
+    const expl = item.querySelector('.qexpl');
+    if (expl) expl.style.display = 'block';
+  });
+  const total = items.length;
+  const pct = Math.round((correct / total) * 100);
+  const scoreEl = document.getElementById('qcm-score');
+  scoreEl.style.display = 'block';
+  document.getElementById('score-n').textContent = correct + ' / ' + total;
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('score-msg').textContent =
+    pct >= 80 ? '🎉 Excellent ! Tu maîtrises la stack React Native · Firebase.' :
+    pct >= 60 ? '👍 Bien ! Relis les jours sur les questions ratées.' :
+                '📚 Des révisions s\'imposent — reprends les supports J1–J4.';
+  document.getElementById('qcm-submit-btn').disabled = true;
+  scoreEl.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

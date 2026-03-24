@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>J4 — UX Mobile & EAS Build · B3 Dev Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#1e40af;--pl:#3b82f6;--pll:#93c5fd;
+  --g:#059669;--gl:#34d399;
+  --a:#d97706;--al:#fbbf24;
+  --r:#dc2626;--rl:#fca5a5;
+  --v:#7c3aed;--vl:#c4b5fd;
+  --pk:#db2777;--pkl:#f9a8d4;
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#162032;--bg4:#0d1117;
+  --bd:#334155;
+  --tx:#f1f5f9;--txm:#94a3b8;--txd:#64748b;
+  --ff:'Sora',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--ff);background:var(--bg);color:var(--tx);line-height:1.65;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#0f172a 0%,#1a0a2e 55%,#4a044e 100%);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;border-bottom:1px solid rgba(219,39,119,.3)}
+.hdr::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 75% 40%,rgba(219,39,119,.12),transparent)}
+.hdr-in{max-width:1160px;margin:0 auto;position:relative}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(219,39,119,.25);border:1px solid rgba(219,39,119,.4);border-radius:999px;padding:.3rem .9rem;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#f9a8d4;margin-bottom:1.1rem}
+.badge b{color:#fbbf24}
+h1{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:.5rem}
+h1 em{font-style:normal;color:#f472b6}
+.hdr-sub{font-size:.9rem;color:var(--txm);margin-bottom:1.4rem;font-weight:300}
+.pills{display:flex;flex-wrap:wrap;gap:.45rem}
+.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .8rem;border-radius:999px;font-size:.75rem;font-weight:500;font-family:var(--fm)}
+.pb{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+.pg{background:rgba(5,150,105,.25);border:1px solid rgba(16,185,129,.35);color:#6ee7b7}
+.pa{background:rgba(217,119,6,.25);border:1px solid rgba(245,158,11,.35);color:#fcd34d}
+.pp{background:rgba(124,58,237,.25);border:1px solid rgba(139,92,246,.35);color:#c4b5fd}
+.ppk{background:rgba(219,39,119,.25);border:1px solid rgba(219,39,119,.4);color:#f9a8d4}
+.nav-wrap{background:rgba(15,23,42,.9);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;backdrop-filter:blur(14px)}
+.nav-tabs{max-width:1160px;margin:0 auto;display:flex;padding:0 1rem;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tb{padding:.9rem 1.15rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--txm);font-family:var(--ff);font-size:.79rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:.35rem}
+.tb:hover{color:var(--tx)}.tb.active{color:#f472b6;border-bottom-color:var(--pk);font-weight:600}
+.main{max-width:1160px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.pan{display:none}.pan.active{display:block}
+.sh{display:flex;align-items:center;gap:.9rem;margin-bottom:1.6rem;padding-bottom:.9rem;border-bottom:1px solid var(--bd)}
+.ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.ib{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3)}
+.ig{background:rgba(5,150,105,.3);border:1px solid rgba(16,185,129,.3)}
+.ia{background:rgba(217,119,6,.3);border:1px solid rgba(245,158,11,.3)}
+.ip{background:rgba(124,58,237,.3);border:1px solid rgba(139,92,246,.3)}
+.ipk{background:rgba(219,39,119,.25);border:1px solid rgba(219,39,119,.35)}
+.si h2{font-size:1.2rem;font-weight:700}.si p{font-size:.8rem;color:var(--txm);margin-top:.1rem}
+.pw{background:rgba(255,255,255,.05);border-radius:999px;height:3px;margin-bottom:1.8rem}
+.pb2{height:100%;background:linear-gradient(90deg,var(--pk),var(--pkl));border-radius:999px}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem;transition:border-color .2s}
+.card:hover{border-color:rgba(219,39,119,.2)}
+.ct{font-size:.93rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+ul.cl{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+ul.cl li{display:flex;align-items:flex-start;gap:.55rem;font-size:.87rem;color:#cbd5e1;line-height:1.55}
+ul.cl li::before{content:'▸';color:var(--pkl);font-size:.72rem;margin-top:.25rem;flex-shrink:0}
+ul.cl li b{color:var(--tx)}
+code{font-family:var(--fm);font-size:.81em;background:rgba(219,39,119,.1);color:#f9a8d4;padding:.1em .38em;border-radius:4px;border:1px solid rgba(219,39,119,.2)}
+code.r{background:rgba(220,38,38,.12);color:#fca5a5;border-color:rgba(220,38,38,.2)}
+code.g{background:rgba(5,150,105,.12);color:#6ee7b7;border-color:rgba(16,185,129,.2)}
+code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,246,.2)}
+code.a{background:rgba(217,119,6,.12);color:#fcd34d;border-color:rgba(245,158,11,.2)}
+.cb{background:var(--bg4);border:1px solid rgba(219,39,119,.12);border-radius:10px;padding:1.1rem 1.3rem;margin:.8rem 0;overflow-x:auto}
+.cb pre{font-family:var(--fm);font-size:.81rem;line-height:1.75;color:#e2e8f0;white-space:pre}
+.cb .kw{color:#c792ea}.cb .fn{color:#82aaff}.cb .st{color:#c3e88d}.cb .cm{color:#4a5568;font-style:italic}
+.cb .tg{color:#f07178}.cb .at{color:#ffcb6b}.cb .nm{color:#f78c6c}.cb .cp{color:#89ddff}
+.cl2{font-family:var(--fm);font-size:.68rem;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.cl2::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--pk);flex-shrink:0}
+.call{border-radius:10px;padding:.95rem 1.1rem;margin:.9rem 0;display:flex;gap:.75rem;align-items:flex-start;font-size:.86rem;line-height:1.55}
+.ci{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.cbl{background:rgba(30,64,175,.15);border:1px solid rgba(59,130,246,.25)}
+.cam{background:rgba(217,119,6,.15);border:1px solid rgba(245,158,11,.25)}
+.cgr{background:rgba(5,150,105,.15);border:1px solid rgba(16,185,129,.25)}
+.crd{background:rgba(220,38,38,.15);border:1px solid rgba(239,68,68,.25)}
+.cpu{background:rgba(124,58,237,.15);border:1px solid rgba(139,92,246,.25)}
+.cpk{background:rgba(219,39,119,.1);border:1px solid rgba(219,39,119,.25)}
+.tbl{width:100%;border-collapse:collapse;font-size:.83rem;margin:.8rem 0}
+.tbl th{background:rgba(219,39,119,.15);padding:.6rem .9rem;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#f9a8d4;border-bottom:1px solid rgba(219,39,119,.2)}
+.tbl td{padding:.55rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);color:#cbd5e1;vertical-align:top}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.ok{color:var(--gl)}.ko{color:var(--rl)}
+.steps{counter-reset:st;display:flex;flex-direction:column;gap:.65rem}
+.step{counter-increment:st;display:flex;align-items:flex-start;gap:.75rem;font-size:.87rem;color:#cbd5e1}
+.step::before{content:counter(st);min-width:24px;height:24px;background:rgba(219,39,119,.25);border:1px solid rgba(219,39,119,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#f9a8d4;flex-shrink:0;margin-top:.12rem}
+.sw{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1.2rem;margin:.8rem 0;overflow:hidden}
+.sw svg{display:block;max-width:100%;height:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:720px){.g2{grid-template-columns:1fr}}
+.accordion{margin:.9rem 0;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.acc-item{border-bottom:1px solid var(--bd)}.acc-item:last-child{border-bottom:none}
+.acc-btn{width:100%;background:var(--bg3);border:none;padding:.85rem 1.1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--tx);font-family:var(--ff);font-size:.86rem;font-weight:600;transition:background .2s;text-align:left;gap:.5rem}
+.acc-btn:hover{background:rgba(219,39,119,.06)}
+.acc-btn .acc-arrow{font-size:.75rem;color:var(--txm);transition:transform .25s;flex-shrink:0}
+.acc-btn.open{background:rgba(219,39,119,.06);color:#f472b6}
+.acc-btn.open .acc-arrow{transform:rotate(90deg);color:#f472b6}
+.acc-content{display:none;padding:1rem 1.2rem;border-top:1px solid var(--bd);background:var(--bg4)}
+.acc-content.open{display:block}
+.analogy{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(139,92,246,.05));border:1px solid rgba(139,92,246,.3);border-radius:12px;padding:1.1rem 1.3rem;margin:.9rem 0}
+.analogy-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--vl);margin-bottom:.45rem;display:flex;align-items:center;gap:.4rem}
+.analogy p{font-size:.86rem;color:#cbd5e1;line-height:1.6}
+.explain-box{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1rem 1.2rem;margin:.8rem 0}
+.explain-step{display:flex;gap:.85rem;align-items:flex-start;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.explain-step:last-child{border-bottom:none;padding-bottom:0}
+.explain-num{min-width:26px;height:26px;background:rgba(219,39,119,.25);border:1px solid rgba(219,39,119,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#f9a8d4;flex-shrink:0;margin-top:.1rem}
+.explain-step h4{font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.2rem}
+.explain-step p{font-size:.82rem;color:var(--txm);line-height:1.55}
+.xbadge{font-family:var(--fm);font-size:.72rem;font-weight:700;padding:.3rem .75rem;border-radius:999px;white-space:nowrap}
+.xb-ux{background:rgba(219,39,119,.3);border:1px solid rgba(219,39,119,.45);color:#f9a8d4}
+.xb-fr{background:rgba(217,119,6,.3);border:1px solid rgba(245,158,11,.4);color:#fcd34d}
+.fr-card{background:linear-gradient(135deg,rgba(217,119,6,.12),rgba(245,158,11,.05));border:2px solid rgba(245,158,11,.35);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem}
+.fr-badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(217,119,6,.3);border:1px solid rgba(245,158,11,.4);border-radius:999px;padding:.25rem .75rem;font-size:.7rem;font-weight:700;color:#fcd34d;margin-bottom:.8rem;font-family:var(--fm);text-transform:uppercase;letter-spacing:.06em}
+.qcm-wrap{display:flex;flex-direction:column;gap:1.2rem}
+.qcm-item{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1.2rem 1.4rem}
+.qcm-num{font-family:var(--fm);font-size:.68rem;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem}
+.qcm-q{font-size:.9rem;font-weight:600;color:var(--tx);margin-bottom:.8rem;line-height:1.5}
+.qopt{display:flex;flex-direction:column;gap:.35rem}
+.qo{background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:8px;padding:.6rem 1rem;font-size:.84rem;color:#cbd5e1;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem;font-family:var(--ff);text-align:left;width:100%}
+.qo:hover{border-color:var(--pk);background:rgba(219,39,119,.07)}
+.qo.selected{border-color:var(--pk);background:rgba(219,39,119,.14);color:#f9a8d4;font-weight:500}
+.qo.ok2{border-color:var(--gl);background:rgba(5,150,105,.18);color:#6ee7b7}
+.qo.ko2{border-color:var(--rl);background:rgba(220,38,38,.18);color:#fca5a5}
+.qo:disabled{cursor:default}
+.qo .mk{margin-left:auto;flex-shrink:0}
+.qexpl{font-size:.81rem;color:var(--txm);margin-top:.6rem;padding:.7rem 1rem;background:rgba(255,255,255,.03);border-radius:8px;border-left:3px solid var(--pk);line-height:1.55;display:none}
+.qcm-submit{background:linear-gradient(135deg,rgba(219,39,119,.4),rgba(249,168,212,.25));border:1px solid rgba(219,39,119,.4);color:#f9a8d4;font-family:var(--ff);font-size:.85rem;font-weight:600;padding:.75rem 2rem;border-radius:8px;cursor:pointer;margin-top:1.4rem;transition:all .2s;display:block;width:100%}
+.qcm-submit:hover{background:linear-gradient(135deg,rgba(219,39,119,.6),rgba(249,168,212,.4))}
+.qcm-submit:disabled{opacity:.4;cursor:default}
+.qcm-score{background:var(--bg);border:1px solid rgba(219,39,119,.3);border-radius:14px;padding:2rem;text-align:center;margin-top:1.5rem;display:none}
+.score-big{font-size:3rem;font-weight:800;color:#f472b6;font-family:var(--fm);line-height:1;margin-bottom:.5rem}
+.score-pct{font-size:1rem;color:var(--txm);margin-bottom:.8rem}
+.score-msg{font-size:.9rem;color:var(--tx);font-weight:500}
+.gloss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1rem;margin-top:.5rem}
+.gc{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1.2rem;transition:border-color .2s}
+.gc:hover{border-color:rgba(219,39,119,.25)}
+.gt{font-family:var(--fm);font-size:.88rem;font-weight:700;color:#f472b6;margin-bottom:.25rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.gcat{font-size:.62rem;background:rgba(219,39,119,.2);border:1px solid rgba(219,39,119,.3);color:#f9a8d4;padding:.1rem .42rem;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;font-family:var(--ff)}
+.gd{font-size:.84rem;color:#cbd5e1;line-height:1.55;margin-bottom:.5rem}
+.ge{font-size:.78rem;color:var(--txm);font-style:italic;border-left:2px solid rgba(219,39,119,.3);padding-left:.6rem}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="badge">📱 React Native &nbsp;·&nbsp; <b>B3 Dev Web 2025-2026</b></div>
+    <h1>J4 — <em>UX Mobile</em> & EAS Build</h1>
+    <p class="hdr-sub">Formulaires natifs · AsyncStorage · Accessibilité · Finitions App Quiz · Génération APK</p>
+    <div class="pills">
+      <span class="pill ppk">🕐 7h — 2 séances</span>
+      <span class="pill pb">S7 · UX Mobile & AsyncStorage</span>
+      <span class="pill pa">S8 · Finitions + EAS Build</span>
+      <span class="pill pp">🧪 MyExoApp T6</span>
+    </div>
+  </div>
+</header>
+
+<div class="nav-wrap">
+  <nav class="nav-tabs">
+    <button class="tb active" onclick="sw('s7',this)">📱 S7 · UX Mobile</button>
+    <button class="tb" onclick="sw('s8',this)">🚀 S8 · EAS Build</button>
+    <button class="tb" onclick="sw('filrouge',this)">🎯 Fil rouge — Rendu</button>
+    <button class="tb" onclick="sw('pratique',this)">🧩 10 QCM</button>
+    <button class="tb" onclick="sw('glossaire',this)">📚 Glossaire</button>
+  </nav>
+</div>
+
+<main class="main">
+
+<!-- ══════ S7 — UX MOBILE ══════ -->
+<div id="tab-s7" class="pan active">
+  <div class="sh"><div class="ico ipk">📱</div>
+    <div class="si"><h2>S7 · UX Mobile & AsyncStorage</h2><p>Clavier natif · TextInput avancé · AsyncStorage · Pressable · Accessibilité</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <!-- ═ BLOC 1 : Clavier natif ═ -->
+  <div class="card">
+    <div class="ct">⌨️ Formulaires & clavier natif</div>
+    <div class="analogy">
+      <div class="analogy-lbl">💡 Analogie</div>
+      <p>Sur mobile, le clavier est une <b>contrainte majeure</b> — il occupe ~40% de l'écran. Sans <code>KeyboardAvoidingView</code>, tes champs de saisie peuvent être cachés sous le clavier. C'est une des erreurs UX les plus fréquentes sur les apps débutantes.</p>
+    </div>
+    <div class="explain-box">
+      <div class="explain-step"><div class="explain-num">1</div><div>
+        <h4><code>KeyboardAvoidingView</code> — éviter que le clavier masque les champs</h4>
+        <p>Enveloppe le formulaire. Sur iOS : <code>behavior="padding"</code>. Sur Android : <code>behavior="height"</code> ou géré via le manifest. Le composant remonte automatiquement le contenu quand le clavier apparaît.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">2</div><div>
+        <h4><code>returnKeyType</code> — personnaliser la touche Entrée</h4>
+        <p><code>"next"</code> pour passer au champ suivant, <code>"done"</code> pour fermer le clavier, <code>"search"</code> pour les barres de recherche, <code>"send"</code> pour les messages.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">3</div><div>
+        <h4><code>keyboardType</code> — clavier adapté au contenu</h4>
+        <p><code>"email-address"</code> pour les emails, <code>"numeric"</code> pour les chiffres, <code>"phone-pad"</code> pour les téléphones. Le bon clavier = moins d'erreurs utilisateur.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">4</div><div>
+        <h4><code>ref</code> + <code>focus()</code> — navigation entre champs</h4>
+        <p>Associer une <code>ref</code> à chaque <code>TextInput</code>. Dans <code>onSubmitEditing</code>, appeler <code>ref.current.focus()</code> sur le champ suivant. L'utilisateur passe d'un champ à l'autre sans toucher l'écran.</p>
+      </div></div>
+    </div>
+    <div class="cb">
+      <div class="cl2">Formulaire complet — Login avec clavier optimisé</div>
+      <pre><span class="kw">import</span> { <span class="cp">KeyboardAvoidingView</span>, <span class="cp">Platform</span>, <span class="cp">TextInput</span>, <span class="cp">ScrollView</span> } <span class="kw">from</span> <span class="st">'react-native'</span>;
+<span class="kw">import</span> { useRef } <span class="kw">from</span> <span class="st">'react'</span>;
+
+<span class="kw">const</span> <span class="fn">LoginScreen</span> = () => {
+  <span class="kw">const</span> passwordRef = useRef(<span class="nm">null</span>);
+
+  <span class="kw">return</span> (
+    <span class="tg">&lt;KeyboardAvoidingView</span>
+      <span class="at">style</span>={{ flex: <span class="nm">1</span> }}
+      <span class="at">behavior</span>={Platform.OS === <span class="st">'ios'</span> ? <span class="st">'padding'</span> : <span class="st">'height'</span>}
+    &gt;
+      <span class="tg">&lt;ScrollView</span> <span class="at">keyboardShouldPersistTaps</span>=<span class="st">"handled"</span>&gt;
+        <span class="tg">&lt;TextInput</span>
+          <span class="at">placeholder</span>=<span class="st">"Email"</span>
+          <span class="at">keyboardType</span>=<span class="st">"email-address"</span>
+          <span class="at">autoCapitalize</span>=<span class="st">"none"</span>
+          <span class="at">autoCorrect</span>={<span class="nm">false</span>}
+          <span class="at">returnKeyType</span>=<span class="st">"next"</span>
+          <span class="at">onSubmitEditing</span>={() => passwordRef.current.<span class="fn">focus</span>()}
+        /&gt;
+        <span class="tg">&lt;TextInput</span>
+          <span class="at">ref</span>={passwordRef}
+          <span class="at">placeholder</span>=<span class="st">"Mot de passe"</span>
+          <span class="at">secureTextEntry</span>     <span class="cm">// ← masque les caractères</span>
+          <span class="at">returnKeyType</span>=<span class="st">"done"</span>
+          <span class="at">onSubmitEditing</span>={handleLogin}
+        /&gt;
+      <span class="tg">&lt;/ScrollView&gt;</span>
+    <span class="tg">&lt;/KeyboardAvoidingView&gt;</span>
+  );
+};</pre>
+    </div>
+    <p style="font-size:.82rem;color:var(--txm);margin:.9rem 0 .4rem;font-weight:600">Exemples — cliquer pour développer :</p>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>👁 TextInput — afficher/masquer le mot de passe</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <div class="cb" style="margin:0"><pre><span class="kw">const</span> [show, setShow] = <span class="fn">useState</span>(<span class="nm">false</span>);
+
+<span class="tg">&lt;View</span> <span class="at">style</span>={{ flexDirection: <span class="st">'row'</span>, alignItems: <span class="st">'center'</span> }}&gt;
+  <span class="tg">&lt;TextInput</span>
+    <span class="at">secureTextEntry</span>={!show}
+    <span class="at">placeholder</span>=<span class="st">"Mot de passe"</span>
+    <span class="at">style</span>={{ flex: <span class="nm">1</span> }}
+  /&gt;
+  <span class="tg">&lt;TouchableOpacity</span> <span class="at">onPress</span>={() => <span class="fn">setShow</span>(!show)}&gt;
+    <span class="tg">&lt;Ionicons</span>
+      <span class="at">name</span>={show ? <span class="st">'eye-off'</span> : <span class="st">'eye'</span>}
+      <span class="at">size</span>={<span class="nm">20</span>}
+      <span class="at">color</span>=<span class="st">"#94a3b8"</span>
+    /&gt;
+  <span class="tg">&lt;/TouchableOpacity&gt;</span>
+<span class="tg">&lt;/View&gt;</span></pre></div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>⌨️ Fermer le clavier au tap en dehors</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { <span class="cp">TouchableWithoutFeedback</span>, <span class="cp">Keyboard</span> } <span class="kw">from</span> <span class="st">'react-native'</span>;
+
+<span class="cm">// Envelopper l'écran entier — tap n'importe où ferme le clavier</span>
+<span class="tg">&lt;TouchableWithoutFeedback</span> <span class="at">onPress</span>={Keyboard.<span class="fn">dismiss</span>}&gt;
+  <span class="tg">&lt;View</span> <span class="at">style</span>={{ flex: <span class="nm">1</span> }}&gt;
+    <span class="cm">{/* formulaire ici */}</span>
+  <span class="tg">&lt;/View&gt;</span>
+<span class="tg">&lt;/TouchableWithoutFeedback&gt;</span></pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercices T6-01 -->
+    <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--bd)">
+      <div style="font-size:.85rem;font-weight:700;color:#f9a8d4;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem">🧪 Exercices T6 — <code>screens/T6_UXMobile/</code></div>
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-ux" style="margin-right:.5rem">T6 · Exo 01</span> Formulaire avec clavier optimisé</span><span class="acc-arrow">▶</span></button>
+          <div class="acc-content">
+            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T6Exo01_Clavier.js</code>. Un formulaire d'inscription avec gestion complète du clavier.</p>
+            <ul class="cl">
+              <li>Champs : prénom, email, mot de passe, confirmation — tous avec <code>keyboardType</code> adapté</li>
+              <li>Navigation clavier : <code>returnKeyType="next"</code> + <code>ref</code> + <code>focus()</code> entre les champs</li>
+              <li>Envelopper dans <code>KeyboardAvoidingView</code> + <code>ScrollView</code></li>
+              <li>Validation basique côté client avant soumission (champs vides, mots de passe identiques)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═ BLOC 2 : AsyncStorage ═ -->
+  <div class="card">
+    <div class="ct">💾 AsyncStorage — Persistance locale</div>
+    <div class="analogy">
+      <div class="analogy-lbl">💡 Analogie</div>
+      <p>AsyncStorage, c'est le <b>localStorage du mobile</b>. Un système clé/valeur simple qui persiste entre les redémarrages de l'app. Tout est asynchrone (Promise-based). Idéal pour les préférences légères — pas pour des données volumineuses (utiliser Firestore ou SQLite pour ça).</p>
+    </div>
+    <div class="cb">
+      <div class="cl2">AsyncStorage — API complète</div>
+      <pre><span class="kw">import</span> AsyncStorage <span class="kw">from</span> <span class="st">'@react-native-async-storage/async-storage'</span>;
+
+<span class="cm">// ÉCRIRE — stocker une valeur (toujours string ou JSON.stringify)</span>
+<span class="kw">await</span> AsyncStorage.<span class="fn">setItem</span>(<span class="st">'@theme'</span>, <span class="st">'dark'</span>);
+<span class="kw">await</span> AsyncStorage.<span class="fn">setItem</span>(<span class="st">'@user_prefs'</span>, JSON.<span class="fn">stringify</span>({ fontSize: <span class="nm">16</span>, theme: <span class="st">'dark'</span> }));
+
+<span class="cm">// LIRE — récupérer une valeur (peut retourner null si absente)</span>
+<span class="kw">const</span> theme = <span class="kw">await</span> AsyncStorage.<span class="fn">getItem</span>(<span class="st">'@theme'</span>);  <span class="cm">// → 'dark' ou null</span>
+<span class="kw">const</span> prefs = JSON.<span class="fn">parse</span>(<span class="kw">await</span> AsyncStorage.<span class="fn">getItem</span>(<span class="st">'@user_prefs'</span>) || <span class="st">'null'</span>);
+
+<span class="cm">// SUPPRIMER — effacer une clé</span>
+<span class="kw">await</span> AsyncStorage.<span class="fn">removeItem</span>(<span class="st">'@theme'</span>);
+
+<span class="cm">// LISTER — toutes les clés stockées</span>
+<span class="kw">const</span> keys = <span class="kw">await</span> AsyncStorage.<span class="fn">getAllKeys</span>();
+
+<span class="cm">// VIDER — effacer tout (attention !)</span>
+<span class="kw">await</span> AsyncStorage.<span class="fn">clear</span>();</pre>
+    </div>
+    <div class="call cam"><span class="ci">⚠️</span><span>AsyncStorage ne stocke que des <b>chaînes</b>. Pour les objets, utiliser <code>JSON.stringify()</code> en écriture et <code>JSON.parse()</code> en lecture. Ne jamais stocker de données sensibles (mots de passe, tokens).</span></div>
+    <div class="accordion" style="margin-top:.9rem">
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>🌙 Thème clair/sombre persisté avec AsyncStorage</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="st">'react'</span>;
+<span class="kw">import</span> AsyncStorage <span class="kw">from</span> <span class="st">'@react-native-async-storage/async-storage'</span>;
+
+<span class="kw">const</span> <span class="fn">ThemeToggle</span> = () => {
+  <span class="kw">const</span> [isDark, setIsDark] = <span class="fn">useState</span>(<span class="nm">true</span>);
+
+  <span class="cm">// Charger le thème sauvegardé au démarrage</span>
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="fn">loadTheme</span> = <span class="kw">async</span> () => {
+      <span class="kw">const</span> saved = <span class="kw">await</span> AsyncStorage.<span class="fn">getItem</span>(<span class="st">'@theme'</span>);
+      <span class="kw">if</span> (saved !== <span class="nm">null</span>) <span class="fn">setIsDark</span>(saved === <span class="st">'dark'</span>);
+    };
+    <span class="fn">loadTheme</span>();
+  }, []);
+
+  <span class="kw">const</span> <span class="fn">toggleTheme</span> = <span class="kw">async</span> () => {
+    <span class="kw">const</span> newTheme = !isDark;
+    <span class="fn">setIsDark</span>(newTheme);
+    <span class="kw">await</span> AsyncStorage.<span class="fn">setItem</span>(<span class="st">'@theme'</span>, newTheme ? <span class="st">'dark'</span> : <span class="st">'light'</span>);
+  };
+
+  <span class="kw">return</span> (
+    <span class="tg">&lt;TouchableOpacity</span> <span class="at">onPress</span>={toggleTheme}&gt;
+      <span class="tg">&lt;Text&gt;</span>{isDark ? <span class="st">'🌙 Mode sombre'</span> : <span class="st">'☀️ Mode clair'</span>}<span class="tg">&lt;/Text&gt;</span>
+    <span class="tg">&lt;/TouchableOpacity&gt;</span>
+  );
+};</pre></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Exercices T6-02 à 03 -->
+    <div style="margin-top:1rem">
+      <div class="accordion">
+        <div class="acc-item">
+          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-ux" style="margin-right:.5rem">T6 · Exo 02</span> Préférences persistées avec AsyncStorage</span><span class="acc-arrow">▶</span></button>
+          <div class="acc-content">
+            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T6Exo02_Persistance.js</code>. Un écran de préférences qui se souvient des choix de l'utilisateur.</p>
+            <ul class="cl">
+              <li>Un bouton toggle Thème clair / sombre — persisté avec <code>@theme</code></li>
+              <li>Un champ "Pseudo" — persisté avec <code>@pseudo</code></li>
+              <li>Au chargement de l'écran : récupérer les valeurs sauvegardées avec <code>useEffect</code></li>
+              <li>Les changements sont sauvegardés immédiatement (pas besoin de bouton "Sauvegarder")</li>
+            </ul>
+          </div>
+        </div>
+        <div class="acc-item">
+          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-ux" style="margin-right:.5rem">T6 · Exo 03</span> Bouton avec feedback visuel</span><span class="acc-arrow">▶</span></button>
+          <div class="acc-content">
+            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T6Exo03_Feedback.js</code>. Explorer <code>Pressable</code> et les différents types de feedback.</p>
+            <ul class="cl">
+              <li>Comparer <code>TouchableOpacity</code>, <code>TouchableHighlight</code> et <code>Pressable</code></li>
+              <li>Avec <code>Pressable</code> : changer le style selon <code>pressed</code> : <code>style={'{'}({ pressed }) => [styles.btn, pressed && styles.btnPressed]{'}'}</code></li>
+              <li>Ajouter un retour haptique : <code>import {'{'} Vibration {'}'} from 'react-native'</code> → <code>Vibration.vibrate(50)</code> au press</li>
+              <li>Afficher un indicateur visuel "✓ Envoyé" pendant 2 secondes après le clic</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═ BLOC 3 : Accessibilité ═ -->
+  <div class="card">
+    <div class="ct">♿ Accessibilité de base</div>
+    <div class="call cbl"><span class="ci">💡</span><span>L'accessibilité mobile n'est pas une option — c'est une obligation légale dans de nombreux pays et une bonne pratique universelle. React Native expose les APIs d'accessibilité iOS (VoiceOver) et Android (TalkBack) via les mêmes props.</span></div>
+    <div class="cb">
+      <div class="cl2">Props d'accessibilité essentielles</div>
+      <pre><span class="cm">// accessibilityLabel — texte lu par le lecteur d'écran</span>
+<span class="tg">&lt;TouchableOpacity</span>
+  <span class="at">accessibilityLabel</span>=<span class="st">"Bouton Se connecter"</span>
+  <span class="at">accessibilityHint</span>=<span class="st">"Lance la connexion avec vos identifiants"</span>
+  <span class="at">accessibilityRole</span>=<span class="st">"button"</span>
+&gt;
+  <span class="tg">&lt;Text&gt;</span>Se connecter<span class="tg">&lt;/Text&gt;</span>
+<span class="tg">&lt;/TouchableOpacity&gt;</span>
+
+<span class="cm">// accessibilityState — état courant (désactivé, sélectionné...)</span>
+<span class="tg">&lt;TouchableOpacity</span>
+  <span class="at">disabled</span>={!isValid}
+  <span class="at">accessibilityState</span>={{ disabled: !isValid }}
+&gt;
+
+<span class="cm">// Zones tactiles ≥ 44pt (recommandation Apple/Google)</span>
+touchTarget: { minWidth: <span class="nm">44</span>, minHeight: <span class="nm">44</span>, justifyContent: <span class="st">'center'</span>, alignItems: <span class="st">'center'</span> }
+
+<span class="cm">// useColorScheme — détecter le thème système</span>
+<span class="kw">import</span> { useColorScheme } <span class="kw">from</span> <span class="st">'react-native'</span>;
+<span class="kw">const</span> colorScheme = <span class="fn">useColorScheme</span>(); <span class="cm">// 'dark' | 'light' | null</span></pre>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Prop</th><th>Valeurs</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><code>accessibilityLabel</code></td><td>string</td><td>Texte lu par VoiceOver/TalkBack</td></tr>
+        <tr><td><code>accessibilityHint</code></td><td>string</td><td>Description de l'action résultante</td></tr>
+        <tr><td><code>accessibilityRole</code></td><td>button, link, image, header…</td><td>Rôle sémantique du composant</td></tr>
+        <tr><td><code>accessibilityState</code></td><td>{'{ disabled, selected, checked… }'}</td><td>État dynamique du composant</td></tr>
+        <tr><td><code>accessible</code></td><td>true/false</td><td>Rendre ou non accessible au lecteur</td></tr>
+        <tr><td><code>importantForAccessibility</code></td><td>auto, yes, no, no-hide-descendants</td><td>Android : contrôle fin de l'accessibilité</td></tr>
+      </tbody>
+    </table>
+
+    <!-- Exercices T6-04 à 05 -->
+    <div class="accordion" style="margin-top:.9rem">
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-ux" style="margin-right:.5rem">T6 · Exo 04</span> Recherche avancée avec TextInput</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T6Exo04_Recherche.js</code>. Une barre de recherche complète avec UX soignée.</p>
+          <ul class="cl">
+            <li>TextInput avec <code>placeholder</code>, <code>clearButtonMode="while-editing"</code> (iOS), bouton ✕ custom (Android)</li>
+            <li>Un bouton "Annuler" qui apparaît uniquement quand le champ est actif (<code>onFocus</code> / <code>onBlur</code>)</li>
+            <li>Filtrage d'une liste statique en temps réel + affichage du nombre de résultats</li>
+            <li>Accessibilité : <code>accessibilityLabel</code>, <code>accessibilityRole="search"</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-ux" style="margin-right:.5rem">T6 · Exo 05</span> Accessibilité de base</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T6Exo05_Accessibilite.js</code>. Rendre un écran accessible aux lecteurs d'écran.</p>
+          <ul class="cl">
+            <li>Reprendre T6Exo01 et ajouter les props d'accessibilité sur tous les éléments interactifs</li>
+            <li>Ajouter <code>accessibilityLabel</code> et <code>accessibilityHint</code> sur chaque bouton</li>
+            <li>S'assurer que les zones tactiles font bien ≥ 44pt</li>
+            <li>Utiliser <code>useColorScheme()</code> pour adapter les couleurs au thème système</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /s7 -->
+
+<!-- ══════ S8 — EAS BUILD ══════ -->
+<div id="tab-s8" class="pan">
+  <div class="sh"><div class="ico ipk">🚀</div>
+    <div class="si"><h2>S8 · Finitions & EAS Build</h2><p>Sprint polish · app.json · eas build · APK Android · Test sur device</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <!-- ═ BLOC 1 : Configuration app.json ═ -->
+  <div class="card">
+    <div class="ct">⚙️ Configuration production — app.json</div>
+    <div class="analogy">
+      <div class="analogy-lbl">💡 Analogie</div>
+      <p><code>app.json</code>, c'est la <b>carte d'identité de ton app</b>. C'est là que tu définis le nom qui s'affiche sur le téléphone, l'icône, le splash screen, et toutes les métadonnées nécessaires au store. Sans une config propre, l'app ne sera pas acceptée par Google Play.</p>
+    </div>
+    <div class="cb">
+      <div class="cl2">app.json — configuration minimale production</div>
+      <pre>{
+  <span class="at">"expo"</span>: {
+    <span class="at">"name"</span>:    <span class="st">"App Quiz"</span>,               <span class="cm">// ← nom affiché sur l'écran d'accueil</span>
+    <span class="at">"slug"</span>:    <span class="st">"app-quiz"</span>,              <span class="cm">// ← identifiant URL (minuscules, tirets)</span>
+    <span class="at">"version"</span>: <span class="st">"1.0.0"</span>,
+    <span class="at">"orientation"</span>: <span class="st">"portrait"</span>,       <span class="cm">// portrait | landscape | default</span>
+    <span class="at">"icon"</span>: <span class="st">"./assets/icon.png"</span>,       <span class="cm">// ← 1024x1024px, fond opaque</span>
+    <span class="at">"splash"</span>: {
+      <span class="at">"image"</span>:           <span class="st">"./assets/splash.png"</span>,
+      <span class="at">"resizeMode"</span>:      <span class="st">"contain"</span>,
+      <span class="at">"backgroundColor"</span>: <span class="st">"#0f172a"</span>
+    },
+    <span class="at">"android"</span>: {
+      <span class="at">"adaptiveIcon"</span>: {
+        <span class="at">"foregroundImage"</span>: <span class="st">"./assets/adaptive-icon.png"</span>,
+        <span class="at">"backgroundColor"</span>: <span class="st">"#0f172a"</span>
+      },
+      <span class="at">"package"</span>: <span class="st">"com.tonpseudo.appquiz"</span>,  <span class="cm">// ← unique — format reverse domain</span>
+      <span class="at">"versionCode"</span>: <span class="nm">1</span>
+    },
+    <span class="at">"ios"</span>: {
+      <span class="at">"bundleIdentifier"</span>: <span class="st">"com.tonpseudo.appquiz"</span>,
+      <span class="at">"buildNumber"</span>: <span class="st">"1"</span>
+    },
+    <span class="at">"extra"</span>: {
+      <span class="at">"eas"</span>: { <span class="at">"projectId"</span>: <span class="st">"votre-eas-project-id"</span> }
+    }
+  }
+}</pre>
+    </div>
+    <div class="call crd"><span class="ci">⚠️</span><span>Le champ <code>package</code> Android doit être <b>unique dans le monde entier</b>. Utiliser le format reverse domain : <code>com.tonpseudo.appquiz</code>. Il ne peut <b>jamais</b> être changé après publication sur le Play Store.</span></div>
+  </div>
+
+  <!-- ═ BLOC 2 : EAS Build ═ -->
+  <div class="card">
+    <div class="ct">🏗 EAS Build — Générer l'APK Android</div>
+    <div class="analogy">
+      <div class="analogy-lbl">💡 Analogie</div>
+      <p>EAS Build, c'est un <b>serveur de compilation dans le cloud</b>. Tu envoies ton code source, EAS compile l'APK sur ses serveurs (avec les outils natifs Android et iOS installés) et te retourne le fichier binaire. Plus besoin d'Android Studio installé localement.</p>
+    </div>
+    <div class="sw">
+      <svg viewBox="0 0 720 180" xmlns="http://www.w3.org/2000/svg" font-family="'Sora',sans-serif">
+        <defs>
+          <marker id="ea" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0L0,6L8,3z" fill="#f9a8d4"/></marker>
+        </defs>
+        <text x="360" y="20" text-anchor="middle" fill="#f9a8d4" font-size="13" font-weight="700">Pipeline EAS Build — de ton code à l'APK</text>
+        <rect x="15" y="38" width="130" height="115" rx="10" fill="rgba(219,39,119,.12)" stroke="#db2777" stroke-width="1.5"/>
+        <text x="80" y="62" text-anchor="middle" fill="#f9a8d4" font-size="11" font-weight="700">Ton projet</text>
+        <text x="80" y="80" text-anchor="middle" fill="#94a3b8" font-size="9">App.js, screens/</text>
+        <text x="80" y="95" text-anchor="middle" fill="#94a3b8" font-size="9">app.json</text>
+        <text x="80" y="110" text-anchor="middle" fill="#94a3b8" font-size="9">package.json</text>
+        <text x="80" y="130" text-anchor="middle" fill="#fcd34d" font-size="9">eas build:configure</text>
+        <path d="M145 95 L195 95" stroke="#f9a8d4" stroke-width="2" fill="none" marker-end="url(#ea)"/>
+        <text x="170" y="88" text-anchor="middle" fill="#f9a8d4" font-size="8">push</text>
+        <rect x="197" y="38" width="160" height="115" rx="10" fill="rgba(59,130,246,.12)" stroke="#3b82f6" stroke-width="1.5"/>
+        <text x="277" y="62" text-anchor="middle" fill="#93c5fd" font-size="11" font-weight="700">EAS Cloud</text>
+        <text x="277" y="82" text-anchor="middle" fill="#94a3b8" font-size="9">npm install</text>
+        <text x="277" y="97" text-anchor="middle" fill="#94a3b8" font-size="9">Gradle (Android)</text>
+        <text x="277" y="112" text-anchor="middle" fill="#94a3b8" font-size="9">Xcode (iOS)</text>
+        <text x="277" y="127" text-anchor="middle" fill="#94a3b8" font-size="9">Signature APK/IPA</text>
+        <path d="M357 95 L407 95" stroke="#f9a8d4" stroke-width="2" fill="none" marker-end="url(#ea)"/>
+        <text x="382" y="88" text-anchor="middle" fill="#f9a8d4" font-size="8">~5-15 min</text>
+        <rect x="409" y="38" width="130" height="115" rx="10" fill="rgba(5,150,105,.12)" stroke="#059669" stroke-width="1.5"/>
+        <text x="474" y="62" text-anchor="middle" fill="#6ee7b7" font-size="11" font-weight="700">Artefacts</text>
+        <text x="474" y="82" text-anchor="middle" fill="#94a3b8" font-size="9">app-preview.apk</text>
+        <text x="474" y="97" text-anchor="middle" fill="#94a3b8" font-size="9">(profil preview)</text>
+        <text x="474" y="115" text-anchor="middle" fill="#fcd34d" font-size="9">→ Télécharger</text>
+        <text x="474" y="130" text-anchor="middle" fill="#fcd34d" font-size="9">→ Installer sur device</text>
+        <path d="M539 95 L589 95" stroke="#f9a8d4" stroke-width="2" fill="none" marker-end="url(#ea)"/>
+        <rect x="591" y="38" width="114" height="115" rx="10" fill="rgba(124,58,237,.12)" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="648" y="62" text-anchor="middle" fill="#c4b5fd" font-size="11" font-weight="700">Device</text>
+        <text x="648" y="82" text-anchor="middle" fill="#94a3b8" font-size="9">Android physique</text>
+        <text x="648" y="97" text-anchor="middle" fill="#94a3b8" font-size="9">ou émulateur</text>
+        <text x="648" y="115" text-anchor="middle" fill="#6ee7b7" font-size="9">✅ App installée</text>
+        <text x="648" y="130" text-anchor="middle" fill="#6ee7b7" font-size="9">& fonctionnelle</text>
+      </svg>
+    </div>
+    <div class="steps" style="margin-top:1rem">
+      <div class="step">Installer EAS CLI : <code>npm install -g eas-cli</code></div>
+      <div class="step">Se connecter : <code>eas login</code> (compte Expo requis)</div>
+      <div class="step">Configurer le projet : <code>eas build:configure</code> → génère <code>eas.json</code></div>
+      <div class="step">Lancer le build Android preview : <code>eas build -p android --profile preview</code></div>
+      <div class="step">Attendre ~5-15 minutes → lien de téléchargement APK dans le terminal</div>
+      <div class="step">Installer l'APK sur Android : télécharger → activer "sources inconnues" → installer</div>
+    </div>
+    <div class="cb" style="margin-top:1rem">
+      <div class="cl2">eas.json — profils de build</div>
+      <pre>{
+  <span class="at">"build"</span>: {
+    <span class="at">"development"</span>: {
+      <span class="at">"developmentClient"</span>: <span class="nm">true</span>,
+      <span class="at">"distribution"</span>: <span class="st">"internal"</span>
+    },
+    <span class="at">"preview"</span>: {
+      <span class="at">"android"</span>: { <span class="at">"buildType"</span>: <span class="st">"apk"</span> }  <span class="cm">// ← APK direct, pas AAB</span>
+    },
+    <span class="at">"production"</span>: {
+      <span class="at">"android"</span>: { <span class="at">"buildType"</span>: <span class="st">"app-bundle"</span> }  <span class="cm">// ← AAB pour Play Store</span>
+    }
+  }
+}</pre>
+    </div>
+    <table class="tbl" style="margin-top:1rem">
+      <thead><tr><th>Profil</th><th>Format</th><th>Usage</th></tr></thead>
+      <tbody>
+        <tr><td><code class="b">development</code></td><td>APK dev client</td><td>Tests avec Expo Dev Client (accès natif)</td></tr>
+        <tr><td><code class="a">preview</code></td><td><b>APK</b></td><td>✅ Tests internes, partage avec les profs/équipe</td></tr>
+        <tr><td><code class="g">production</code></td><td>AAB</td><td>Publication sur Google Play Store</td></tr>
+      </tbody>
+    </table>
+    <div class="call cgr"><span class="ci">✅</span><span>Pour ce cours, utiliser le profil <b>preview</b> — il génère un APK directement installable sans passer par le Play Store. C'est le format attendu pour le rendu J4.</span></div>
+  </div>
+
+  <!-- ═ BLOC 3 : Sprint polish ═ -->
+  <div class="card">
+    <div class="ct">✨ Sprint finitions — checklist UX avant rendu</div>
+    <div class="cb">
+      <div class="cl2">Checklist qualité App Quiz</div>
+      <pre><span class="cm">✅ Navigation</span>
+□ Le bouton retour Android fonctionne sur tous les écrans
+□ Aucune navigation ne mène à un écran blanc ou vide
+□ Le flux Auth → App → Déconnexion → Auth fonctionne sans crash
+
+<span class="cm">✅ États de chargement</span>
+□ Chaque fetch affiche un ActivityIndicator pendant le chargement
+□ Les erreurs Firebase affichent un message lisible en français
+□ Les formulaires désactivent le bouton pendant la requête (éviter double-submit)
+
+<span class="cm">✅ UX Mobile</span>
+□ Les formulaires gèrent le clavier (KeyboardAvoidingView)
+□ Les zones tactiles font ≥ 44pt
+□ Les transitions entre écrans sont fluides (pas de saccades)
+
+<span class="cm">✅ Firestore</span>
+□ Les règles de sécurité sont en place (pas de mode test)
+□ Les listeners onSnapshot ont leurs cleanup functions
+□ Les scores sont bien sauvegardés dans users/{uid}/history
+
+<span class="cm">✅ Build</span>
+□ app.json : name, slug, package Android, icône, splash configurés
+□ eas build:configure exécuté
+□ APK preview généré et testable sur device physique</pre>
+    </div>
+  </div>
+
+</div><!-- /s8 -->
+
+<!-- ══════ FIL ROUGE ══════ -->
+<div id="tab-filrouge" class="pan">
+  <div class="sh"><div class="ico ia">🎯</div>
+    <div class="si"><h2>Fil rouge — App Quiz · Rendu J4</h2><p>Sprint finitions · AsyncStorage · Polish UX · EAS Build · Livrables</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="fr-card">
+    <div class="fr-badge">🎯 Rendu fin J4 — Livrables attendus</div>
+    <div class="ct" style="margin-bottom:.6rem">Ce qui doit être livré</div>
+    <table class="tbl">
+      <thead><tr><th>Livrable</th><th>Format</th><th>Obligatoire</th></tr></thead>
+      <tbody>
+        <tr><td>Dépôt GitHub public</td><td>Lien repo avec README</td><td class="ok">✅ Oui</td></tr>
+        <tr><td>APK Android fonctionnel</td><td>Fichier .apk (profil preview EAS)</td><td class="ok">✅ Oui</td></tr>
+        <tr><td>Accès Firebase partagé</td><td>Inviter le formateur sur console.firebase.google.com</td><td class="ok">✅ Oui</td></tr>
+        <tr><td>README</td><td>Description, screenshots, instructions d'installation</td><td class="a">Recommandé</td></tr>
+        <tr><td>Dark mode</td><td>useColorScheme + AsyncStorage</td><td class="ko">Bonus</td></tr>
+        <tr><td>Timer par question</td><td>Compte à rebours dans QuizScreen</td><td class="ko">Bonus</td></tr>
+        <tr><td>Classement temps réel</td><td>Collection leaderboard Firestore</td><td class="ko">Bonus</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card">
+    <div class="ct">📋 Étapes J4 — Fil rouge App Quiz</div>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 1</span> Appliquer KeyboardAvoidingView sur les formulaires Auth</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl" style="margin-top:.5rem">
+            <li>Envelopper <code>LoginScreen</code> et <code>RegisterScreen</code> dans <code>KeyboardAvoidingView</code></li>
+            <li>Navigation clavier entre les champs (email → password → submit via <code>ref</code>)</li>
+            <li>Désactiver le bouton de connexion pendant la requête Firebase (état <code>loading</code>)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 2</span> Sauvegarder le thème favori avec AsyncStorage</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl" style="margin-top:.5rem">
+            <li>Ajouter un bouton toggle thème dans <code>ProfileScreen</code></li>
+            <li>Persister le choix avec <code>AsyncStorage.setItem('@theme', ...)</code></li>
+            <li>Au démarrage de l'app, lire le thème sauvegardé et l'appliquer</li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 3</span> States loading/error sur tous les écrans Firestore</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl" style="margin-top:.5rem">
+            <li>Chaque écran qui charge des données Firestore doit afficher un <code>ActivityIndicator</code> pendant le fetch</li>
+            <li>En cas d'erreur Firestore, afficher un message clair avec bouton "Réessayer"</li>
+            <li>Vérifier que tous les listeners <code>onSnapshot</code> ont leur <code>cleanup</code> dans <code>useEffect</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 4</span> Configurer app.json et générer l'APK</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl" style="margin-top:.5rem">
+            <li>Mettre à jour <code>app.json</code> : name, slug, package Android, versionCode</li>
+            <li>Créer ou mettre à jour l'icône (1024×1024px) et le splash screen</li>
+            <li><code>eas build:configure</code> → vérifier <code>eas.json</code> profil preview</li>
+            <li><code>eas build -p android --profile preview</code> → attendre ~10 min → télécharger l'APK</li>
+            <li>Tester l'APK sur un device Android physique — vérifier le flux complet</li>
+          </ul>
+          <div class="call cam" style="margin-top:.7rem"><span class="ci">⚠️</span><span>L'APK preview peut déclencher un avertissement "Application inconnue" à l'installation — c'est normal. Il faut activer "Installer des apps inconnues" dans les paramètres Android.</span></div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 5</span> Préparer le dépôt GitHub et le README</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl" style="margin-top:.5rem">
+            <li>Créer le dépôt public sur GitHub — nom : <code>app-quiz-b3</code></li>
+            <li>S'assurer que <code>.gitignore</code> exclut bien <code>node_modules/</code> et <code>.env</code></li>
+            <li>README.md : nom de l'app, description, captures d'écran, stack technique, instructions d'installation</li>
+            <li>Ajouter le lien de téléchargement de l'APK dans le README (lien EAS)</li>
+            <li>Inviter le formateur sur Firebase Console → Paramètres du projet → Utilisateurs et autorisations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /filrouge -->
+
+<!-- ══════ QCM ══════ -->
+<div id="tab-pratique" class="pan">
+  <div class="sh"><div class="ico ipk">🧩</div>
+    <div class="si"><h2>10 QCM — Vérification des acquis J4</h2><p>UX Mobile · AsyncStorage · Accessibilité · EAS Build</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+  <div class="cpk call"><span class="ci">📝</span><span>Sélectionne une réponse par question puis clique sur <b>"Valider mes réponses"</b>.</span></div>
+
+  <div class="qcm-wrap" id="qcm-container" style="margin-top:1.2rem">
+
+    <div class="qcm-item"><div class="qcm-num">Question 1 / 10 · Formulaires</div>
+      <div class="qcm-q">Sur iOS, quelle valeur de <code>behavior</code> utiliser avec <code>KeyboardAvoidingView</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. "height"<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. "padding"<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. "position"<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. "margin"<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Sur iOS, behavior="padding" ajoute du padding en bas pour compenser la hauteur du clavier — c'est le comportement recommandé. Sur Android, behavior="height" fonctionne mieux, ou pas de behavior du tout si le manifest Android est configuré avec windowSoftInputMode.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 2 / 10 · Formulaires</div>
+      <div class="qcm-q">Comment passer automatiquement du champ email au champ mot de passe quand l'utilisateur appuie sur "Suivant" ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. En utilisant onChangeText avec une condition<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. returnKeyType="next" + useRef sur le champ suivant + focus() dans onSubmitEditing<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. En utilisant onKeyPress pour détecter la touche Entrée<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. React Navigation gère automatiquement la navigation entre champs<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">La combinaison returnKeyType="next" + useRef + focus() est le pattern standard. returnKeyType="next" change l'icône du bouton Entrée, useRef crée une référence vers le TextInput suivant, et onSubmitEditing déclenche passwordRef.current.focus() quand l'utilisateur appuie sur la touche.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 3 / 10 · AsyncStorage</div>
+      <div class="qcm-q">Pourquoi AsyncStorage stocke-t-il uniquement des chaînes de caractères ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. C'est une limitation qui sera corrigée dans une future version<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. C'est un choix de design — utiliser JSON.stringify() / JSON.parse() pour les objets<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. AsyncStorage peut stocker des objets directement<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Parce que le stockage sur mobile ne supporte pas les types complexes<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">AsyncStorage est un simple store clé/valeur où les valeurs sont des strings — comme localStorage sur le web. Pour stocker un objet : JSON.stringify(monObjet) en écriture, JSON.parse(valeur) en lecture. Toujours gérer le cas null (clé absente).</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 4 / 10 · AsyncStorage</div>
+      <div class="qcm-q">Dans quel cas AsyncStorage n'est pas adapté au stockage des données ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Pour stocker le thème préféré de l'utilisateur<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. Pour mémoriser la dernière page visitée<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">C. Pour stocker des milliers d'enregistrements nécessitant des requêtes complexes<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Pour conserver le pseudo de l'utilisateur<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">AsyncStorage est idéal pour les préférences légères (thème, langue, paramètres). Pour des données volumineuses avec requêtes complexes, utiliser Firestore (données cloud) ou SQLite/expo-sqlite (base locale relationnelle). AsyncStorage ne supporte pas les requêtes, le tri ou les jointures.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 5 / 10 · Accessibilité</div>
+      <div class="qcm-q">Quelle est la taille minimale recommandée pour une zone tactile sur mobile (iOS/Android) ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. 20pt<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. 32pt<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">C. 44pt<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. 56pt<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">44pt est la recommandation officielle d'Apple (Human Interface Guidelines) et de Google (Material Design). C'est la taille minimale pour qu'une zone soit confortablement tappable par un doigt adulte. En dessous, le taux d'erreur de tap augmente significativement.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 6 / 10 · Accessibilité</div>
+      <div class="qcm-q">À quoi sert la prop <code>accessibilityRole="button"</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Elle change l'apparence du composant en bouton<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. Elle indique aux lecteurs d'écran (VoiceOver/TalkBack) que l'élément est interactif comme un bouton<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Elle empêche le double-tap<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Elle active le retour haptique automatiquement<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">accessibilityRole communique le rôle sémantique au lecteur d'écran. "button" indique que l'élément est cliquable — VoiceOver annonce "Bouton" avant le label. D'autres rôles : "link", "image", "header", "tab". Sans ce rôle, un TouchableOpacity personnalisé peut être lu comme un élément générique non interactif.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 7 / 10 · Pressable</div>
+      <div class="qcm-q">Quelle est la différence principale entre <code>Pressable</code> et <code>TouchableOpacity</code> ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Pressable est plus ancien et déprecié<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. Pressable expose l'état pressed en temps réel dans la prop style, permettant des animations plus fines<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. TouchableOpacity supporte plus de types d'interactions<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Pressable ne fonctionne qu'avec les icônes<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Pressable expose ({ pressed }) dans la prop style. Exemple : style={({ pressed }) => [styles.btn, pressed && styles.btnPressed]}. Cela permet de changer le style en temps réel au press sans JavaScript additionnel. TouchableOpacity ne fait que changer l'opacité — Pressable offre plus de contrôle.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 8 / 10 · EAS Build</div>
+      <div class="qcm-q">Quelle différence entre le format APK (profil preview) et AAB (profil production) ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. APK est pour iOS, AAB pour Android<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. APK est directement installable sur un device. AAB est requis par Google Play Store et optimisé pour la distribution<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. AAB est plus léger qu'APK<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. APK et AAB sont deux noms pour le même format<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">APK (Android Package) est un fichier binaire complet et autonome — on peut l'envoyer par email et l'installer directement. AAB (Android App Bundle) est un format que Google Play décompose pour générer des APKs optimisés par device (architecture, écran, langue). Play Store exige le AAB depuis 2021.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 9 / 10 · EAS Build</div>
+      <div class="qcm-q">Pourquoi le champ <code>package</code> dans app.json ne peut jamais être changé après publication ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. C'est une limitation technique d'Expo<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">B. Google Play identifie l'app par ce package. Le changer = créer une nouvelle app distincte, les anciens utilisateurs ne reçoivent pas les mises à jour<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. Pour des raisons de copyright<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. On peut le changer mais ça nécessite une validation Google<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Le package (ex: com.alice.appquiz) est l'identifiant permanent de l'app sur le Play Store. C'est ce que Google utilise pour les mises à jour, les achats in-app, les permissions. Changer le package = publier une nouvelle app from scratch. Les utilisateurs existants restent sur l'ancienne version indéfiniment.</div>
+    </div>
+
+    <div class="qcm-item"><div class="qcm-num">Question 10 / 10 · UX</div>
+      <div class="qcm-q">Pourquoi désactiver le bouton de soumission d'un formulaire pendant une requête Firebase en cours ?</div>
+      <div class="qopt">
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Pour des raisons de performance<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. Firebase ne supporte pas les requêtes simultanées<span class="mk"></span></button>
+        <button class="qo" data-correct="true" onclick="sel(this)">C. Pour éviter les doubles soumissions — un utilisateur impatient pourrait créer plusieurs comptes ou soumettre plusieurs fois le même formulaire<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. C'est une obligation légale pour les apps mobiles<span class="mk"></span></button>
+      </div>
+      <div class="qexpl" style="display:none">Le double-submit est une des bugs UX les plus fréquents. Sans désactivation, un utilisateur qui tape deux fois sur "S'inscrire" peut créer deux comptes ou envoyer deux requêtes. Pattern : setLoading(true) au début, disabled={loading} sur le bouton, setLoading(false) dans finally.</div>
+    </div>
+
+  </div>
+
+  <button class="qcm-submit" id="qcm-submit-btn" onclick="submitQcm()">✔ Valider mes réponses</button>
+  <div class="qcm-score" id="qcm-score">
+    <div class="score-big" id="score-n">—</div>
+    <div class="score-pct" id="score-pct">—</div>
+    <div class="score-msg" id="score-msg">—</div>
+  </div>
+</div><!-- /pratique -->
+
+<!-- ══════ GLOSSAIRE ══════ -->
+<div id="tab-glossaire" class="pan">
+  <div class="sh"><div class="ico ipk">📚</div>
+    <div class="si"><h2>Glossaire — Termes clés J4</h2><p>UX Mobile · AsyncStorage · Accessibilité · EAS Build</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div style="margin-bottom:1.5rem">
+    <p style="font-size:.78rem;color:var(--txm);margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600">📱 UX Mobile & Formulaires</p>
+    <div class="gloss-grid">
+      <div class="gc"><div class="gt">KeyboardAvoidingView <span class="gcat">Composant RN</span></div><div class="gd">Composant qui remonte le contenu quand le clavier virtuel apparaît, évitant qu'il masque les champs de saisie. Behavior "padding" sur iOS, "height" sur Android.</div><div class="ge">Indispensable sur tout écran avec des TextInput.</div></div>
+      <div class="gc"><div class="gt">returnKeyType <span class="gcat">TextInput</span></div><div class="gd">Prop qui personnalise l'icône de la touche Entrée. Valeurs : "next", "done", "search", "send". Améliore le flux de navigation dans un formulaire.</div><div class="ge">"next" = passer au champ suivant, "done" = fermer le clavier.</div></div>
+      <div class="gc"><div class="gt">secureTextEntry <span class="gcat">TextInput</span></div><div class="gd">Prop booléenne qui masque les caractères saisis (affiche des points). Indispensable pour les champs mot de passe.</div><div class="ge">Toujours combiner avec un bouton "afficher/masquer".</div></div>
+      <div class="gc"><div class="gt">Pressable <span class="gcat">Composant RN</span></div><div class="gd">Composant interactif plus flexible que TouchableOpacity. Expose ({ pressed }) dans la prop style pour des feedbacks visuels personnalisés en temps réel.</div><div class="ge"><code>style={'{'}({ pressed }) => [styles.btn, pressed && styles.active]{'}'}</code></div></div>
+      <div class="gc"><div class="gt">keyboardShouldPersistTaps <span class="gcat">ScrollView</span></div><div class="gd">Prop ScrollView qui contrôle si le clavier se ferme ou non quand l'utilisateur tape en dehors d'un champ. "handled" = recommandé pour les formulaires.</div><div class="ge">Sans ça, taper sur un bouton ferme d'abord le clavier avant d'exécuter l'action.</div></div>
+    </div>
+  </div>
+
+  <div style="margin-bottom:1.5rem">
+    <p style="font-size:.78rem;color:var(--txm);margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600">💾 Persistance & Accessibilité</p>
+    <div class="gloss-grid">
+      <div class="gc"><div class="gt">AsyncStorage <span class="gcat">Persistance</span></div><div class="gd">Store clé/valeur local, asynchrone, persistant entre les redémarrages. Pour les préférences légères. Stocke uniquement des strings — utiliser JSON.stringify/parse pour les objets.</div><div class="ge">Équivalent mobile de localStorage.</div></div>
+      <div class="gc"><div class="gt">accessibilityLabel <span class="gcat">Accessibilité</span></div><div class="gd">Texte lu par VoiceOver (iOS) et TalkBack (Android) à la place ou en plus du contenu visuel. Obligatoire sur les éléments sans texte visible (icônes, images).</div><div class="ge"><code>accessibilityLabel="Fermer la modal"</code></div></div>
+      <div class="gc"><div class="gt">accessibilityRole <span class="gcat">Accessibilité</span></div><div class="gd">Communique le type sémantique du composant au lecteur d'écran. Valeurs : button, link, image, header, tab, checkbox, radio, menu…</div><div class="ge">Permet aux utilisateurs de lecteur d'écran de naviguer par type d'élément.</div></div>
+      <div class="gc"><div class="gt">useColorScheme <span class="gcat">Hook RN</span></div><div class="gd">Hook qui retourne le thème système de l'utilisateur : "dark", "light" ou null. Permet d'adapter l'interface au thème préféré du téléphone automatiquement.</div><div class="ge"><code>const scheme = useColorScheme(); // 'dark' | 'light'</code></div></div>
+    </div>
+  </div>
+
+  <div>
+    <p style="font-size:.78rem;color:var(--txm);margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600">🚀 EAS Build & Déploiement</p>
+    <div class="gloss-grid">
+      <div class="gc"><div class="gt">EAS Build <span class="gcat">Déploiement</span></div><div class="gd">Service cloud Expo qui compile l'app React Native en binaire natif (APK/IPA) sans avoir besoin d'Android Studio ou Xcode en local. Géré via eas-cli.</div><div class="ge"><code>eas build -p android --profile preview</code></div></div>
+      <div class="gc"><div class="gt">APK <span class="gcat">Format Android</span></div><div class="gd">Android Package — fichier binaire directement installable sur un appareil Android. Format utilisé pour les tests internes (profil preview EAS). Non optimisé pour le Play Store.</div><div class="ge">Profil preview EAS : buildType: "apk".</div></div>
+      <div class="gc"><div class="gt">AAB <span class="gcat">Format Android</span></div><div class="gd">Android App Bundle — format requis par Google Play depuis 2021. Google Play le décompose en APKs optimisés par appareil. Plus léger pour l'utilisateur final.</div><div class="ge">Profil production EAS : buildType: "app-bundle".</div></div>
+      <div class="gc"><div class="gt">app.json <span class="gcat">Config Expo</span></div><div class="gd">Fichier de configuration central d'une app Expo. Définit le nom, l'icône, le splash screen, le package Android, l'identifiant iOS, et toutes les métadonnées du build.</div><div class="ge">Le champ "package" Android ne peut jamais changer après publication.</div></div>
+      <div class="gc"><div class="gt">eas.json <span class="gcat">Config EAS</span></div><div class="gd">Fichier de configuration EAS Build. Définit les profils (development, preview, production) avec leurs paramètres spécifiques de build.</div><div class="ge">Généré automatiquement par eas build:configure.</div></div>
+    </div>
+  </div>
+</div><!-- /glossaire -->
+
+</main>
+
+<script>
+function sw(name, btn) {
+  document.querySelectorAll('.pan').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function acc(btn) {
+  const content = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  const accordion = btn.closest('.accordion');
+  accordion.querySelectorAll('.acc-btn').forEach(b => b.classList.remove('open'));
+  accordion.querySelectorAll('.acc-content').forEach(c => c.classList.remove('open'));
+  if (!isOpen) { btn.classList.add('open'); content.classList.add('open'); }
+}
+function sel(btn) {
+  const item = btn.closest('.qcm-item');
+  if (item.dataset.done) return;
+  item.querySelectorAll('.qo').forEach(b => { b.classList.remove('selected'); b.querySelector('.mk').textContent = ''; });
+  btn.classList.add('selected');
+  btn.querySelector('.mk').textContent = ' ●';
+}
+function submitQcm() {
+  const items = document.querySelectorAll('.qcm-item');
+  let correct = 0;
+  items.forEach(item => {
+    item.dataset.done = 'true';
+    const selected = item.querySelector('.qo.selected');
+    item.querySelectorAll('.qo').forEach(b => {
+      b.disabled = true; b.classList.remove('selected'); b.querySelector('.mk').textContent = '';
+      if (b.dataset.correct === 'true') { b.classList.add('ok2'); b.querySelector('.mk').textContent = ' ✅'; }
+    });
+    if (selected) {
+      if (selected.dataset.correct === 'true') correct++;
+      else { selected.classList.add('ko2'); selected.querySelector('.mk').textContent = ' ❌'; }
+    }
+    const expl = item.querySelector('.qexpl');
+    if (expl) expl.style.display = 'block';
+  });
+  const total = items.length;
+  const pct = Math.round((correct / total) * 100);
+  const scoreEl = document.getElementById('qcm-score');
+  scoreEl.style.display = 'block';
+  document.getElementById('score-n').textContent = correct + ' / ' + total;
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('score-msg').textContent =
+    pct >= 80 ? '🎉 Excellent ! Prêt pour J5 — Évaluation finale.' :
+    pct >= 60 ? '👍 Bien ! Relis les sections des questions ratées.' :
+                '📚 À consolider — revois les onglets S7 et S8.';
+  document.getElementById('qcm-submit-btn').disabled = true;
+  scoreEl.scrollIntoView({ behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
