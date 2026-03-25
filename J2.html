@@ -233,6 +233,258 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
     <div class="call crd"><span class="ci">🚫</span><span><b>Erreur classique débutant :</b> mettre <code>NavigationContainer</code> à l'intérieur d'un écran ou d'un composant enfant. Il doit être dans <code>App.js</code> et n'apparaître <b>qu'une seule fois</b> dans toute l'application.</span></div>
   </div>
 
+
+  <!-- ═ SCHÉMA ARCHITECTURE ═ -->
+  <div class="card">
+    <div class="ct">🗺 Vue d'ensemble — structure de MyExoApp</div>
+    <p style="font-size:.86rem;color:#cbd5e1;line-height:1.6;margin-bottom:.8rem">
+      Deux vues complémentaires sur l'organisation de <b>MyExoApp</b> : le schéma d'imbrication des composants de navigation, et l'arborescence des fichiers du projet.
+    </p>
+    <div class="accordion">
+
+      <!-- ══ ACCORDÉON 1 : Schéma d'imbrication ══ -->
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>🗺 Schéma d'imbrication — qui contient quoi</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content" style="padding:0">
+          <div style="overflow-x:auto;padding:1rem 1.2rem">
+<svg width="100%" viewBox="0 0 680 860" xmlns="http://www.w3.org/2000/svg" font-family="'Sora',sans-serif">
+<defs>
+  <marker id="arq" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ══ NIVEAU 0 : App.js ══ -->
+<rect x="12" y="12" width="656" height="834" rx="14" fill="rgba(100,116,139,.08)" stroke="#475569" stroke-width="1" stroke-dasharray="5,3"/>
+<rect x="12" y="12" width="656" height="24" rx="8" fill="#1e293b"/>
+<text x="22" y="27" font-family="'Sora',sans-serif" font-size="11" font-weight="700" fill="#f1f5f9">App.js</text>
+<text x="90" y="27" font-family="'Sora',sans-serif" font-size="10" fill="#64748b">export default · point d'entrée · pas d'UI directe</text>
+
+<!-- BLOC RÈGLES App.js -->
+<rect x="488" y="44" width="168" height="66" rx="6" fill="rgba(30,41,59,.85)" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,2"/>
+<text x="498" y="59" font-family="'Sora',sans-serif" font-size="10" font-weight="600" fill="#94a3b8">App.js contient :</text>
+<text x="498" y="73" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">✓ NavigationContainer</text>
+<text x="498" y="87" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">✓ AppNavigator importé ici</text>
+<text x="498" y="101" font-family="'Sora',sans-serif" font-size="10" fill="#fca5a5">✗ Aucun écran visible</text>
+
+<!-- ══ NIVEAU 1 : NavigationContainer ══ -->
+<rect x="26" y="44" width="452" height="792" rx="12" fill="rgba(124,58,237,.06)" stroke="#7c3aed" stroke-width="1"/>
+<rect x="26" y="44" width="452" height="22" rx="7" fill="#4c1d95"/>
+<text x="36" y="59" font-family="'Sora',sans-serif" font-size="11" font-weight="700" fill="#c4b5fd">NavigationContainer</text>
+<text x="195" y="59" font-family="'Sora',sans-serif" font-size="10" fill="#6d28d9">Importe AppNavigator.js</text>
+<text x="36" y="78" font-family="'Sora',sans-serif" font-size="10" fill="#94a3b8">Fournit le contexte de navigation · une seule instance · jamais dans un Screen</text>
+
+<!-- BLOC RÈGLES NavigationContainer -->
+<rect x="488" y="120" width="168" height="54" rx="6" fill="rgba(30,41,59,.85)" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,2"/>
+<text x="498" y="136" font-family="'Sora',sans-serif" font-size="10" font-weight="600" fill="#94a3b8">NavigationContainer :</text>
+<text x="498" y="150" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">✓ Une seule instance par app</text>
+<text x="498" y="164" font-family="'Sora',sans-serif" font-size="10" fill="#fca5a5">✗ Jamais dans un Screen</text>
+
+<!-- ══ AppNavigator → Tab Navigator ══ -->
+<rect x="40" y="90" width="438" height="732" rx="10" fill="rgba(5,150,105,.06)" stroke="#059669" stroke-width="1"/>
+<rect x="40" y="90" width="438" height="22" rx="7" fill="#064e3b"/>
+<text x="50" y="105" font-family="'Sora',sans-serif" font-size="11" font-weight="700" fill="#6ee7b7">AppNavigator.js → Tab Navigator</text>
+<text x="288" y="105" font-family="'Sora',sans-serif" font-size="10" fill="#065f46">navigation/AppNavigator.js</text>
+<text x="50" y="123" font-family="'Sora',sans-serif" font-size="10" fill="#94a3b8">Bottom Tab avec 2 onglets · chaque onglet garde son état en mémoire</text>
+
+<!-- BLOC RÈGLES Tab Navigator -->
+<rect x="488" y="186" width="168" height="70" rx="6" fill="rgba(30,41,59,.85)" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,2"/>
+<text x="498" y="202" font-family="'Sora',sans-serif" font-size="10" font-weight="600" fill="#94a3b8">Tab Navigator :</text>
+<text x="498" y="217" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">✓ Onglets persistants</text>
+<text x="498" y="231" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">✓ État préservé par onglet</text>
+<text x="498" y="245" font-family="'Sora',sans-serif" font-size="10" fill="#94a3b8">✓ Ionicons pour les icônes</text>
+
+<!-- Onglet Accueil (HomeScreen simple) -->
+<rect x="54" y="136" width="410" height="64" rx="8" fill="rgba(5,150,105,.12)" stroke="#34d399" stroke-width="0.7"/>
+<rect x="54" y="136" width="410" height="20" rx="5" fill="#065f46"/>
+<text x="259" y="150" font-family="'Sora',sans-serif" font-size="10" font-weight="700" fill="#6ee7b7" text-anchor="middle">HomeScreen.js · onglet 🏠 Accueil</text>
+<text x="259" y="169" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Menu des 6 thèmes · verrouillage progressif · reçoit navigation + route</text>
+<text x="259" y="183" font-family="'JetBrains Mono',monospace" font-size="8" fill="#c4b5fd" text-anchor="middle">navigation.navigate('T1_Exo01') · navigation.navigate('T2_Exo01') …</text>
+
+<!-- ══ ExoStack imbriqué dans l'onglet Exercices ══ -->
+<rect x="54" y="214" width="410" height="596" rx="10" fill="rgba(30,64,175,.07)" stroke="#3b82f6" stroke-width="1"/>
+<rect x="54" y="214" width="410" height="22" rx="7" fill="#1e3a8a"/>
+<text x="68" y="229" font-family="'Sora',sans-serif" font-size="11" font-weight="700" fill="#93c5fd">ExoStack · onglet 🧪 Exercices</text>
+<text x="256" y="229" font-family="'Sora',sans-serif" font-size="10" fill="#1d4ed8">Stack Navigator imbriqué dans le Tab</text>
+<text x="68" y="248" font-family="'Sora',sans-serif" font-size="10" fill="#94a3b8">navigate() entre exercices sans quitter l'onglet · goBack() revient à l'exercice précédent</text>
+
+<!-- BLOC RÈGLES Stack imbriqué -->
+<rect x="488" y="270" width="168" height="66" rx="6" fill="rgba(30,41,59,.85)" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,2"/>
+<text x="498" y="286" font-family="'Sora',sans-serif" font-size="10" font-weight="600" fill="#94a3b8">Stack dans Tab :</text>
+<text x="498" y="300" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">✓ Nav sans changer d'onglet</text>
+<text x="498" y="314" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">✓ goBack() reste dans</text>
+<text x="498" y="328" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">  l'onglet Exercices</text>
+
+<!-- THÈME T1 : Composants -->
+<rect x="68" y="260" width="396" height="78" rx="8" fill="rgba(30,64,175,.14)" stroke="#3b82f6" stroke-width="0.7"/>
+<rect x="68" y="260" width="396" height="20" rx="5" fill="#1e3a8a"/>
+<text x="266" y="274" font-family="'Sora',sans-serif" font-size="10" font-weight="700" fill="#93c5fd" text-anchor="middle">T1 · Composants &amp; JSX · screens/T1_Composants/</text>
+<text x="266" y="292" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">T1Exo01_Car · T1Exo02_House · T1Exo03_Person · T1Exo04_Player</text>
+<text x="266" y="305" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">T1Exo05_ToggleButton · T1Exo06_CompteurCaracteres</text>
+<text x="266" y="320" font-family="'JetBrains Mono',monospace" font-size="8" fill="#64748b" text-anchor="middle">Props auto : navigation · route — navigate() pour passer à l'exo suivant</text>
+
+<!-- Flèche inter-thème -->
+<line x1="266" y1="338" x2="266" y2="348" stroke="#3b82f6" stroke-width="1.2" fill="none" marker-end="url(#arq)"/>
+
+<!-- THÈME T2 : Styles -->
+<rect x="68" y="348" width="396" height="78" rx="8" fill="rgba(30,64,175,.14)" stroke="#3b82f6" stroke-width="0.7"/>
+<rect x="68" y="348" width="396" height="20" rx="5" fill="#1e3a8a"/>
+<text x="266" y="362" font-family="'Sora',sans-serif" font-size="10" font-weight="700" fill="#93c5fd" text-anchor="middle">T2 · Styles &amp; Flexbox · screens/T2_Styles/</text>
+<text x="266" y="380" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">T2Exo01_TexteCentre · T2Exo02_BoutonsCote · T2Exo03_ImageTexte</text>
+<text x="266" y="393" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">T2Exo04_ZoningA · T2Exo05_ZoningB</text>
+<text x="266" y="408" font-family="'JetBrains Mono',monospace" font-size="8" fill="#64748b" text-anchor="middle">Props auto : navigation · route — StyleSheet.create() dans chaque fichier</text>
+
+<!-- Flèche inter-thème -->
+<line x1="266" y1="426" x2="266" y2="436" stroke="#3b82f6" stroke-width="1.2" fill="none" marker-end="url(#arq)"/>
+
+<!-- THÈMES T3 → T6 (regroupés, J2 à J4) -->
+<rect x="68" y="436" width="396" height="84" rx="8" fill="rgba(30,64,175,.08)" stroke="#3b82f6" stroke-width="0.7" stroke-dasharray="4,2"/>
+<rect x="68" y="436" width="396" height="20" rx="5" fill="#1e3a8a" opacity="0.6"/>
+<text x="266" y="450" font-family="'Sora',sans-serif" font-size="10" font-weight="700" fill="#64748b" text-anchor="middle">T3 → T6 · à débloquer J2→J4</text>
+<text x="266" y="469" font-family="'Sora',sans-serif" font-size="9" fill="#64748b" text-anchor="middle">T3 · Navigation (J2) · screens/T3_Navigation/</text>
+<text x="266" y="482" font-family="'Sora',sans-serif" font-size="9" fill="#64748b" text-anchor="middle">T4 · Fetch &amp; useEffect (J2) · screens/T4_Fetch/</text>
+<text x="266" y="495" font-family="'Sora',sans-serif" font-size="9" fill="#64748b" text-anchor="middle">T5 · Firebase (J3) · T6 · UX Mobile (J4)</text>
+<text x="266" y="510" font-family="'Sora',sans-serif" font-size="9" fill="#475569" text-anchor="middle">Même structure : 5 exercices par thème · mêmes props navigation + route</text>
+
+<!-- ══ Composants réutilisables ══ -->
+<rect x="68" y="536" width="396" height="62" rx="8" fill="rgba(217,119,6,.1)" stroke="#d97706" stroke-width="0.7"/>
+<rect x="68" y="536" width="396" height="20" rx="5" fill="#78350f"/>
+<text x="266" y="550" font-family="'Sora',sans-serif" font-size="10" font-weight="700" fill="#fbbf24" text-anchor="middle">components/ · ThemeCard · ExoCard</text>
+<text x="266" y="568" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8" text-anchor="middle">Composants réutilisables · pas de props nav/route automatiques</text>
+<text x="266" y="581" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#fbbf24" text-anchor="middle">const nav = useNavigation() ← si besoin de naviguer</text>
+
+<!-- ══ ExoFini Screen ══ -->
+<rect x="68" y="614" width="396" height="62" rx="8" fill="rgba(30,64,175,.12)" stroke="#3b82f6" stroke-width="0.7" stroke-dasharray="4,2"/>
+<rect x="68" y="614" width="396" height="20" rx="5" fill="#1e3a8a" opacity="0.7"/>
+<text x="266" y="628" font-family="'Sora',sans-serif" font-size="10" font-weight="700" fill="#64748b" text-anchor="middle">ExoFiniScreen.js (optionnel)</text>
+<text x="266" y="646" font-family="'Sora',sans-serif" font-size="9" fill="#64748b" text-anchor="middle">Écran de récapitulatif après les 5 exos d'un thème</text>
+<text x="266" y="659" font-family="'JetBrains Mono',monospace" font-size="8.5" fill="#475569" text-anchor="middle">reçoit themeId via route.params · affiche le score</text>
+
+<!-- ══ LÉGENDE ══ -->
+<rect x="488" y="350" width="168" height="234" rx="6" fill="rgba(30,41,59,.85)" stroke="#334155" stroke-width="0.5" stroke-dasharray="3,2"/>
+<text x="498" y="366" font-family="'Sora',sans-serif" font-size="10" font-weight="600" fill="#94a3b8">Légende :</text>
+<rect x="498" y="374" width="10" height="10" rx="2" fill="rgba(124,58,237,.4)" stroke="#7c3aed" stroke-width="0.7"/>
+<text x="514" y="384" font-family="'Sora',sans-serif" font-size="9" fill="#c4b5fd">NavigationContainer</text>
+<rect x="498" y="392" width="10" height="10" rx="2" fill="rgba(5,150,105,.3)" stroke="#059669" stroke-width="0.7"/>
+<text x="514" y="402" font-family="'Sora',sans-serif" font-size="9" fill="#6ee7b7">AppNavigator (Tab)</text>
+<rect x="498" y="410" width="10" height="10" rx="2" fill="rgba(30,64,175,.3)" stroke="#3b82f6" stroke-width="0.7"/>
+<text x="514" y="420" font-family="'Sora',sans-serif" font-size="9" fill="#93c5fd">ExoStack + Screens</text>
+<rect x="498" y="428" width="10" height="10" rx="2" fill="rgba(217,119,6,.3)" stroke="#d97706" stroke-width="0.7"/>
+<text x="514" y="438" font-family="'Sora',sans-serif" font-size="9" fill="#fbbf24">Composants</text>
+<rect x="498" y="446" width="10" height="10" rx="2" fill="rgba(30,64,175,.08)" stroke="#3b82f6" stroke-width="0.7" stroke-dasharray="3,2"/>
+<text x="514" y="456" font-family="'Sora',sans-serif" font-size="9" fill="#64748b">À débloquer (J2→J4)</text>
+<line x1="498" y1="470" x2="536" y2="470" stroke="#3b82f6" stroke-width="1.5" fill="none" marker-end="url(#arq)"/>
+<text x="542" y="474" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8">navigate()</text>
+<line x1="498" y1="466" x2="656" y2="466" stroke="#334155" stroke-width="0.5" style="margin-top:4px"/>
+<line x1="498" y1="488" x2="656" y2="488" stroke="#334155" stroke-width="0.5"/>
+<text x="498" y="502" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8">Props auto sur chaque Screen :</text>
+<text x="498" y="517" font-family="'JetBrains Mono',monospace" font-size="9" fill="#6ee7b7">navigation</text>
+<text x="498" y="532" font-family="'JetBrains Mono',monospace" font-size="9" fill="#fbbf24">route.params</text>
+<line x1="498" y1="542" x2="656" y2="542" stroke="#334155" stroke-width="0.5"/>
+<text x="498" y="556" font-family="'Sora',sans-serif" font-size="9" fill="#fca5a5">⚠ Stack.Screen ≠ composant</text>
+<text x="498" y="570" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8">Screen = déclaration dans nav</text>
+<text x="498" y="584" font-family="'Sora',sans-serif" font-size="9" fill="#94a3b8">composant = fichier .js séparé</text>
+
+<!-- RÉSUMÉ structure J1 vs J2 -->
+<rect x="54" y="692" width="410" height="122" rx="8" fill="rgba(100,116,139,.08)" stroke="#475569" stroke-width="0.7" stroke-dasharray="3,2"/>
+<text x="64" y="710" font-family="'Sora',sans-serif" font-size="10" font-weight="700" fill="#94a3b8">Récapitulatif — ce qui est branché par journée :</text>
+<text x="64" y="728" font-family="'Sora',sans-serif" font-size="10" fill="#6ee7b7">J1 → T1 (Composants) + T2 (Styles)</text>
+<text x="64" y="744" font-family="'Sora',sans-serif" font-size="10" fill="#93c5fd">J2 → T3 (Navigation) + T4 (Fetch)</text>
+<text x="64" y="760" font-family="'Sora',sans-serif" font-size="10" fill="#fca5a5">J3 → T5 (Firebase Auth + Firestore)</text>
+<text x="64" y="776" font-family="'Sora',sans-serif" font-size="10" fill="#c4b5fd">J4 → T6 (UX Mobile)</text>
+<text x="64" y="796" font-family="'Sora',sans-serif" font-size="9" fill="#64748b">Chaque thème = 1 dossier screens/ + 5 exercices numérotés + verrouillage progressif dans HomeScreen</text>
+
+</svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ACCORDÉON 2 : Arborescence ══ -->
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>📁 Arborescence MyExoApp — organisation des fichiers</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <p style="font-size:.85rem;color:var(--txm);margin-bottom:1rem;line-height:1.6">L'arborescence de <b>MyExoApp</b> suit une logique par thème : un dossier <code>screens/TX_NomTheme/</code> par journée, avec un fichier par exercice. Le verrouillage progressif s'applique dans <code>HomeScreen.js</code>.</p>
+          <div class="cb">
+            <div class="cl2">MyExoApp/ — arborescence complète</div>
+            <pre><span class="cm">MyExoApp/                              ← racine du projet (--template blank)</span>
+<span class="tg">├── App.js</span>                            <span class="cm">← point d'entrée · NavigationContainer · AppNavigator</span>
+<span class="tg">├── app.json</span>                          <span class="cm">← config Expo (nom, icône, version)</span>
+<span class="tg">├── package.json</span>                      <span class="cm">← dépendances npm</span>
+<span class="tg">│</span>
+<span class="kw">├── navigation/</span>                       <span class="cm">← logique de navigation</span>
+<span class="tg">│   └── AppNavigator.js</span>               <span class="cm">← Tab (Accueil 🏠 + Exercices 🧪) + ExoStack</span>
+<span class="tg">│</span>
+<span class="kw">├── screens/</span>                          <span class="cm">← UN fichier = UN exercice · props auto : navigation + route</span>
+<span class="tg">│   ├── HomeScreen.js</span>                 <span class="cm">← menu des 6 thèmes · verrouillage progressif</span>
+<span class="tg">│   │</span>
+<span class="tg">│   ├── T1_Composants/</span>               <span class="cm">← J1 · débloqué dès le départ</span>
+<span class="tg">│   │   ├── T1Exo01_Car.js</span>           <span class="cm">← View + Text · données statiques</span>
+<span class="tg">│   │   ├── T1Exo02_House.js</span>         <span class="cm">← View + Text · liste de pièces</span>
+<span class="tg">│   │   ├── T1Exo03_Person.js</span>        <span class="cm">← composants imbriqués · FullName + Hobbies</span>
+<span class="tg">│   │   ├── T1Exo04_Player.js</span>        <span class="cm">← rendu conditionnel · ternaire JSX</span>
+<span class="tg">│   │   ├── T1Exo05_ToggleButton.js</span>  <span class="cm">← useState booléen · couleur dynamique</span>
+<span class="tg">│   │   └── T1Exo06_CompteurCaracteres.js</span> <span class="cm">← useState + TextInput · .length</span>
+<span class="tg">│   │</span>
+<span class="tg">│   ├── T2_Styles/</span>                   <span class="cm">← J1 · débloqué après T1</span>
+<span class="tg">│   │   ├── T2Exo01_TexteCentre.js</span>   <span class="cm">← flex:1 · alignItems/justifyContent center</span>
+<span class="tg">│   │   ├── T2Exo02_BoutonsCote.js</span>   <span class="cm">← flexDirection:row · space-between</span>
+<span class="tg">│   │   ├── T2Exo03_ImageTexte.js</span>    <span class="cm">← Image uri · width/height obligatoires</span>
+<span class="tg">│   │   ├── T2Exo04_ZoningA.js</span>       <span class="cm">← Flexbox maquette A · flex proportionnel</span>
+<span class="tg">│   │   └── T2Exo05_ZoningB.js</span>       <span class="cm">← Flexbox maquette B · Views imbriquées</span>
+<span class="tg">│   │</span>
+<span class="tg">│   ├── T3_Navigation/</span>               <span class="cm">← J2 · débloqué en J2</span>
+<span class="tg">│   │   ├── T3Exo01_StackBasique.js</span>
+<span class="tg">│   │   ├── T3Exo02_Parametres.js</span>
+<span class="tg">│   │   ├── T3Exo03_TabBar.js</span>
+<span class="tg">│   │   ├── T3Exo04_StackDansTab.js</span>
+<span class="tg">│   │   └── T3Exo05_EcranProtege.js</span>
+<span class="tg">│   │</span>
+<span class="tg">│   ├── T4_Fetch/</span>                    <span class="cm">← J2 · débloqué en J2</span>
+<span class="tg">│   │   ├── T4Exo01_ListeAPI.js</span>      <span class="cm">← useEffect + fetch + 3 états</span>
+<span class="tg">│   │   ├── T4Exo02_Detail.js</span>
+<span class="tg">│   │   ├── T4Exo03_Recherche.js</span>
+<span class="tg">│   │   ├── T4Exo04_Refresh.js</span>
+<span class="tg">│   │   └── T4Exo05_Erreur.js</span>
+<span class="tg">│   │</span>
+<span class="tg">│   ├── T5_Firebase/</span>                 <span class="cm">← J3 · débloqué en J3</span>
+<span class="tg">│   │   └── T5Exo01 → T5Exo05</span>
+<span class="tg">│   │</span>
+<span class="tg">│   └── T6_UXMobile/</span>                 <span class="cm">← J4 · débloqué en J4</span>
+<span class="tg">│       └── T6Exo01 → T6Exo05</span>
+<span class="tg">│</span>
+<span class="kw">├── components/</span>                      <span class="cm">← briques réutilisables · pas de props nav/route auto</span>
+<span class="tg">│   ├── ThemeCard.js</span>                 <span class="cm">← carte d'un thème dans HomeScreen</span>
+<span class="tg">│   └── ExoCard.js</span>                   <span class="cm">← carte d'un exercice (optionnel)</span>
+<span class="tg">│</span>
+<span class="kw">└── assets/</span>                          <span class="cm">← images, icônes</span>
+<span class="tg">    ├── icon.png</span>
+<span class="tg">    └── splash.png</span></pre>
+          </div>
+          <div class="g2" style="margin-top:1rem;gap:.7rem">
+            <div class="call cgr"><span class="ci">💡</span><div><b>Convention de nommage :</b> <code>TX</code> = numéro du thème · <code>ExoNN</code> = numéro de l'exercice. Exemple : <code>T2Exo04_ZoningA.js</code> = Thème 2, exercice 04. Les noms sont descriptifs pour s'y retrouver facilement.</div></div>
+            <div class="call cam"><span class="ci">⚠️</span><div><b>Verrouillage progressif :</b> <code>HomeScreen.js</code> affiche les thèmes T3→T6 en grisé avec 🔒. Ils se débloquent à chaque nouvelle journée — c'est uniquement de l'UI, pas une vraie protection.</div></div>
+          </div>
+          <table class="tbl" style="margin-top:1rem">
+            <thead><tr><th>Dossier</th><th>Rôle</th><th>Props navigation ?</th><th>Journée</th></tr></thead>
+            <tbody>
+              <tr><td><code>navigation/</code></td><td>Déclare Tab + Stack</td><td class="ok">Oui — c'est sa raison d'être</td><td>J1</td></tr>
+              <tr><td><code>screens/HomeScreen.js</code></td><td>Menu des thèmes</td><td class="ok">Oui — <code>navigation</code> + <code>route</code></td><td>J1</td></tr>
+              <tr><td><code>screens/T1_Composants/</code></td><td>6 exercices View/Text/useState</td><td class="ok">Oui — <code>navigation</code> + <code>route</code></td><td>J1</td></tr>
+              <tr><td><code>screens/T2_Styles/</code></td><td>5 exercices StyleSheet/Flexbox</td><td class="ok">Oui — <code>navigation</code> + <code>route</code></td><td>J1</td></tr>
+              <tr><td><code>screens/T3_Navigation/</code></td><td>5 exercices React Navigation</td><td class="ok">Oui — <code>navigation</code> + <code>route</code></td><td>J2</td></tr>
+              <tr><td><code>screens/T4_Fetch/</code></td><td>5 exercices useEffect + fetch</td><td class="ok">Oui — <code>navigation</code> + <code>route</code></td><td>J2</td></tr>
+              <tr><td><code>screens/T5_Firebase/</code></td><td>5 exercices Firebase Auth/Firestore</td><td class="ok">Oui</td><td>J3</td></tr>
+              <tr><td><code>screens/T6_UXMobile/</code></td><td>5 exercices UX Mobile</td><td class="ok">Oui</td><td>J4</td></tr>
+              <tr><td><code>components/</code></td><td>Briques réutilisables</td><td class="ok">Via <code>useNavigation()</code></td><td>J1+</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
   <!-- ═ BLOC 2 : Stack Navigator ═ -->
   <div class="card">
     <div class="ct">📚 Stack Navigator — navigation en pile d'écrans</div>
@@ -870,9 +1122,18 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
       <li>Application de quiz multithèmes avec <b>authentification</b>, questions stockées dans <b>Firestore</b> et historique des scores par utilisateur</li>
       <li><b>Core :</b> Auth (inscription/connexion) · Sélection de thème · Moteur QCM · Résultats · Historique · Profil utilisateur</li>
       <li><b>Bonus :</b> Classement temps réel · Timer par question</li>
-      <li><b>Rendu en J5 :</b> Dépôt GitHub + APK Android via EAS Build + accès Firebase partagé</li>
+      <li><b>Rendu fin J4 :</b> Dépôt GitHub + APK Android via EAS Build + accès Firebase partagé</li>
     </ul>
-    
+    <table class="tbl" style="margin-top:1rem">
+      <thead><tr><th>Critère</th><th>Points</th><th>Ce qui est évalué</th></tr></thead>
+      <tbody>
+        <tr><td>Fonctionnalités core</td><td><b>5 pts</b></td><td>Auth + QCM + Résultats fonctionnels</td></tr>
+        <tr><td>Firebase Auth</td><td><b>4 pts</b></td><td>Inscription, connexion, déconnexion</td></tr>
+        <tr><td>Firestore</td><td><b>4 pts</b></td><td>Questions chargées, scores sauvegardés</td></tr>
+        <tr><td>UX Mobile</td><td><b>4 pts</b></td><td>Navigation fluide, états loading/erreur</td></tr>
+        <tr><td>Qualité code</td><td><b>3 pts</b></td><td>Lisibilité, commentaires, composants réutilisables</td></tr>
+      </tbody>
+    </table>
   </div>
 
   <!-- Architecture navigation -->
