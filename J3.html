@@ -145,7 +145,6 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
 .gcat{font-size:.62rem;background:rgba(194,65,12,.25);border:1px solid rgba(249,115,22,.3);color:#fb923c;padding:.1rem .42rem;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;font-family:var(--ff)}
 .gd{font-size:.84rem;color:#cbd5e1;line-height:1.55;margin-bottom:.5rem}
 .ge{font-size:.78rem;color:var(--txm);font-style:italic;border-left:2px solid rgba(249,115,22,.3);padding-left:.6rem}
-/* modèle firestore */
 .fs-model{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:.8rem;margin:.9rem 0}
 .fs-col{background:var(--bg3);border:1px solid #44301a;border-radius:10px;padding:1rem}
 .fs-col-title{font-family:var(--fm);font-size:.78rem;font-weight:700;color:#fcd34d;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
@@ -200,7 +199,6 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
       <svg viewBox="0 0 720 180" xmlns="http://www.w3.org/2000/svg" font-family="'Sora',sans-serif">
         <defs><marker id="fa" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto"><path d="M0,0L0,6L7,3z" fill="#fb923c"/></marker></defs>
         <text x="360" y="20" text-anchor="middle" fill="#fb923c" font-size="13" font-weight="700">Les 3 services Firebase utilisés dans ce cours</text>
-        <!-- Auth -->
         <rect x="30" y="36" width="190" height="120" rx="12" fill="rgba(194,65,12,.15)" stroke="#fb923c" stroke-width="1.5"/>
         <text x="125" y="62" text-anchor="middle" fill="#fb923c" font-size="13" font-weight="700">🔐 Auth</text>
         <text x="125" y="82" text-anchor="middle" fill="#94a3b8" font-size="10">Inscription, connexion,</text>
@@ -208,7 +206,6 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
         <text x="125" y="114" text-anchor="middle" fill="#fcd34d" font-family="'JetBrains Mono'" font-size="9">createUser()</text>
         <text x="125" y="128" text-anchor="middle" fill="#fcd34d" font-family="'JetBrains Mono'" font-size="9">signIn()</text>
         <text x="125" y="142" text-anchor="middle" fill="#fcd34d" font-family="'JetBrains Mono'" font-size="9">onAuthStateChanged()</text>
-        <!-- Firestore -->
         <rect x="265" y="36" width="190" height="120" rx="12" fill="rgba(217,119,6,.15)" stroke="#fbbf24" stroke-width="1.5"/>
         <text x="360" y="62" text-anchor="middle" fill="#fcd34d" font-size="13" font-weight="700">🗄 Firestore</text>
         <text x="360" y="82" text-anchor="middle" fill="#94a3b8" font-size="10">Base de données NoSQL</text>
@@ -216,7 +213,6 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
         <text x="360" y="114" text-anchor="middle" fill="#fcd34d" font-family="'JetBrains Mono'" font-size="9">getDocs(), addDoc()</text>
         <text x="360" y="128" text-anchor="middle" fill="#fcd34d" font-family="'JetBrains Mono'" font-size="9">setDoc(), deleteDoc()</text>
         <text x="360" y="142" text-anchor="middle" fill="#fcd34d" font-family="'JetBrains Mono'" font-size="9">onSnapshot()</text>
-        <!-- Storage (hors scope) -->
         <rect x="500" y="36" width="190" height="120" rx="12" fill="rgba(30,64,175,.1)" stroke="#334155" stroke-width="1.5" stroke-dasharray="5,3"/>
         <text x="595" y="62" text-anchor="middle" fill="#64748b" font-size="13" font-weight="700">📦 Storage</text>
         <text x="595" y="82" text-anchor="middle" fill="#475569" font-size="10">Fichiers, images, vidéos</text>
@@ -250,55 +246,33 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
     </div>
     <div class="cb" style="margin-top:1rem">
       <div class="cl2">services/firebase.js — configuration complète avec Auth + Firestore</div>
-      <pre><span class="cm">// ─── IMPORTS SDK FIREBASE ──────────────────────────────────────────────────
-// On importe uniquement les fonctions dont on a besoin (tree-shaking)
-// Évite d'importer tout Firebase — réduit la taille du bundle</span>
+      <pre><span class="cm">// ─── IMPORTS SDK FIREBASE ──────────────────────────────────────────────────</span>
 <span class="kw">import</span> { <span class="fn">initializeApp</span> }                  <span class="kw">from</span> <span class="st">'firebase/app'</span>;
 <span class="kw">import</span> { <span class="fn">getAuth</span>, <span class="fn">initializeAuth</span>,
          <span class="fn">getReactNativePersistence</span> }       <span class="kw">from</span> <span class="st">'firebase/auth'</span>;
 <span class="kw">import</span> { <span class="fn">getFirestore</span> }                  <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
-<span class="cm">// AsyncStorage : permet à Firebase de mémoriser la session entre les relances de l'app
-// Sans ça, l'utilisateur devrait se reconnecter à chaque redémarrage</span>
 <span class="kw">import</span> AsyncStorage                       <span class="kw">from</span> <span class="st">'@react-native-async-storage/async-storage'</span>;
 
-<span class="cm">// ─── CLÉs DE CONFIGURATION ──────────────────────────────────────────────────
-// Ces clés sont fournies par la console Firebase → Paramètres → Applications Web
-// ⚠ Ces clés sont "publiques" (elles sont dans le JS téléchargé par le client)
-//   Elles NE sont PAS des mots de passe. La sécurité réelle se fait
-//   via les Règles de Sécurité Firestore (Auth Rules), pas ici.</span>
 <span class="kw">const</span> firebaseConfig = {
-  apiKey:            <span class="st">"AIzaSy..."</span>,        <span class="cm">// clé API (identifie ton projet)</span>
+  apiKey:            <span class="st">"AIzaSy..."</span>,
   authDomain:        <span class="st">"ton-projet.firebaseapp.com"</span>,
-  projectId:         <span class="st">"ton-projet"</span>,     <span class="cm">// ID unique de ton projet Firebase</span>
+  projectId:         <span class="st">"ton-projet"</span>,
   storageBucket:     <span class="st">"ton-projet.appspot.com"</span>,
   messagingSenderId: <span class="st">"123456789"</span>,
   appId:             <span class="st">"1:123456789:web:abc..."</span>,
 };
 
-<span class="cm">// ─── INITIALISATION ─────────────────────────────────────────────────────────
-// initializeApp() initialise Firebase avec ta config — À appeler une seule fois</span>
 <span class="kw">const</span> app = <span class="fn">initializeApp</span>(firebaseConfig);
 
-<span class="cm">// ─── AUTH AVEC PERSISTANCE ──────────────────────────────────────────────────
-// initializeAuth() avec getReactNativePersistence(AsyncStorage) :
-// → la session est sauvegardée dans AsyncStorage
-// → si l'utilisateur était connecté avant de fermer l'app, il l'est encore au redémarrage
-// En React web on utiliserait getAuth(app) — en React Native on doit spécifier la persistance</span>
 <span class="kw">const</span> auth = <span class="fn">initializeAuth</span>(app, {
   persistence: <span class="fn">getReactNativePersistence</span>(AsyncStorage),
 });
 
-<span class="cm">// ─── FIRESTORE ──────────────────────────────────────────────────────────────
-// getFirestore() retourne l'instance de la base de données Firestore
-// On l'utilisera dans tous les fichiers qui lisent/écrivent des données</span>
 <span class="kw">const</span> db = <span class="fn">getFirestore</span>(app);
 
-<span class="cm">// ─── EXPORT ─────────────────────────────────────────────────────────────────
-// On exporte auth et db pour les importer dans nos screens
-// Ex : import { auth, db } from '../services/firebase';</span>
 <span class="kw">export</span> { auth, db };</pre>
     </div>
-    <div class="call cam"><span class="ci">⚠️</span><span>Il faut aussi installer <code>@react-native-async-storage/async-storage</code> : <code>npx expo install @react-native-async-storage/async-storage</code>. Sans ça, la persistance de session ne fonctionnera pas.</span></div>
+    <div class="call cam"><span class="ci">⚠️</span><span>Il faut aussi installer <code>@react-native-async-storage/async-storage</code> : <code>npx expo install @react-native-async-storage/async-storage</code>.</span></div>
   </div>
 
   <!-- ═ BLOC 3 : Auth email/password ═ -->
@@ -306,24 +280,24 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
     <div class="ct">🔐 Authentification email / mot de passe</div>
     <div class="analogy">
       <div class="analogy-lbl">💡 Analogie</div>
-      <p>Firebase Auth, c'est comme un <b>videur de boîte de nuit</b>. Il vérifie que l'email existe, que le mot de passe est correct, et délivre un "bracelet" (le token JWT). Ce bracelet est envoyé automatiquement à chaque requête Firestore — tu n'as pas à gérer les tokens toi-même. Firebase s'en charge.</p>
+      <p>Firebase Auth, c'est comme un <b>videur de boîte de nuit</b>. Il vérifie que l'email existe, que le mot de passe est correct, et délivre un "bracelet" (le token JWT). Ce bracelet est envoyé automatiquement à chaque requête Firestore — tu n'as pas à gérer les tokens toi-même.</p>
     </div>
     <div class="explain-box">
       <div class="explain-step"><div class="explain-num">1</div><div>
         <h4><code>createUserWithEmailAndPassword(auth, email, password)</code> — inscription</h4>
-        <p>Crée un nouveau compte dans Firebase Auth. Retourne une Promise avec un <code>UserCredential</code> — un objet qui contient les infos de l'utilisateur créé (<code>user.uid</code>, <code>user.email</code>…).</p>
+        <p>Crée un nouveau compte dans Firebase Auth. Retourne une Promise avec un <code>UserCredential</code>.</p>
       </div></div>
       <div class="explain-step"><div class="explain-num">2</div><div>
         <h4><code>signInWithEmailAndPassword(auth, email, password)</code> — connexion</h4>
-        <p>Tente de connecter l'utilisateur avec ces identifiants. Si les identifiants sont corrects, retourne un <code>UserCredential</code>. Si incorrects → lance une erreur (code <code>auth/wrong-password</code> ou <code>auth/user-not-found</code>).</p>
+        <p>Tente de connecter l'utilisateur. Si incorrects → lance une erreur (<code>auth/wrong-password</code> ou <code>auth/user-not-found</code>).</p>
       </div></div>
       <div class="explain-step"><div class="explain-num">3</div><div>
         <h4><code>signOut(auth)</code> — déconnexion</h4>
-        <p>Déconnecte l'utilisateur courant. Simple — pas de paramètre supplémentaire. Le listener <code>onAuthStateChanged</code> sera notifié avec <code>null</code>.</p>
+        <p>Déconnecte l'utilisateur courant. Le listener <code>onAuthStateChanged</code> sera notifié avec <code>null</code>.</p>
       </div></div>
       <div class="explain-step"><div class="explain-num">4</div><div>
         <h4><code>onAuthStateChanged(auth, callback)</code> — écouter l'état d'auth</h4>
-        <p>Le listener temps réel le plus important. Appelé automatiquement quand l'utilisateur se connecte, se déconnecte, ou au démarrage de l'app. Reçoit <code>user</code> (connecté) ou <code>null</code> (déconnecté). C'est lui qui remplace le booléen mock de J2.</p>
+        <p>Appelé automatiquement quand l'utilisateur se connecte, se déconnecte, ou au démarrage. C'est lui qui remplace le booléen mock de J2.</p>
       </div></div>
     </div>
     <p style="font-size:.82rem;color:var(--txm);margin:.9rem 0 .4rem;font-weight:600">Exemples — cliquer pour développer :</p>
@@ -331,59 +305,31 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
       <div class="acc-item">
         <button class="acc-btn" onclick="acc(this)"><span>📝 Formulaire d'inscription complet</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <div class="cb" style="margin:0"><pre><span class="cm">// ─── screens/auth/RegisterScreen.js ─────────────────────────────────────────
-// Ce screen reçoit la prop onLogin depuis App.js
-// → appelée après inscription réussie pour basculer vers AppStack</span>
-<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="st">'react'</span>;
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { useState } <span class="kw">from</span> <span class="st">'react'</span>;
 <span class="kw">import</span> { <span class="cp">View</span>, <span class="cp">Text</span>, <span class="cp">TextInput</span>, <span class="cp">TouchableOpacity</span>, <span class="cp">Alert</span>, <span class="cp">ActivityIndicator</span> } <span class="kw">from</span> <span class="st">'react-native'</span>;
-<span class="cm">// On importe notre instance auth ET les fonctions d'auth Firebase</span>
 <span class="kw">import</span> { auth } <span class="kw">from</span> <span class="st">'../../services/firebase'</span>;
 <span class="kw">import</span> { <span class="fn">createUserWithEmailAndPassword</span> } <span class="kw">from</span> <span class="st">'firebase/auth'</span>;
 
-<span class="kw">export default function</span> <span class="fn">RegisterScreen</span>({ onLogin }) {
-  <span class="cm">// 3 états : email, password, et loading pour le spinner pendant l'appel Firebase</span>
-  <span class="kw">const</span> [email,    setEmail]    = <span class="fn">useState</span>(<span class="st">''</span>);
+<span class="kw">export default function</span> <span class="fn">RegisterScreen</span>() {
+  <span class="kw">const</span> [email, setEmail]       = <span class="fn">useState</span>(<span class="st">''</span>);
   <span class="kw">const</span> [password, setPassword] = <span class="fn">useState</span>(<span class="st">''</span>);
-  <span class="kw">const</span> [loading,  setLoading]  = <span class="fn">useState</span>(<span class="nm">false</span>);
+  <span class="kw">const</span> [loading, setLoading]   = <span class="fn">useState</span>(<span class="nm">false</span>);
 
   <span class="kw">const</span> <span class="fn">handleRegister</span> = <span class="kw">async</span> () => {
-    <span class="cm">// Validation basique AVANT d'appeler Firebase (économise des appels réseau)</span>
-    <span class="kw">if</span> (!email || !password) {
-      <span class="fn">Alert</span>.<span class="fn">alert</span>(<span class="st">'Erreur'</span>, <span class="st">'Remplis tous les champs.'</span>);
-      <span class="kw">return</span>;
-    }
+    <span class="kw">if</span> (!email || !password) { <span class="fn">Alert</span>.<span class="fn">alert</span>(<span class="st">'Erreur'</span>, <span class="st">'Remplis tous les champs.'</span>); <span class="kw">return</span>; }
     <span class="kw">try</span> {
       <span class="fn">setLoading</span>(<span class="nm">true</span>);
-      <span class="cm">// createUserWithEmailAndPassword(auth, email, password)
-      // → auth : notre instance Firebase Auth
-      // → retourne une Promise avec UserCredential si succès
-      // → lance une erreur avec un code si l'email existe déjà, mot de passe trop court…</span>
       <span class="kw">const</span> userCredential = <span class="kw">await</span> <span class="fn">createUserWithEmailAndPassword</span>(auth, email, password);
-
-      <span class="cm">// userCredential.user contient les infos du compte créé :
-      // .uid (identifiant unique), .email, .displayName (null pour l'instant)…</span>
-      <span class="kw">const</span> user = userCredential.user;
-      console.<span class="fn">log</span>(<span class="st">'Compte créé :'</span>, user.uid);
-
-      <span class="cm">// On appelle onLogin() reçu en prop → App.js bascule vers AppStack</span>
-      <span class="fn">onLogin</span>();
-
+      console.<span class="fn">log</span>(<span class="st">'Compte créé :'</span>, userCredential.user.uid);
     } <span class="kw">catch</span> (err) {
-      <span class="cm">// Firebase retourne des codes d'erreur — on les traduit en français
-      // err.code contient le code (ex: 'auth/email-already-in-use')</span>
-      <span class="kw">const</span> msg = <span class="fn">getErrorMessage</span>(err.code);
-      <span class="fn">Alert</span>.<span class="fn">alert</span>(<span class="st">'Inscription échouée'</span>, msg);
-    } <span class="kw">finally</span> {
-      <span class="fn">setLoading</span>(<span class="nm">false</span>); <span class="cm">// ← toujours arrêter le spinner</span>
-    }
+      <span class="fn">Alert</span>.<span class="fn">alert</span>(<span class="st">'Erreur'</span>, err.message);
+    } <span class="kw">finally</span> { <span class="fn">setLoading</span>(<span class="nm">false</span>); }
   };
 
   <span class="kw">return</span> (
     <span class="tg">&lt;View&gt;</span>
-      <span class="tg">&lt;TextInput</span> <span class="at">value</span>={email}    <span class="at">onChangeText</span>={setEmail}    <span class="at">placeholder</span>=<span class="st">"Email"</span>
-        <span class="at">keyboardType</span>=<span class="st">"email-address"</span> <span class="at">autoCapitalize</span>=<span class="st">"none"</span> /&gt;
-      <span class="tg">&lt;TextInput</span> <span class="at">value</span>={password} <span class="at">onChangeText</span>={setPassword} <span class="at">placeholder</span>=<span class="st">"Mot de passe"</span>
-        <span class="at">secureTextEntry</span> /&gt;  <span class="cm">// secureTextEntry → masque les caractères</span>
+      <span class="tg">&lt;TextInput</span> <span class="at">value</span>={email} <span class="at">onChangeText</span>={setEmail} <span class="at">placeholder</span>=<span class="st">"Email"</span> <span class="at">keyboardType</span>=<span class="st">"email-address"</span> <span class="at">autoCapitalize</span>=<span class="st">"none"</span> /&gt;
+      <span class="tg">&lt;TextInput</span> <span class="at">value</span>={password} <span class="at">onChangeText</span>={setPassword} <span class="at">placeholder</span>=<span class="st">"Mot de passe"</span> <span class="at">secureTextEntry</span> /&gt;
       <span class="tg">&lt;TouchableOpacity</span> <span class="at">onPress</span>={handleRegister} <span class="at">disabled</span>={loading}&gt;
         {loading ? <span class="tg">&lt;ActivityIndicator</span> /&gt; : <span class="tg">&lt;Text&gt;</span>S'inscrire<span class="tg">&lt;/Text&gt;</span>}
       <span class="tg">&lt;/TouchableOpacity&gt;</span>
@@ -395,11 +341,7 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
       <div class="acc-item">
         <button class="acc-btn" onclick="acc(this)"><span>🔑 Traduction des codes d'erreur Firebase en français</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <p style="font-size:.82rem;color:var(--txm);margin-bottom:.7rem">Firebase retourne des codes d'erreur en anglais brut. Il faut les intercepter et les traduire pour que les utilisateurs comprennent.</p>
-          <div class="cb" style="margin:0"><pre><span class="cm">// utils/firebaseErrors.js — fonction réutilisable dans toute l'app
-// err.code = le code retourné par Firebase, ex: 'auth/wrong-password'</span>
-<span class="kw">export function</span> <span class="fn">getErrorMessage</span>(code) {
-  <span class="cm">// On utilise un objet dictionnaire plutôt qu'un switch/case — plus lisible</span>
+          <div class="cb" style="margin:0"><pre><span class="kw">export function</span> <span class="fn">getErrorMessage</span>(code) {
   <span class="kw">const</span> messages = {
     <span class="st">'auth/email-already-in-use'</span>:    <span class="st">'Cet email est déjà utilisé.'</span>,
     <span class="st">'auth/invalid-email'</span>:           <span class="st">'Format d\'email invalide.'</span>,
@@ -409,9 +351,6 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
     <span class="st">'auth/too-many-requests'</span>:       <span class="st">'Trop de tentatives. Réessaie plus tard.'</span>,
     <span class="st">'auth/network-request-failed'</span>:  <span class="st">'Problème de connexion internet.'</span>,
   };
-  <span class="cm">// Si le code n'est pas dans notre liste → message générique
-  // messages[code] → retourne la traduction ou undefined
-  // ?? → l'opérateur "nullish coalescing" : retourne le côté droit si gauche est null/undefined</span>
   <span class="kw">return</span> messages[code] ?? <span class="st">'Une erreur est survenue. Réessaie.'</span>;
 }</pre></div>
         </div>
@@ -419,41 +358,25 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
       <div class="acc-item">
         <button class="acc-btn" onclick="acc(this)"><span>👁 onAuthStateChanged — remplacer le booléen mock de J2</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <p style="font-size:.82rem;color:var(--txm);margin-bottom:.7rem">C'est la migration clé de J2 → J3. On remplace le <code>useState(false)</code> mock par le vrai listener Firebase.</p>
-          <div class="cb" style="margin:0"><pre><span class="cm">// ─── App.js — AVANT (J2, mock) ───────────────────────────────────────────────</span>
-<span class="kw">const</span> [isLoggedIn, setIsLoggedIn] = <span class="fn">useState</span>(<span class="nm">false</span>); <span class="cm">// ← mock à supprimer</span>
-
-<span class="cm">// ─── App.js — APRÈS (J3, Firebase) ──────────────────────────────────────────</span>
+          <div class="cb" style="margin:0"><pre><span class="cm">// App.js — APRÈS (J3, Firebase)</span>
 <span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="st">'react'</span>;
 <span class="kw">import</span> { auth } <span class="kw">from</span> <span class="st">'./services/firebase'</span>;
 <span class="kw">import</span> { <span class="fn">onAuthStateChanged</span> } <span class="kw">from</span> <span class="st">'firebase/auth'</span>;
 
 <span class="kw">export default function</span> <span class="fn">App</span>() {
-  <span class="cm">// user = null si déconnecté, user = objet User Firebase si connecté
-  // undefined = état initial avant que Firebase ait vérifié la session</span>
   <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">undefined</span>);
 
   <span class="fn">useEffect</span>(() => {
-    <span class="cm">// onAuthStateChanged retourne une fonction "unsubscribe"
-    // On l'appelle dans le cleanup du useEffect pour éviter les fuites mémoire</span>
     <span class="kw">const</span> unsubscribe = <span class="fn">onAuthStateChanged</span>(auth, (firebaseUser) => {
-      <span class="cm">// firebaseUser = objet User si connecté (avec .uid, .email, .displayName…)
-      // firebaseUser = null si déconnecté ou session expirée
-      // Appelé AUTOMATIQUEMENT à chaque changement d'état d'auth</span>
       <span class="fn">setUser</span>(firebaseUser);
     });
-    <span class="cm">// Cleanup : quand le composant est démonté, on arrête d'écouter Firebase
-    // Sans ça → fuite mémoire si le composant est détruit avant la désinscription</span>
     <span class="kw">return</span> unsubscribe;
-  }, []); <span class="cm">// [] → s'exécute une seule fois au montage</span>
+  }, []);
 
-  <span class="cm">// Pendant que Firebase vérifie la session → afficher un splash/spinner</span>
   <span class="kw">if</span> (user === <span class="kw">undefined</span>) <span class="kw">return</span> <span class="tg">&lt;SplashScreen</span> /&gt;;
 
   <span class="kw">return</span> (
     <span class="tg">&lt;NavigationContainer&gt;</span>
-      <span class="cm">// !!user = true si user est un objet (connecté), false si null (déconnecté)
-      // Structure identique à J2 — seule la source de vérité change</span>
       {!!user ? <span class="tg">&lt;AppStack</span> /&gt; : <span class="tg">&lt;AuthStack</span> /&gt;}
     <span class="tg">&lt;/NavigationContainer&gt;</span>
   );
@@ -462,31 +385,27 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
       </div>
     </div>
 
-    <!-- Exercices T5 Auth -->
     <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #44301a">
       <div style="font-size:.85rem;font-weight:700;color:#fb923c;margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem">🧪 Exercices T5 — <code>screens/T5_Firebase/</code></div>
       <div class="accordion">
         <div class="acc-item">
           <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-auth" style="margin-right:.5rem">T5 · Exo 01</span> Configuration Firebase + Auth inscription</span><span class="acc-arrow">▶</span></button>
           <div class="acc-content">
-            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T5Exo01_Register.js</code>. Configurer Firebase et créer un formulaire d'inscription fonctionnel.</p>
             <ul class="cl">
               <li>Créer le projet Firebase sur la console, activer Email/Password, récupérer les clés</li>
-              <li>Créer <code>services/firebase.js</code> avec <code>initializeApp()</code>, <code>initializeAuth()</code> avec persistance AsyncStorage, et <code>getFirestore()</code></li>
-              <li>Formulaire avec email + password → bouton "S'inscrire" → <code>createUserWithEmailAndPassword()</code></li>
-              <li>Gérer les erreurs avec la fonction <code>getErrorMessage()</code> et afficher avec <code>Alert.alert()</code></li>
+              <li>Créer <code>services/firebase.js</code> avec <code>initializeApp()</code>, <code>initializeAuth()</code> avec persistance AsyncStorage</li>
+              <li>Formulaire avec email + password → <code>createUserWithEmailAndPassword()</code></li>
+              <li>Gérer les erreurs avec <code>getErrorMessage()</code></li>
             </ul>
           </div>
         </div>
         <div class="acc-item">
           <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-auth" style="margin-right:.5rem">T5 · Exo 02</span> Auth connexion + déconnexion</span><span class="acc-arrow">▶</span></button>
           <div class="acc-content">
-            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T5Exo02_LoginLogout.js</code>. Formulaire de connexion et bouton de déconnexion.</p>
             <ul class="cl">
-              <li>Formulaire avec email + password → bouton "Se connecter" → <code>signInWithEmailAndPassword()</code></li>
-              <li>Si connecté → afficher l'email de l'utilisateur courant (<code>auth.currentUser.email</code>)</li>
+              <li>Formulaire de connexion → <code>signInWithEmailAndPassword()</code></li>
+              <li>Si connecté → afficher <code>auth.currentUser.email</code></li>
               <li>Bouton "Se déconnecter" → <code>signOut(auth)</code></li>
-              <li>Gérer les erreurs avec les codes Firebase traduits en français</li>
             </ul>
           </div>
         </div>
@@ -494,58 +413,270 @@ code.b{background:rgba(59,130,246,.12);color:#93c5fd;border-color:rgba(59,130,24
     </div>
   </div>
 
-  <!-- ═ BLOC 4 : Règles de sécurité ═ -->
+  <!-- ═ BLOC 3b : Interaction entre fichiers ═ -->
   <div class="card">
-    <div class="ct">🛡 Règles de sécurité Firestore — du mode test au mode sécurisé</div>
-    <div class="call crd"><span class="ci">⚠️</span><span><b>Le mode test de Firestore expire !</b> Par défaut Firebase crée des règles qui expirent après 30 jours et autorisent tout le monde. Ne jamais laisser ces règles en production — n'importe qui pourrait lire ou supprimer tes données.</span></div>
-    <div class="cb">
-      <div class="cl2">Règles de sécurité Firestore — console Firebase → Firestore → Règles</div>
-      <pre><span class="cm">// ─── MODE TEST (par défaut) — ⚠ À NE PAS LAISSER ───────────────────────────
-// Tout le monde peut lire et écrire — pratique pour tester, dangereux en prod</span>
-rules_version = <span class="st">'2'</span>;
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /{document=**} {
-      allow read, write: <span class="kw">if</span> request.time &lt; timestamp.date(<span class="nm">2024</span>, <span class="nm">12</span>, <span class="nm">31</span>);
-    }
+    <div class="ct">🗂 Interaction entre fichiers — Comment tout s'articule ?</div>
+    <div class="analogy">
+      <div class="analogy-lbl">🏗 Architecture</div>
+      <p>Firebase ne s'insère pas dans un seul fichier — il est <b>réparti sur plusieurs couches</b>. Comprendre qui fait quoi évite de mélanger la logique Firebase avec les composants visuels, et permet de réutiliser facilement les fonctions d'auth dans toute l'app.</p>
+    </div>
+    <div class="sw" style="margin:.9rem 0">
+      <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg" font-family="'Sora',sans-serif" font-size="11">
+        <defs>
+          <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0L0,6L8,3z" fill="#fb923c"/></marker>
+          <marker id="arrg2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0L0,6L8,3z" fill="#34d399"/></marker>
+          <marker id="arrb2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0L0,6L8,3z" fill="#93c5fd"/></marker>
+        </defs>
+        <text x="380" y="20" text-anchor="middle" fill="#fb923c" font-size="13" font-weight="700">Architecture fichiers — Firebase Auth dans React Native</text>
+        <rect x="20" y="38" width="160" height="62" rx="9" fill="rgba(194,65,12,.18)" stroke="#fb923c" stroke-width="1.5"/>
+        <text x="100" y="58" text-anchor="middle" fill="#fb923c" font-weight="700">services/firebase.js</text>
+        <text x="100" y="74" text-anchor="middle" fill="#94a3b8" font-size="9.5">initializeApp()</text>
+        <text x="100" y="88" text-anchor="middle" fill="#94a3b8" font-size="9.5">export { auth, db }</text>
+        <rect x="20" y="130" width="160" height="76" rx="9" fill="rgba(217,119,6,.15)" stroke="#fbbf24" stroke-width="1.5"/>
+        <text x="100" y="150" text-anchor="middle" fill="#fcd34d" font-weight="700">services/authService.js</text>
+        <text x="100" y="166" text-anchor="middle" fill="#94a3b8" font-size="9.5">signUp(email, pwd)</text>
+        <text x="100" y="180" text-anchor="middle" fill="#94a3b8" font-size="9.5">signIn(email, pwd)</text>
+        <text x="100" y="194" text-anchor="middle" fill="#94a3b8" font-size="9.5">logOut()</text>
+        <line x1="100" y1="100" x2="100" y2="128" stroke="#fb923c" stroke-width="1.3" marker-end="url(#arr2)" stroke-dasharray="4,2"/>
+        <text x="106" y="117" fill="#64748b" font-size="8.5">import { auth }</text>
+        <rect x="295" y="38" width="170" height="90" rx="9" fill="rgba(30,64,175,.2)" stroke="#3b82f6" stroke-width="1.8"/>
+        <text x="380" y="58" text-anchor="middle" fill="#93c5fd" font-weight="700">App.js</text>
+        <text x="380" y="74" text-anchor="middle" fill="#94a3b8" font-size="9.5">onAuthStateChanged()</text>
+        <text x="380" y="88" text-anchor="middle" fill="#94a3b8" font-size="9.5">useState(user)</text>
+        <text x="380" y="102" text-anchor="middle" fill="#94a3b8" font-size="9.5">→ pilote AppNavigator</text>
+        <text x="380" y="116" text-anchor="middle" fill="#fcd34d" font-size="9" font-style="italic">Chef d'orchestre</text>
+        <line x1="180" y1="62" x2="293" y2="73" stroke="#93c5fd" stroke-width="1.3" marker-end="url(#arrb2)"/>
+        <text x="220" y="60" fill="#64748b" font-size="8.5">import { auth }</text>
+        <rect x="295" y="165" width="170" height="62" rx="9" fill="rgba(124,58,237,.18)" stroke="#8b5cf6" stroke-width="1.5"/>
+        <text x="380" y="185" text-anchor="middle" fill="#c4b5fd" font-weight="700">AppNavigator.js</text>
+        <text x="380" y="201" text-anchor="middle" fill="#94a3b8" font-size="9.5">user ? &lt;AppStack /&gt;</text>
+        <text x="380" y="215" text-anchor="middle" fill="#94a3b8" font-size="9.5">: &lt;AuthStack /&gt;</text>
+        <line x1="380" y1="128" x2="380" y2="163" stroke="#8b5cf6" stroke-width="1.3" marker-end="url(#arr2)" stroke-dasharray="4,2"/>
+        <text x="386" y="149" fill="#64748b" font-size="8.5">props user</text>
+        <rect x="200" y="268" width="140" height="52" rx="9" fill="rgba(220,38,38,.15)" stroke="#ef4444" stroke-width="1.3"/>
+        <text x="270" y="288" text-anchor="middle" fill="#fca5a5" font-weight="700">AuthStack.js</text>
+        <text x="270" y="305" text-anchor="middle" fill="#94a3b8" font-size="9.5">Login · Register</text>
+        <rect x="370" y="268" width="140" height="52" rx="9" fill="rgba(5,150,105,.15)" stroke="#10b981" stroke-width="1.3"/>
+        <text x="440" y="288" text-anchor="middle" fill="#6ee7b7" font-weight="700">AppStack.js</text>
+        <text x="440" y="305" text-anchor="middle" fill="#94a3b8" font-size="9.5">Tabs post-connexion</text>
+        <line x1="340" y1="227" x2="290" y2="266" stroke="#ef4444" stroke-width="1.2" marker-end="url(#arr2)"/>
+        <line x1="420" y1="227" x2="440" y2="266" stroke="#34d399" stroke-width="1.2" marker-end="url(#arrg2)"/>
+        <text x="245" y="254" fill="#ef4444" font-size="8.5">user=null</text>
+        <text x="424" y="254" fill="#34d399" font-size="8.5">user≠null</text>
+        <rect x="130" y="358" width="140" height="50" rx="9" fill="rgba(220,38,38,.1)" stroke="#991b1b" stroke-width="1.2" stroke-dasharray="5,2"/>
+        <text x="200" y="378" text-anchor="middle" fill="#fca5a5" font-weight="600" font-size="10">LoginScreen.js</text>
+        <text x="200" y="394" text-anchor="middle" fill="#64748b" font-size="9">import signIn()</text>
+        <line x1="240" y1="320" x2="210" y2="356" stroke="#991b1b" stroke-width="1.1" marker-end="url(#arr2)" stroke-dasharray="3,2"/>
+        <rect x="370" y="358" width="140" height="50" rx="9" fill="rgba(5,150,105,.1)" stroke="#065f46" stroke-width="1.2" stroke-dasharray="5,2"/>
+        <text x="440" y="378" text-anchor="middle" fill="#6ee7b7" font-weight="600" font-size="10">HomeScreen.js</text>
+        <text x="440" y="394" text-anchor="middle" fill="#64748b" font-size="9">import logOut()</text>
+        <line x1="440" y1="320" x2="440" y2="356" stroke="#065f46" stroke-width="1.1" marker-end="url(#arrg2)" stroke-dasharray="3,2"/>
+        <line x1="100" y1="206" x2="100" y2="375" stroke="#fbbf24" stroke-width="1.1" stroke-dasharray="3,2"/>
+        <line x1="100" y1="375" x2="128" y2="378" stroke="#fbbf24" stroke-width="1.1" marker-end="url(#arr2)" stroke-dasharray="3,2"/>
+        <text x="8" y="305" fill="#64748b" font-size="8.5">import</text>
+        <text x="4" y="317" fill="#64748b" font-size="8.5">signIn()</text>
+        <rect x="580" y="38" width="160" height="62" rx="9" fill="rgba(255,193,7,.08)" stroke="#fbbf24" stroke-width="1.3" stroke-dasharray="6,3"/>
+        <text x="660" y="58" text-anchor="middle" fill="#fcd34d" font-weight="700">☁ Firebase</text>
+        <text x="660" y="74" text-anchor="middle" fill="#94a3b8" font-size="9.5">Serveurs Google</text>
+        <text x="660" y="88" text-anchor="middle" fill="#94a3b8" font-size="9.5">Auth · Firestore</text>
+        <line x1="465" y1="69" x2="578" y2="62" stroke="#fbbf24" stroke-width="1.2" marker-end="url(#arr2)"/>
+        <text x="488" y="58" fill="#64748b" font-size="8">écoute</text>
+        <line x1="20" y1="408" x2="55" y2="408" stroke="#fb923c" stroke-width="1.3"/>
+        <text x="60" y="412" fill="#94a3b8" font-size="9">Import direct</text>
+        <line x1="140" y1="408" x2="175" y2="408" stroke="#fb923c" stroke-width="1.3" stroke-dasharray="4,2"/>
+        <text x="180" y="412" fill="#94a3b8" font-size="9">Import indirect</text>
+        <line x1="290" y1="408" x2="325" y2="408" stroke="#34d399" stroke-width="1.3"/>
+        <text x="330" y="412" fill="#94a3b8" font-size="9">user connecté</text>
+        <line x1="420" y1="408" x2="455" y2="408" stroke="#ef4444" stroke-width="1.3"/>
+        <text x="460" y="412" fill="#94a3b8" font-size="9">user null</text>
+      </svg>
+    </div>
+    <div class="explain-box" style="margin-top:1rem">
+      <div class="explain-step"><div class="explain-num">1</div><div>
+        <h4><code>services/firebase.js</code> — La source unique de vérité Firebase</h4>
+        <p>Initialise Firebase <b>une seule fois</b> et exporte les instances <code>auth</code> et <code>db</code>. Tous les autres fichiers importent depuis ici — jamais ils n'appellent <code>initializeApp()</code> eux-mêmes. C'est le seul fichier qui connaît les clés de configuration.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">2</div><div>
+        <h4><code>services/authService.js</code> — Les fonctions Auth centralisées</h4>
+        <p>Importe <code>auth</code> depuis <code>firebase.js</code> et expose des fonctions simples : <code>signUp</code>, <code>signIn</code>, <code>logOut</code>. Les écrans n'importent jamais le SDK Firebase directement — ils passent par ce service. Avantage : si Firebase change d'API, on ne modifie qu'un seul fichier.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">3</div><div>
+        <h4><code>App.js</code> — Le chef d'orchestre (pièce clé 🔑)</h4>
+        <p>Importe <code>auth</code> et écoute <code>onAuthStateChanged</code>. Quand l'état change, il met à jour <code>user</code> en state. C'est ce state qui décide quel Navigator afficher. <b>Ni LoginScreen, ni HomeScreen n'ont besoin de naviguer manuellement</b> — App.js réagit automatiquement à chaque changement d'état.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">4</div><div>
+        <h4><code>navigation/AppNavigator.js</code> — L'aiguilleur Auth ↔ App</h4>
+        <p>Reçoit <code>user</code> en prop depuis App.js. Si <code>user</code> est un objet → affiche <code>AppStack</code>. Si <code>null</code> → affiche <code>AuthStack</code>. Ce composant ne fait rien d'autre — logique minimale, impact maximal.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">5</div><div>
+        <h4><code>screens/LoginScreen.js</code> — Utilise le service, ignore Firebase</h4>
+        <p>Importe uniquement <code>signIn()</code> depuis <code>authService.js</code>. Après l'appel, <b>ne navigue jamais manuellement</b> — Firebase notifie App.js via <code>onAuthStateChanged</code>, App.js met à jour <code>user</code>, AppNavigator bascule vers AppStack. Tout est automatique et réactif.</p>
+      </div></div>
+    </div>
+    <p style="font-size:.82rem;font-weight:700;color:#fb923c;margin:1.1rem 0 .5rem">🔄 Le flux complet pas-à-pas</p>
+    <div class="explain-box">
+      <div class="explain-step"><div class="explain-num">①</div><div>
+        <h4>Utilisateur saisit email + mot de passe → appuie sur "Se connecter"</h4>
+        <p><code>LoginScreen.handleLogin()</code> est appelé.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">②</div><div>
+        <h4><code>authService.signIn(email, password)</code> est appelé</h4>
+        <p>Qui appelle en interne <code>signInWithEmailAndPassword(auth, email, password)</code> du SDK Firebase.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">③</div><div>
+        <h4>Le SDK Firebase contacte les serveurs Google</h4>
+        <p>Si les identifiants sont corrects → Firebase génère un token JWT et le sauvegarde dans AsyncStorage.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">④</div><div>
+        <h4><code>onAuthStateChanged</code> se déclenche automatiquement dans <code>App.js</code></h4>
+        <p>Firebase notifie tous ses listeners actifs. <code>setUser(firebaseUser)</code> est appelé avec l'objet User.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">⑤</div><div>
+        <h4>React re-rend <code>App.js</code> → <code>!!user</code> vaut <code>true</code></h4>
+        <p><code>AppNavigator</code> reçoit <code>user ≠ null</code> → affiche <code>AppStack</code>. L'écran Login disparaît automatiquement — sans <code>navigation.navigate()</code>.</p>
+      </div></div>
+    </div>
+    <div class="call cgr" style="margin-top:.9rem"><span class="ci">💡</span><span><b>La beauté du pattern réactif :</b> <code>LoginScreen</code> n'a jamais besoin de naviguer. Il fait son travail (appeler Firebase), et c'est l'état <code>user</code> dans App.js qui pilote toute la navigation. C'est le principe <b>"state-driven navigation"</b> — l'UI suit l'état, pas l'inverse.</span></div>
+    <p style="font-size:.82rem;font-weight:700;color:var(--txm);margin:1.1rem 0 .4rem">Code des fichiers clés — cliquer pour développer :</p>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>📄 <code>services/authService.js</code> — Fonctions Auth centralisées</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <div class="cb" style="margin:0"><pre><span class="cm">// ─── services/authService.js ─────────────────────────────────────────────────
+// Centralise TOUTES les opérations Firebase Auth
+// Les écrans importent ces fonctions — jamais le SDK Firebase directement
+// Avantage : si Firebase change d'API, on modifie un seul fichier</span>
+
+<span class="kw">import</span> {
+  <span class="fn">createUserWithEmailAndPassword</span>,
+  <span class="fn">signInWithEmailAndPassword</span>,
+  <span class="fn">signOut</span>
+} <span class="kw">from</span> <span class="st">'firebase/auth'</span>;
+<span class="cm">// On importe l'instance auth depuis firebase.js — jamais on ne la recrée</span>
+<span class="kw">import</span> { auth } <span class="kw">from</span> <span class="st">'./firebase'</span>;
+
+<span class="cm">// ── Inscription ──────────────────────────────────────────────────────────────
+// Retourne une Promise avec UserCredential si succès
+// Lance une erreur avec err.code si échec (email déjà pris, mdp trop court…)</span>
+<span class="kw">export const</span> <span class="fn">signUp</span> = (email, password) => {
+  <span class="kw">return</span> <span class="fn">createUserWithEmailAndPassword</span>(auth, email, password);
+};
+
+<span class="cm">// ── Connexion ────────────────────────────────────────────────────────────────</span>
+<span class="kw">export const</span> <span class="fn">signIn</span> = (email, password) => {
+  <span class="kw">return</span> <span class="fn">signInWithEmailAndPassword</span>(auth, email, password);
+};
+
+<span class="cm">// ── Déconnexion ──────────────────────────────────────────────────────────────
+// Après l'appel, onAuthStateChanged reçoit null → App.js bascule vers AuthStack</span>
+<span class="kw">export const</span> <span class="fn">logOut</span> = () => {
+  <span class="kw">return</span> <span class="fn">signOut</span>(auth);
+};</pre></div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>📄 <code>App.js</code> — Chef d'orchestre avec <code>onAuthStateChanged</code></span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <div class="cb" style="margin:0"><pre><span class="cm">// ─── App.js ──────────────────────────────────────────────────────────────────
+// Point d'entrée de l'app. Son seul rôle Firebase : écouter l'état d'auth
+// et passer l'info à AppNavigator. Toute la navigation découle de ce state.</span>
+
+<span class="kw">import</span> { useState, useEffect }    <span class="kw">from</span> <span class="st">'react'</span>;
+<span class="kw">import</span> { <span class="cp">NavigationContainer</span> }    <span class="kw">from</span> <span class="st">'@react-navigation/native'</span>;
+<span class="kw">import</span> { <span class="cp">ActivityIndicator</span>, <span class="cp">View</span> } <span class="kw">from</span> <span class="st">'react-native'</span>;
+<span class="kw">import</span> { <span class="fn">onAuthStateChanged</span> }      <span class="kw">from</span> <span class="st">'firebase/auth'</span>;
+<span class="kw">import</span> { auth }                    <span class="kw">from</span> <span class="st">'./services/firebase'</span>;
+<span class="kw">import</span> <span class="cp">AppNavigator</span>               <span class="kw">from</span> <span class="st">'./navigation/AppNavigator'</span>;
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="cm">// undefined → Firebase n'a pas encore répondu (état initial)
+  // null      → déconnecté | objet User → connecté</span>
+  <span class="kw">const</span> [user, setUser] = <span class="fn">useState</span>(<span class="kw">undefined</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="cm">// onAuthStateChanged s'exécute :
+    // 1) Immédiatement au montage (vérifie la session AsyncStorage)
+    // 2) À chaque connexion / déconnexion</span>
+    <span class="kw">const</span> unsubscribe = <span class="fn">onAuthStateChanged</span>(auth, (firebaseUser) => {
+      <span class="fn">setUser</span>(firebaseUser);
+    });
+    <span class="kw">return</span> unsubscribe; <span class="cm">// cleanup → évite fuite mémoire</span>
+  }, []);
+
+  <span class="cm">// Spinner pendant que Firebase vérifie la session
+  // Sans ça : flash de AuthStack avant confirmation de session</span>
+  <span class="kw">if</span> (user === <span class="kw">undefined</span>) {
+    <span class="kw">return</span> (
+      <span class="tg">&lt;View</span> <span class="at">style</span>={'{'}flex:1,justifyContent:'center',alignItems:'center'{'}'}&gt;
+        <span class="tg">&lt;ActivityIndicator</span> <span class="at">size</span>=<span class="st">"large"</span> /&gt;
+      <span class="tg">&lt;/View&gt;</span>
+    );
   }
-}
 
-<span class="cm">// ─── RÈGLES SÉCURISÉES pour App Quiz ─────────────────────────────────────────
-// Principe du moindre privilège : chaque règle n'autorise QUE ce qui est nécessaire</span>
-rules_version = <span class="st">'2'</span>;
-service cloud.firestore {
-  match /databases/{database}/documents {
+  <span class="kw">return</span> (
+    <span class="tg">&lt;NavigationContainer&gt;</span>
+      <span class="cm">// !!user = true si objet (connecté), false si null (déconnecté)</span>
+      <span class="tg">&lt;AppNavigator</span> <span class="at">user</span>={user} /&gt;
+    <span class="tg">&lt;/NavigationContainer&gt;</span>
+  );
+}</pre></div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span>📄 <code>screens/LoginScreen.js</code> — Utilise le service, ne navigue pas</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <div class="cb" style="margin:0"><pre><span class="cm">// ─── screens/auth/LoginScreen.js ─────────────────────────────────────────────
+// Ce screen NE CONNAÎT PAS Firebase directement — il utilise authService
+// Il NE NAVIGUE PAS manuellement — App.js gère tout via onAuthStateChanged</span>
 
-    <span class="cm">// themes/ → lecture publique (tout le monde peut voir les thèmes)
-    // write interdite côté client (seul le formateur ajoute des thèmes)</span>
-    match /themes/{themeId} {
-      allow read:  <span class="kw">if true</span>;        <span class="cm">// n'importe qui peut lire</span>
-      allow write: <span class="kw">if false</span>;       <span class="cm">// personne ne peut écrire (admin seulement)</span>
+<span class="kw">import</span> { useState }                   <span class="kw">from</span> <span class="st">'react'</span>;
+<span class="kw">import</span> { <span class="cp">View</span>, <span class="cp">Text</span>, <span class="cp">TextInput</span>,
+         <span class="cp">TouchableOpacity</span>, <span class="cp">Alert</span>,
+         <span class="cp">ActivityIndicator</span> }         <span class="kw">from</span> <span class="st">'react-native'</span>;
+<span class="kw">import</span> { <span class="fn">signIn</span> }         <span class="kw">from</span> <span class="st">'../../services/authService'</span>;
+<span class="kw">import</span> { <span class="fn">getErrorMessage</span> } <span class="kw">from</span> <span class="st">'../../utils/firebaseErrors'</span>;
+
+<span class="kw">export default function</span> <span class="fn">LoginScreen</span>() {
+  <span class="kw">const</span> [email,    setEmail]    = <span class="fn">useState</span>(<span class="st">''</span>);
+  <span class="kw">const</span> [password, setPassword] = <span class="fn">useState</span>(<span class="st">''</span>);
+  <span class="kw">const</span> [loading,  setLoading]  = <span class="fn">useState</span>(<span class="nm">false</span>);
+
+  <span class="kw">const</span> <span class="fn">handleLogin</span> = <span class="kw">async</span> () => {
+    <span class="kw">if</span> (!email || !password) {
+      <span class="fn">Alert</span>.<span class="fn">alert</span>(<span class="st">'Erreur'</span>, <span class="st">'Remplis tous les champs.'</span>); <span class="kw">return</span>;
     }
-
-    <span class="cm">// questions/ → lecture si connecté, écriture interdite côté client</span>
-    match /questions/{questionId} {
-      allow read:  <span class="kw">if</span> request.auth != <span class="kw">null</span>;  <span class="cm">// connecté = peut lire</span>
-      allow write: <span class="kw">if false</span>;
+    <span class="fn">setLoading</span>(<span class="nm">true</span>);
+    <span class="kw">try</span> {
+      <span class="kw">await</span> <span class="fn">signIn</span>(email, password);
+      <span class="cm">// ✅ Pas de navigation ici !
+      // Firebase → onAuthStateChanged → setUser() → AppNavigator → AppStack
+      // La bascule est 100% automatique et réactive</span>
+    } <span class="kw">catch</span> (err) {
+      <span class="fn">Alert</span>.<span class="fn">alert</span>(<span class="st">'Connexion échouée'</span>, <span class="fn">getErrorMessage</span>(err.code));
+    } <span class="kw">finally</span> {
+      <span class="fn">setLoading</span>(<span class="nm">false</span>);
     }
+  };
 
-    <span class="cm">// users/ → chaque utilisateur accède uniquement à SES propres données
-    // request.auth.uid = l'uid Firebase de l'utilisateur qui fait la requête
-    // userId = la variable tirée du chemin {userId}</span>
-    match /users/{userId} {
-      allow read, write: <span class="kw">if</span> request.auth != <span class="kw">null</span>
-                         && request.auth.uid == userId;
-      <span class="cm">// La sous-collection history suit les mêmes règles que son parent</span>
-      match /history/{historyId} {
-        allow read, write: <span class="kw">if</span> request.auth != <span class="kw">null</span>
-                           && request.auth.uid == userId;
-      }
-    }
-  }
-}</pre>
+  <span class="kw">return</span> (
+    <span class="tg">&lt;View&gt;</span>
+      <span class="tg">&lt;TextInput</span> <span class="at">value</span>={email}    <span class="at">onChangeText</span>={setEmail}
+        <span class="at">placeholder</span>=<span class="st">"Email"</span> <span class="at">keyboardType</span>=<span class="st">"email-address"</span> <span class="at">autoCapitalize</span>=<span class="st">"none"</span> /&gt;
+      <span class="tg">&lt;TextInput</span> <span class="at">value</span>={password} <span class="at">onChangeText</span>={setPassword}
+        <span class="at">placeholder</span>=<span class="st">"Mot de passe"</span> <span class="at">secureTextEntry</span> /&gt;
+      <span class="tg">&lt;TouchableOpacity</span> <span class="at">onPress</span>={handleLogin} <span class="at">disabled</span>={loading}&gt;
+        {loading ? <span class="tg">&lt;ActivityIndicator</span> /&gt; : <span class="tg">&lt;Text&gt;</span>Se connecter<span class="tg">&lt;/Text&gt;</span>}
+      <span class="tg">&lt;/TouchableOpacity&gt;</span>
+    <span class="tg">&lt;/View&gt;</span>
+  );
+}</pre></div>
+        </div>
+      </div>
     </div>
   </div>
+
+
+  
 
 </div><!-- /s5 -->
 
@@ -556,12 +687,11 @@ service cloud.firestore {
   </div>
   <div class="pw"><div class="pb2" style="width:100%"></div></div>
 
-  <!-- ═ BLOC 1 : Modèle de données ═ -->
   <div class="card">
     <div class="ct">📐 Modèle de données App Quiz — Collections & Documents</div>
     <div class="analogy">
       <div class="analogy-lbl">💡 Analogie</div>
-      <p>Firestore, c'est comme un <b>classeur à tiroirs</b>. Chaque tiroir est une <b>collection</b> (ex: <code>users/</code>). Dans chaque tiroir, des <b>dossiers</b> — les <b>documents</b>. Chaque dossier contient des <b>champs</b> (texte, nombre, date…). Un dossier peut aussi contenir des <b>sous-tiroirs</b> : les <b>sous-collections</b>. Contrairement à SQL, pas de schéma fixe — chaque document peut avoir des champs différents.</p>
+      <p>Firestore, c'est comme un <b>classeur à tiroirs</b>. Chaque tiroir est une <b>collection</b>. Dans chaque tiroir, des <b>dossiers</b> — les <b>documents</b>. Chaque dossier contient des <b>champs</b>. Un dossier peut aussi contenir des <b>sous-collections</b>.</p>
     </div>
     <div class="fs-model">
       <div class="fs-col">
@@ -591,250 +721,117 @@ service cloud.firestore {
         <div class="fs-field"><span>date</span><span class="fs-type">timestamp</span></div>
       </div>
     </div>
-    <table class="tbl">
-      <thead><tr><th>Concept</th><th>SQL équivalent</th><th>Exemple App Quiz</th></tr></thead>
-      <tbody>
-        <tr><td><b>Collection</b></td><td>Table</td><td><code>themes</code>, <code>questions</code>, <code>users</code></td></tr>
-        <tr><td><b>Document</b></td><td>Ligne (row)</td><td><code>themes/abc123</code> → <code>{'{'} name: "JavaScript" {'}'}</code></td></tr>
-        <tr><td><b>Champ</b></td><td>Colonne (column)</td><td><code>name</code>, <code>icon</code>, <code>questionCount</code></td></tr>
-        <tr><td><b>Sous-collection</b></td><td>Table liée (JOIN)</td><td><code>users/uid/history</code></td></tr>
-        <tr><td><b>ID document</b></td><td>Clé primaire</td><td>Auto-généré par Firestore ou personnalisé (ex: uid)</td></tr>
-      </tbody>
-    </table>
   </div>
 
-  <!-- ═ BLOC 2 : CRUD ═ -->
   <div class="card">
     <div class="ct">⚡ CRUD Firestore — Lire, Créer, Modifier, Supprimer</div>
-    <p style="font-size:.82rem;color:var(--txm);margin:.4rem 0 .9rem">Exemples — cliquer pour développer :</p>
     <div class="accordion">
       <div class="acc-item">
         <button class="acc-btn" onclick="acc(this)"><span>📖 R — Lire une collection complète (<code>getDocs</code>)</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <div class="cb" style="margin:0"><pre><span class="cm">// ─── IMPORTS ─────────────────────────────────────────────────────────────────
-// collection() : référence vers une collection Firestore
-// getDocs()    : récupère TOUS les documents d'une collection (one-shot, pas temps réel)</span>
-<span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">getDocs</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">getDocs</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
 <span class="kw">import</span> { db } <span class="kw">from</span> <span class="st">'../services/firebase'</span>;
 
 <span class="kw">const</span> <span class="fn">chargerThemes</span> = <span class="kw">async</span> () => {
-  <span class="cm">// collection(db, 'themes') : crée une référence vers la collection "themes"
-  // Elle n'effectue pas encore de requête — c'est juste un pointeur</span>
-  <span class="kw">const</span> collectionRef = <span class="fn">collection</span>(db, <span class="st">'themes'</span>);
-
-  <span class="cm">// getDocs() : envoie la vraie requête à Firestore et attend la réponse
-  // Retourne un QuerySnapshot : un objet qui contient tous les documents trouvés</span>
-  <span class="kw">const</span> snapshot = <span class="kw">await</span> <span class="fn">getDocs</span>(collectionRef);
-
-  <span class="cm">// snapshot.docs : tableau des DocumentSnapshot
-  // .map() pour transformer chaque doc en objet JS exploitable :
-  //   doc.id   = l'identifiant unique du document dans Firestore
-  //   doc.data() = l'objet avec tous les champs du document</span>
-  <span class="kw">const</span> themes = snapshot.docs.<span class="fn">map</span>(doc => ({
-    id:   doc.id,        <span class="cm">// ex: "abc123"</span>
-    ...doc.<span class="fn">data</span>(),      <span class="cm">// spread : copie tous les champs du document</span>
-                         <span class="cm">// ex: name: "JavaScript", icon: "🟡", questionCount: 10</span>
-  }));
+  <span class="kw">const</span> snapshot = <span class="kw">await</span> <span class="fn">getDocs</span>(<span class="fn">collection</span>(db, <span class="st">'themes'</span>));
+  <span class="kw">const</span> themes = snapshot.docs.<span class="fn">map</span>(doc => ({ id: doc.id, ...doc.<span class="fn">data</span>() }));
   <span class="kw">return</span> themes;
 };</pre></div>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span>🔍 R — Filtrer avec <code>where</code> — questions d'un thème</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span>🔍 R — Filtrer avec <code>where</code></span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <div class="cb" style="margin:0"><pre><span class="cm">// query() et where() permettent de filtrer les résultats — comme un WHERE SQL
-// On importe les fonctions nécessaires</span>
-<span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">query</span>, <span class="fn">where</span>, <span class="fn">getDocs</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">query</span>, <span class="fn">where</span>, <span class="fn">getDocs</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
 
 <span class="kw">const</span> <span class="fn">chargerQuestions</span> = <span class="kw">async</span> (themeId) => {
-  <span class="cm">// Étape 1 : référence vers la collection "questions"</span>
-  <span class="kw">const</span> questionsRef = <span class="fn">collection</span>(db, <span class="st">'questions'</span>);
-
-  <span class="cm">// Étape 2 : créer une requête filtrée
-  // where('themeId', '==', themeId) = "WHERE themeId = 'leThemeVoulu'"
-  // → retourne uniquement les documents où le champ themeId correspond</span>
-  <span class="kw">const</span> q = <span class="fn">query</span>(questionsRef, <span class="fn">where</span>(<span class="st">'themeId'</span>, <span class="st">'=='</span>, themeId));
-
-  <span class="cm">// Étape 3 : exécuter la requête filtrée (getDocs avec la query, pas la collection directe)</span>
+  <span class="kw">const</span> q = <span class="fn">query</span>(<span class="fn">collection</span>(db, <span class="st">'questions'</span>), <span class="fn">where</span>(<span class="st">'themeId'</span>, <span class="st">'=='</span>, themeId));
   <span class="kw">const</span> snapshot = <span class="kw">await</span> <span class="fn">getDocs</span>(q);
-
-  <span class="kw">const</span> questions = snapshot.docs.<span class="fn">map</span>(doc => ({
-    id: doc.id,
-    ...doc.<span class="fn">data</span>(),
-    <span class="cm">// ex: themeId: "js", question: "Qu'est-ce que let ?",
-    //     answers: ["var", "let", "const", "new"],
-    //     correctIndex: 1</span>
-  }));
-  <span class="kw">return</span> questions;
+  <span class="kw">return</span> snapshot.docs.<span class="fn">map</span>(doc => ({ id: doc.id, ...doc.<span class="fn">data</span>() }));
 };</pre></div>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span>✏️ C — Créer un document (<code>setDoc</code> avec ID choisi)</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span>✏️ C — Créer avec ID choisi (<code>setDoc</code>)</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <p style="font-size:.82rem;color:var(--txm);margin-bottom:.7rem"><code>setDoc</code> = créer ou remplacer un document avec l'ID de ton choix (ex: uid de l'utilisateur). <code>addDoc</code> = créer avec un ID auto-généré par Firestore.</p>
-          <div class="cb" style="margin:0"><pre><span class="cm">// setDoc vs addDoc :
-// setDoc(ref, data) → tu choisis l'ID (ex: l'uid Firebase de l'utilisateur)
-// addDoc(collection, data) → Firestore génère un ID aléatoire automatiquement</span>
-<span class="kw">import</span> { <span class="fn">doc</span>, <span class="fn">setDoc</span>, <span class="fn">serverTimestamp</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
-<span class="kw">import</span> { auth, db } <span class="kw">from</span> <span class="st">'../services/firebase'</span>;
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { <span class="fn">doc</span>, <span class="fn">setDoc</span>, <span class="fn">serverTimestamp</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
 
-<span class="kw">const</span> <span class="fn">creerProfilUtilisateur</span> = <span class="kw">async</span> (pseudo) => {
-  <span class="cm">// auth.currentUser.uid = l'ID unique Firebase de l'utilisateur connecté
-  // On l'utilise comme ID du document pour retrouver facilement ses données</span>
+<span class="kw">const</span> <span class="fn">creerProfil</span> = <span class="kw">async</span> (pseudo) => {
   <span class="kw">const</span> uid = auth.currentUser.uid;
-
-  <span class="cm">// doc(db, 'users', uid) : référence vers le document "users/[uid]"
-  // Si le document n'existe pas → setDoc le crée
-  // Si le document existe déjà → setDoc le REMPLACE entièrement</span>
-  <span class="kw">const</span> userRef = <span class="fn">doc</span>(db, <span class="st">'users'</span>, uid);
-
-  <span class="cm">// setDoc() : écrit les données dans le document référencé
-  // serverTimestamp() : horodatage côté serveur Firebase (pas l'heure du téléphone)</span>
-  <span class="kw">await</span> <span class="fn">setDoc</span>(userRef, {
-    pseudo:    pseudo,
-    email:     auth.currentUser.email,
-    createdAt: <span class="fn">serverTimestamp</span>(), <span class="cm">// ← toujours utiliser le timestamp serveur pour la cohérence</span>
+  <span class="kw">await</span> <span class="fn">setDoc</span>(<span class="fn">doc</span>(db, <span class="st">'users'</span>, uid), {
+    pseudo, email: auth.currentUser.email, createdAt: <span class="fn">serverTimestamp</span>(),
   });
 };</pre></div>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span>➕ C — Ajouter avec ID auto (<code>addDoc</code>) — sauvegarder un score</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span>➕ C — Ajouter avec ID auto (<code>addDoc</code>)</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <div class="cb" style="margin:0"><pre><span class="cm">// addDoc : ajouter un document avec un ID généré automatiquement par Firestore
-// Utile pour les sous-collections history où l'ID importe peu</span>
-<span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">addDoc</span>, <span class="fn">serverTimestamp</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">addDoc</span>, <span class="fn">serverTimestamp</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
 
 <span class="kw">const</span> <span class="fn">sauvegarderScore</span> = <span class="kw">async</span> (themeId, score, total) => {
   <span class="kw">const</span> uid = auth.currentUser.uid;
-
-  <span class="cm">// La sous-collection history est dans le document de l'utilisateur
-  // collection(db, 'users', uid, 'history') = "users/{uid}/history"</span>
-  <span class="kw">const</span> historyRef = <span class="fn">collection</span>(db, <span class="st">'users'</span>, uid, <span class="st">'history'</span>);
-
-  <span class="cm">// addDoc ajoute un nouveau document — Firestore génère l'ID
-  // Retourne une référence vers le document créé (avec son nouvel ID)</span>
-  <span class="kw">const</span> docRef = <span class="kw">await</span> <span class="fn">addDoc</span>(historyRef, {
-    themeId:  themeId,
-    score:    score,         <span class="cm">// ex: 7</span>
-    total:    total,         <span class="cm">// ex: 10</span>
-    date:     <span class="fn">serverTimestamp</span>(),
+  <span class="kw">await</span> <span class="fn">addDoc</span>(<span class="fn">collection</span>(db, <span class="st">'users'</span>, uid, <span class="st">'history'</span>), {
+    themeId, score, total, date: <span class="fn">serverTimestamp</span>(),
   });
-  console.<span class="fn">log</span>(<span class="st">'Score sauvegardé, ID doc :'</span>, docRef.id);
 };</pre></div>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span>🔄 U — Modifier partiellement un document (<code>updateDoc</code>)</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span>🔄 U — Modifier partiellement (<code>updateDoc</code>)</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <div class="cb" style="margin:0"><pre><span class="cm">// updateDoc vs setDoc :
-// setDoc     → remplace le document ENTIÈREMENT (les champs non mentionnés sont perdus)
-// updateDoc  → modifie seulement les champs spécifiés, le reste est conservé</span>
-<span class="kw">import</span> { <span class="fn">doc</span>, <span class="fn">updateDoc</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { <span class="fn">doc</span>, <span class="fn">updateDoc</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
 
 <span class="kw">const</span> <span class="fn">modifierPseudo</span> = <span class="kw">async</span> (nouveauPseudo) => {
-  <span class="kw">const</span> uid = auth.currentUser.uid;
-
-  <span class="cm">// doc(db, 'users', uid) → référence vers le document de l'utilisateur</span>
-  <span class="kw">const</span> userRef = <span class="fn">doc</span>(db, <span class="st">'users'</span>, uid);
-
-  <span class="cm">// updateDoc modifie seulement le champ "pseudo"
-  // les autres champs (email, createdAt) sont préservés</span>
-  <span class="kw">await</span> <span class="fn">updateDoc</span>(userRef, {
-    pseudo: nouveauPseudo, <span class="cm">// ← seul ce champ est modifié</span>
-  });
+  <span class="kw">await</span> <span class="fn">updateDoc</span>(<span class="fn">doc</span>(db, <span class="st">'users'</span>, auth.currentUser.uid), { pseudo: nouveauPseudo });
 };</pre></div>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span>🔴 D — Supprimer un document (<code>deleteDoc</code>)</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span>🔴 Temps réel — <code>onSnapshot</code></span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
-          <div class="cb" style="margin:0"><pre><span class="cm">// deleteDoc supprime définitivement un document (et ses champs)
-// ⚠ Ne supprime PAS les sous-collections — à faire séparément si besoin</span>
-<span class="kw">import</span> { <span class="fn">doc</span>, <span class="fn">deleteDoc</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
-
-<span class="kw">const</span> <span class="fn">supprimerEntree</span> = <span class="kw">async</span> (historyId) => {
-  <span class="kw">const</span> uid = auth.currentUser.uid;
-
-  <span class="cm">// Référence vers l'entrée d'historique à supprimer</span>
-  <span class="kw">const</span> docRef = <span class="fn">doc</span>(db, <span class="st">'users'</span>, uid, <span class="st">'history'</span>, historyId);
-
-  <span class="cm">// deleteDoc() supprime le document — irréversible
-  // La Promise se résout quand la suppression est confirmée par Firestore</span>
-  <span class="kw">await</span> <span class="fn">deleteDoc</span>(docRef);
-};</pre></div>
-        </div>
-      </div>
-      <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span>🔴 Temps réel — <code>onSnapshot</code> — écouter les changements en direct</span><span class="acc-arrow">▶</span></button>
-        <div class="acc-content">
-          <p style="font-size:.82rem;color:var(--txm);margin-bottom:.7rem"><code>onSnapshot</code> écoute les changements en temps réel. Contrairement à <code>getDocs</code> qui fait une seule requête, <code>onSnapshot</code> est déclenché à chaque modification du document ou de la collection.</p>
-          <div class="cb" style="margin:0"><pre><span class="cm">// onSnapshot : listener temps réel — la callback est appelée immédiatement
-// (avec les données courantes) puis à chaque modification dans Firestore</span>
-<span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">onSnapshot</span>, <span class="fn">orderBy</span>, <span class="fn">query</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
+          <div class="cb" style="margin:0"><pre><span class="kw">import</span> { <span class="fn">collection</span>, <span class="fn">onSnapshot</span>, <span class="fn">orderBy</span>, <span class="fn">query</span> } <span class="kw">from</span> <span class="st">'firebase/firestore'</span>;
 
 <span class="fn">useEffect</span>(() => {
   <span class="kw">const</span> uid = auth.currentUser.uid;
-
-  <span class="cm">// query avec orderBy pour trier les résultats par date décroissante</span>
-  <span class="kw">const</span> historyRef = <span class="fn">query</span>(
-    <span class="fn">collection</span>(db, <span class="st">'users'</span>, uid, <span class="st">'history'</span>),
-    <span class="fn">orderBy</span>(<span class="st">'date'</span>, <span class="st">'desc'</span>)  <span class="cm">// ← plus récent en premier</span>
-  );
-
-  <span class="cm">// onSnapshot retourne une fonction "unsubscribe" (comme onAuthStateChanged)
-  // La callback reçoit un snapshot à chaque modification de la collection</span>
-  <span class="kw">const</span> unsubscribe = <span class="fn">onSnapshot</span>(historyRef, (snapshot) => {
-    <span class="kw">const</span> history = snapshot.docs.<span class="fn">map</span>(doc => ({
-      id: doc.id,
-      ...doc.<span class="fn">data</span>(),
-    }));
-    <span class="fn">setHistory</span>(history); <span class="cm">// ← l'UI se met à jour automatiquement</span>
+  <span class="kw">const</span> q = <span class="fn">query</span>(<span class="fn">collection</span>(db, <span class="st">'users'</span>, uid, <span class="st">'history'</span>), <span class="fn">orderBy</span>(<span class="st">'date'</span>, <span class="st">'desc'</span>));
+  <span class="kw">const</span> unsubscribe = <span class="fn">onSnapshot</span>(q, (snapshot) => {
+    <span class="fn">setHistory</span>(snapshot.docs.<span class="fn">map</span>(doc => ({ id: doc.id, ...doc.<span class="fn">data</span>() })));
   });
-
-  <span class="cm">// Cleanup obligatoire pour éviter les fuites mémoire</span>
   <span class="kw">return</span> unsubscribe;
 }, []);</pre></div>
         </div>
       </div>
     </div>
 
-    <!-- Exercices T5 Firestore -->
     <div style="margin-top:1.5rem;padding-top:1rem;border-top:1px solid #44301a">
       <div class="accordion">
         <div class="acc-item">
-          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fire" style="margin-right:.5rem">T5 · Exo 03</span> Seeder Firestore — ajouter des données</span><span class="acc-arrow">▶</span></button>
+          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fire" style="margin-right:.5rem">T5 · Exo 03</span> Seeder Firestore</span><span class="acc-arrow">▶</span></button>
           <div class="acc-content">
-            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T5Exo03_Seeder.js</code>. Peupler Firestore avec des données initiales via un script.</p>
             <ul class="cl">
-              <li>Créer au moins 2 thèmes dans la collection <code>themes/</code> avec <code>setDoc()</code></li>
-              <li>Créer 5 questions par thème dans <code>questions/</code> avec <code>addDoc()</code> et le bon <code>themeId</code></li>
-              <li>Vérifier dans la console Firebase que les documents sont bien créés</li>
+              <li>Créer 2 thèmes dans <code>themes/</code> avec <code>setDoc()</code></li>
+              <li>Créer 5 questions par thème dans <code>questions/</code> avec <code>addDoc()</code></li>
             </ul>
           </div>
         </div>
         <div class="acc-item">
-          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fire" style="margin-right:.5rem">T5 · Exo 04</span> Charger une liste depuis Firestore</span><span class="acc-arrow">▶</span></button>
+          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fire" style="margin-right:.5rem">T5 · Exo 04</span> Charger depuis Firestore</span><span class="acc-arrow">▶</span></button>
           <div class="acc-content">
-            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T5Exo04_ListeFirestore.js</code>. Charger et afficher les thèmes depuis Firestore.</p>
             <ul class="cl">
               <li>Utiliser <code>getDocs(collection(db, 'themes'))</code> dans un <code>useEffect([], [])</code></li>
-              <li>Transformer le snapshot en tableau d'objets avec <code>.map(doc => ({'{'} id: doc.id, ...doc.data() {'}'}))</code></li>
-              <li>Afficher les thèmes dans une <code>FlatList</code> avec les 3 états loading/data/error</li>
+              <li>Afficher dans une <code>FlatList</code> avec états loading/data/error</li>
             </ul>
           </div>
         </div>
         <div class="acc-item">
-          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fire" style="margin-right:.5rem">T5 · Exo 05</span> Sauvegarder et lire en temps réel</span><span class="acc-arrow">▶</span></button>
+          <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fire" style="margin-right:.5rem">T5 · Exo 05</span> Temps réel avec <code>onSnapshot</code></span><span class="acc-arrow">▶</span></button>
           <div class="acc-content">
-            <p style="font-size:.85rem;color:var(--txm);margin-bottom:.7rem">Créer <code>T5Exo05_TempsReel.js</code>. Une liste mise à jour automatiquement avec <code>onSnapshot</code>.</p>
             <ul class="cl">
-              <li>Un formulaire simple pour saisir un message → <code>addDoc()</code> dans une collection <code>messages/</code></li>
-              <li>Un <code>onSnapshot()</code> qui écoute la collection et met à jour la liste automatiquement</li>
-              <li>Tester : ouvrir l'app sur deux appareils (ou deux onglets Expo Go) → écrire depuis l'un → voir apparaître en temps réel sur l'autre</li>
+              <li>Formulaire → <code>addDoc()</code> dans <code>messages/</code></li>
+              <li><code>onSnapshot()</code> qui écoute et met à jour la liste automatiquement</li>
             </ul>
-            <div class="call cor"><span class="ci">💡</span><span>C'est la puissance de Firestore : la <code>FlatList</code> se rafraîchit sans recharger l'app. N'oublie pas de retourner la fonction <code>unsubscribe</code> dans le cleanup de <code>useEffect</code> !</span></div>
+            <div class="call cor"><span class="ci">💡</span><span>N'oublie pas de retourner la fonction <code>unsubscribe</code> dans le cleanup de <code>useEffect</code> !</span></div>
           </div>
         </div>
       </div>
@@ -852,100 +849,89 @@ service cloud.firestore {
 
   <div class="fr-card">
     <div class="fr-badge">🎯 App Quiz — État au début de J3</div>
-    <p style="font-size:.86rem;color:#cbd5e1;margin-bottom:.9rem">À la fin de J2, l'App Quiz a une navigation complète et fonctionnelle avec des données mockées. En J3, on branche Firebase : le mock disparaît, les vraies données arrivent.</p>
+    <p style="font-size:.86rem;color:#cbd5e1;margin-bottom:.9rem">À la fin de J2, l'App Quiz a une navigation complète avec des données mockées. En J3, on branche Firebase : le mock disparaît, les vraies données arrivent.</p>
     <div class="g2">
       <div>
         <p style="font-size:.75rem;font-weight:700;color:var(--rl);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em">❌ J2 — Mock</p>
         <ul class="cl">
           <li><code>isLoggedIn = useState(false)</code> simulé</li>
-          <li>Questions codées en dur dans le composant</li>
-          <li>Scores affichés mais non sauvegardés</li>
-          <li>Profil statique, pas d'utilisateur réel</li>
+          <li>Questions codées en dur</li>
+          <li>Scores non sauvegardés</li>
         </ul>
       </div>
       <div>
         <p style="font-size:.75rem;font-weight:700;color:var(--gl);margin-bottom:.5rem;text-transform:uppercase;letter-spacing:.06em">✅ J3 — Firebase branché</p>
         <ul class="cl">
           <li><code>onAuthStateChanged</code> — état réel</li>
-          <li>Questions chargées depuis Firestore</li>
-          <li>Score sauvegardé dans <code>users/uid/history</code></li>
-          <li>Profil affiche email + historique des parties</li>
+          <li>Questions depuis Firestore</li>
+          <li>Scores dans <code>users/uid/history</code></li>
         </ul>
       </div>
     </div>
   </div>
 
   <div class="card">
-    <div class="ct">🗺 Plan de migration J2 → J3 — étapes dans l'ordre</div>
+    <div class="ct">🗺 Plan de migration J2 → J3</div>
     <div class="accordion">
       <div class="acc-item">
         <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 1</span> Installer Firebase + créer <code>services/firebase.js</code></span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
           <ul class="cl">
-            <li>Créer le projet Firebase sur la console, activer Auth email/password</li>
+            <li>Créer le projet Firebase, activer Auth email/password</li>
             <li><code>npm install firebase</code> + <code>npx expo install @react-native-async-storage/async-storage</code></li>
-            <li>Créer <code>services/firebase.js</code> avec <code>initializeApp()</code>, <code>initializeAuth()</code> + persistance, <code>getFirestore()</code></li>
-            <li>Vérifier que <code>export {'{'} auth, db {'}'}</code> fonctionne (importer dans App.js et console.log)</li>
+            <li>Créer <code>services/firebase.js</code> et vérifier <code>export { auth, db }</code></li>
           </ul>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 2</span> Brancher Auth sur LoginScreen et RegisterScreen</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 2</span> Brancher Auth sur Login et Register</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
           <ul class="cl">
-            <li>Remplacer le bouton "Se connecter" mock par <code>signInWithEmailAndPassword(auth, email, password)</code></li>
-            <li>Remplacer le bouton "S'inscrire" mock par <code>createUserWithEmailAndPassword(auth, email, password)</code></li>
-            <li>Créer <code>utils/firebaseErrors.js</code> avec la fonction <code>getErrorMessage(code)</code> — afficher les erreurs en français</li>
-            <li>Ajouter les états <code>loading</code> sur les boutons — désactiver pendant l'appel Firebase</li>
+            <li>Remplacer les mocks par <code>signInWithEmailAndPassword()</code> et <code>createUserWithEmailAndPassword()</code></li>
+            <li>Créer <code>utils/firebaseErrors.js</code> avec <code>getErrorMessage()</code></li>
           </ul>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 3</span> Migrer App.js — remplacer le booléen mock par <code>onAuthStateChanged</code></span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 3</span> Migrer App.js — remplacer le mock par <code>onAuthStateChanged</code></span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
           <ul class="cl">
-            <li>Dans <code>App.js</code> : supprimer <code>useState(false)</code> et les callbacks <code>onLogin</code>/<code>onLogout</code></li>
-            <li>Ajouter <code>useEffect</code> avec <code>onAuthStateChanged(auth, (user) => setUser(user))</code></li>
-            <li>Retourner la fonction <code>unsubscribe</code> dans le cleanup du <code>useEffect</code></li>
-            <li>Remplacer <code>isLoggedIn</code> par <code>!!user</code> dans le rendu conditionnel</li>
-            <li>Ajouter un état <code>undefined</code> initial pour afficher un splash pendant la vérification de session</li>
+            <li>Supprimer <code>useState(false)</code> mock</li>
+            <li>Ajouter <code>onAuthStateChanged(auth, (user) => setUser(user))</code></li>
+            <li>Retourner <code>unsubscribe</code> dans le cleanup</li>
           </ul>
-          <div class="call cam"><span class="ci">⚠️</span><span>Si <code>user === undefined</code> au démarrage → afficher un <code>&lt;ActivityIndicator&gt;</code> le temps que Firebase vérifie la session. Sans ça, un bref flash de <code>AuthStack</code> peut apparaître avant que Firebase confirme que l'utilisateur est connecté.</span></div>
+          <div class="call cam"><span class="ci">⚠️</span><span>Si <code>user === undefined</code> → afficher <code>&lt;ActivityIndicator&gt;</code> pour éviter le flash de AuthStack.</span></div>
         </div>
       </div>
       <div class="acc-item">
         <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 4</span> Créer le profil Firestore à l'inscription</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
           <ul class="cl">
-            <li>Après <code>createUserWithEmailAndPassword()</code> → appeler <code>setDoc(doc(db, 'users', uid), {'{'} pseudo, email, createdAt: serverTimestamp() {'}'})</code></li>
-            <li>Gérer le cas d'erreur séparément : si le compte est créé mais le setDoc échoue, l'utilisateur est quand même connecté</li>
+            <li>Après <code>createUserWithEmailAndPassword()</code> → <code>setDoc(doc(db, 'users', uid), { pseudo, email, createdAt: serverTimestamp() })</code></li>
           </ul>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 5</span> Seeder Firestore + charger les questions dans QuizScreen</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 5</span> Seeder + charger les questions</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
           <ul class="cl">
-            <li>Créer un fichier <code>scripts/seedFirestore.js</code> pour peupler : 3 thèmes + 10 questions chacun</li>
-            <li>Dans <code>QuizScreen</code> : remplacer les questions mockées par un <code>useEffect</code> avec <code>getDocs(query(collection(db, 'questions'), where('themeId', '==', themeId)))</code></li>
-            <li>Gérer les 3 états loading/data/error pendant le chargement des questions</li>
+            <li>3 thèmes + 10 questions chacun dans Firestore</li>
+            <li>Dans <code>QuizScreen</code> : <code>getDocs(query(collection(db,'questions'), where('themeId','==',themeId)))</code></li>
           </ul>
         </div>
       </div>
       <div class="acc-item">
-        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 6</span> Sauvegarder le score + afficher l'historique</span><span class="acc-arrow">▶</span></button>
+        <button class="acc-btn" onclick="acc(this)"><span><span class="xbadge xb-fr" style="margin-right:.5rem">FR · Étape 6</span> Sauvegarder le score + historique</span><span class="acc-arrow">▶</span></button>
         <div class="acc-content">
           <ul class="cl">
-            <li>Dans <code>ResultScreen</code> : après affichage du score → <code>addDoc(collection(db, 'users', uid, 'history'), {'{'} themeId, score, total, date: serverTimestamp() {'}'})</code></li>
-            <li>Dans <code>ProfileScreen</code> : charger l'historique avec <code>onSnapshot(query(collection(db, 'users', uid, 'history'), orderBy('date', 'desc')))</code></li>
-            <li>Afficher chaque entrée dans une <code>FlatList</code> : thème, score/total, date formatée</li>
-            <li>Ajouter un bouton "Se déconnecter" : <code>signOut(auth)</code> → <code>onAuthStateChanged</code> bascule automatiquement vers <code>AuthStack</code></li>
+            <li>Dans <code>ResultScreen</code> : <code>addDoc(collection(db,'users',uid,'history'), { themeId, score, total, date: serverTimestamp() })</code></li>
+            <li>Dans <code>ProfileScreen</code> : <code>onSnapshot</code> + <code>orderBy('date','desc')</code></li>
+            <li>Bouton "Se déconnecter" → <code>signOut(auth)</code></li>
           </ul>
         </div>
       </div>
     </div>
   </div>
-
 </div><!-- /filrouge -->
 
 <!-- ══════ QCM ══════ -->
@@ -957,7 +943,6 @@ service cloud.firestore {
   <div class="call cgr"><span class="ci">📝</span><span>Sélectionne une réponse par question puis clique sur <b>"Valider mes réponses"</b>.</span></div>
 
   <div class="qcm-wrap" id="qcm-container" style="margin-top:1.2rem">
-
     <div class="qcm-item"><div class="qcm-num">Question 1 / 10 · Firebase Auth</div>
       <div class="qcm-q">Quelle fonction Firebase permet de créer un nouveau compte avec email et mot de passe ?</div>
       <div class="qopt">
@@ -966,64 +951,58 @@ service cloud.firestore {
         <button class="qo" data-correct="false" onclick="sel(this)">C. <code>auth.createAccount(email, password)</code><span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">D. <code>signUpWithEmailAndPassword(auth, email, password)</code><span class="mk"></span></button>
       </div>
-      <div class="qexpl">createUserWithEmailAndPassword() est la fonction officielle Firebase. Elle prend en paramètres l'instance auth et les identifiants. Elle retourne une Promise avec un UserCredential contenant user.uid, user.email etc.</div>
+      <div class="qexpl">createUserWithEmailAndPassword() est la fonction officielle Firebase. Elle retourne une Promise avec UserCredential contenant user.uid, user.email etc.</div>
     </div>
-
     <div class="qcm-item"><div class="qcm-num">Question 2 / 10 · onAuthStateChanged</div>
       <div class="qcm-q">Pourquoi faut-il retourner la fonction <code>unsubscribe</code> dans le cleanup du <code>useEffect</code> contenant <code>onAuthStateChanged</code> ?</div>
       <div class="qopt">
         <button class="qo" data-correct="false" onclick="sel(this)">A. Pour déconnecter l'utilisateur automatiquement<span class="mk"></span></button>
         <button class="qo" data-correct="true"  onclick="sel(this)">B. Pour éviter une fuite mémoire quand le composant est démonté<span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">C. C'est optionnel, l'app fonctionne de la même façon sans<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. C'est optionnel<span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">D. Pour empêcher onAuthStateChanged d'être appelé plusieurs fois<span class="mk"></span></button>
       </div>
-      <div class="qexpl">Sans unsubscribe, le listener Firebase continue d'écouter même si le composant a été détruit. Ça provoque des "memory leaks" et des tentatives de mise à jour d'état sur un composant démonté → avertissements React et comportements imprévisibles.</div>
+      <div class="qexpl">Sans unsubscribe, le listener Firebase continue d'écouter même si le composant a été détruit → memory leaks et mises à jour d'état sur un composant démonté.</div>
     </div>
-
     <div class="qcm-item"><div class="qcm-num">Question 3 / 10 · Persistance de session</div>
-      <div class="qcm-q">Pourquoi utilise-t-on <code>initializeAuth</code> avec <code>getReactNativePersistence(AsyncStorage)</code> plutôt que <code>getAuth</code> en React Native ?</div>
+      <div class="qcm-q">Pourquoi utilise-t-on <code>initializeAuth</code> avec <code>getReactNativePersistence(AsyncStorage)</code> ?</div>
       <div class="qopt">
-        <button class="qo" data-correct="false" onclick="sel(this)">A. getAuth() ne fonctionne pas du tout en React Native<span class="mk"></span></button>
-        <button class="qo" data-correct="true"  onclick="sel(this)">B. Pour que la session soit sauvegardée et l'utilisateur reste connecté après fermeture de l'app<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">A. getAuth() ne fonctionne pas en React Native<span class="mk"></span></button>
+        <button class="qo" data-correct="true"  onclick="sel(this)">B. Pour que la session soit sauvegardée et l'utilisateur reste connecté après fermeture<span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">C. Pour accélérer les appels Firebase<span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">D. Pour activer le mode offline de Firebase<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Pour activer le mode offline<span class="mk"></span></button>
       </div>
-      <div class="qexpl">getReactNativePersistence(AsyncStorage) indique à Firebase de sauvegarder le token de session dans AsyncStorage. Sans ça, la session est en mémoire vive → perdue à chaque fermeture de l'app. L'utilisateur devrait se reconnecter à chaque lancement.</div>
+      <div class="qexpl">Sans persistance AsyncStorage, le token de session est perdu à chaque fermeture. L'utilisateur doit se reconnecter à chaque lancement.</div>
     </div>
-
-    <div class="qcm-item"><div class="qcm-num">Question 4 / 10 · Firestore — Structure</div>
+    <div class="qcm-item"><div class="qcm-num">Question 4 / 10 · Firestore</div>
       <div class="qcm-q">Dans Firestore, quelle est la différence entre <code>setDoc</code> et <code>addDoc</code> ?</div>
       <div class="qopt">
         <button class="qo" data-correct="false" onclick="sel(this)">A. setDoc crée, addDoc modifie<span class="mk"></span></button>
         <button class="qo" data-correct="true"  onclick="sel(this)">B. setDoc choisit l'ID (ou remplace), addDoc génère un ID automatiquement<span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">C. addDoc est plus rapide que setDoc<span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">D. Ils font exactement la même chose<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. addDoc est plus rapide<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. Ils font la même chose<span class="mk"></span></button>
       </div>
-      <div class="qexpl">setDoc(doc(db, 'users', uid), data) = tu choisis l'ID du document (ici l'uid Firebase). Si le document existe déjà, il est remplacé. addDoc(collection(db, 'messages'), data) = Firestore génère un ID aléatoire. Utile pour les sous-collections d'historique.</div>
+      <div class="qexpl">setDoc avec un ID choisi (ex: uid). addDoc = ID aléatoire généré par Firestore, utile pour les sous-collections d'historique.</div>
     </div>
-
-    <div class="qcm-item"><div class="qcm-num">Question 5 / 10 · Firestore — Requêtes</div>
-      <div class="qcm-q">Comment charger uniquement les questions d'un thème précis dans Firestore ?</div>
+    <div class="qcm-item"><div class="qcm-num">Question 5 / 10 · Firestore</div>
+      <div class="qcm-q">Comment charger uniquement les questions d'un thème précis ?</div>
       <div class="qopt">
         <button class="qo" data-correct="false" onclick="sel(this)">A. <code>getDocs(collection(db, 'questions', themeId))</code><span class="mk"></span></button>
         <button class="qo" data-correct="true"  onclick="sel(this)">B. <code>getDocs(query(collection(db, 'questions'), where('themeId', '==', themeId)))</code><span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">C. <code>getDocs(filter(collection(db, 'questions'), themeId))</code><span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">D. <code>collection(db, 'questions').filter(q => q.themeId === themeId)</code><span class="mk"></span></button>
       </div>
-      <div class="qexpl">query() + where() permettent de filtrer les documents. where('themeId', '==', themeId) retourne seulement les documents où le champ themeId correspond exactement. C'est l'équivalent d'un WHERE SQL côté Firestore.</div>
+      <div class="qexpl">query() + where() filtrent les documents. where('themeId', '==', themeId) = équivalent d'un WHERE SQL.</div>
     </div>
-
     <div class="qcm-item"><div class="qcm-num">Question 6 / 10 · getDocs vs onSnapshot</div>
       <div class="qcm-q">Quelle est la différence fondamentale entre <code>getDocs</code> et <code>onSnapshot</code> ?</div>
       <div class="qopt">
-        <button class="qo" data-correct="false" onclick="sel(this)">A. getDocs est plus récent et remplace onSnapshot<span class="mk"></span></button>
-        <button class="qo" data-correct="true"  onclick="sel(this)">B. getDocs fait une requête unique, onSnapshot écoute en continu et met à jour à chaque changement<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">A. getDocs est plus récent<span class="mk"></span></button>
+        <button class="qo" data-correct="true"  onclick="sel(this)">B. getDocs = requête unique, onSnapshot = écoute continue et mise à jour à chaque changement<span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">C. onSnapshot ne fonctionne qu'avec les sous-collections<span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">D. getDocs est temps réel, onSnapshot est one-shot<span class="mk"></span></button>
       </div>
-      <div class="qexpl">getDocs = one-shot : envoie une requête, reçoit les données, termine. Idéal pour les données qui changent rarement. onSnapshot = listener permanent : la callback est appelée immédiatement puis à chaque modification. Idéal pour l'historique et les données dynamiques.</div>
+      <div class="qexpl">getDocs = one-shot. onSnapshot = listener permanent appelé à chaque modification. Idéal pour l'historique et les données dynamiques.</div>
     </div>
-
     <div class="qcm-item"><div class="qcm-num">Question 7 / 10 · Règles de sécurité</div>
       <div class="qcm-q">Que signifie <code>request.auth != null</code> dans les règles Firestore ?</div>
       <div class="qopt">
@@ -1032,42 +1011,38 @@ service cloud.firestore {
         <button class="qo" data-correct="false" onclick="sel(this)">C. La requête contient un token d'API valide<span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">D. L'utilisateur a vérifié son email<span class="mk"></span></button>
       </div>
-      <div class="qexpl">request.auth est null si la requête vient d'un utilisateur non connecté. request.auth != null = "l'utilisateur est connecté via Firebase Auth". C'est la condition minimale pour protéger les données — sans elle, n'importe qui peut lire ou écrire.</div>
+      <div class="qexpl">request.auth est null si non connecté. != null = l'utilisateur est connecté via Firebase Auth. Condition minimale pour protéger les données.</div>
     </div>
-
     <div class="qcm-item"><div class="qcm-num">Question 8 / 10 · Règles de sécurité</div>
-      <div class="qcm-q">Comment s'assurer qu'un utilisateur ne peut accéder qu'à ses propres données dans <code>users/{userId}</code> ?</div>
+      <div class="qcm-q">Comment s'assurer qu'un utilisateur n'accède qu'à ses propres données dans <code>users/{userId}</code> ?</div>
       <div class="qopt">
         <button class="qo" data-correct="false" onclick="sel(this)">A. <code>allow read, write: if request.auth != null;</code><span class="mk"></span></button>
         <button class="qo" data-correct="true"  onclick="sel(this)">B. <code>allow read, write: if request.auth != null &amp;&amp; request.auth.uid == userId;</code><span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">C. <code>allow read, write: if userId == auth.currentUser.uid;</code><span class="mk"></span></button>
         <button class="qo" data-correct="false" onclick="sel(this)">D. <code>allow read, write: if true;</code><span class="mk"></span></button>
       </div>
-      <div class="qexpl">request.auth.uid = l'uid de l'utilisateur qui fait la requête. userId = la variable tirée du chemin {userId}. En comparant les deux, on garantit que chaque utilisateur n'accède qu'à son propre document. La réponse A autorise tout le monde à lire les données de tout le monde !</div>
+      <div class="qexpl">request.auth.uid = uid de celui qui fait la requête. En le comparant avec userId du chemin, chaque utilisateur n'accède qu'à son propre document.</div>
     </div>
-
     <div class="qcm-item"><div class="qcm-num">Question 9 / 10 · setDoc vs updateDoc</div>
-      <div class="qcm-q">Tu veux modifier uniquement le pseudo d'un utilisateur sans toucher à son email et sa date de création. Quelle fonction utilises-tu ?</div>
+      <div class="qcm-q">Tu veux modifier uniquement le pseudo sans toucher à l'email et la date de création. Quelle fonction ?</div>
       <div class="qopt">
-        <button class="qo" data-correct="false" onclick="sel(this)">A. <code>setDoc()</code> — en précisant uniquement le champ pseudo<span class="mk"></span></button>
-        <button class="qo" data-correct="true"  onclick="sel(this)">B. <code>updateDoc()</code> — en précisant uniquement le champ pseudo<span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">C. <code>addDoc()</code> — pour ajouter le pseudo<span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">D. <code>setDoc()</code> avec <code>{'{'} merge: true {'}'}</code><span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">A. <code>setDoc()</code><span class="mk"></span></button>
+        <button class="qo" data-correct="true"  onclick="sel(this)">B. <code>updateDoc()</code><span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">C. <code>addDoc()</code><span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. <code>setDoc()</code> avec <code>{ merge: true }</code><span class="mk"></span></button>
       </div>
-      <div class="qexpl">updateDoc() modifie seulement les champs spécifiés, les autres champs sont préservés. setDoc() sans option remplace le document entièrement — email et createdAt seraient perdus. Note : setDoc avec { merge: true } est aussi valide mais updateDoc est la façon idiomatique.</div>
+      <div class="qexpl">updateDoc() modifie seulement les champs spécifiés. setDoc() sans option remplace le document entièrement — les autres champs seraient perdus.</div>
     </div>
-
     <div class="qcm-item"><div class="qcm-num">Question 10 / 10 · Architecture</div>
-      <div class="qcm-q">Après l'appel <code>signOut(auth)</code>, qu'est-ce qui gère automatiquement la redirection vers <code>AuthStack</code> sans navigation manuelle ?</div>
+      <div class="qcm-q">Après <code>signOut(auth)</code>, qu'est-ce qui gère automatiquement la redirection vers <code>AuthStack</code> ?</div>
       <div class="qopt">
-        <button class="qo" data-correct="false" onclick="sel(this)">A. Un middleware Firebase qui détecte la déconnexion<span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">B. <code>navigation.replace('Login')</code> appelé manuellement<span class="mk"></span></button>
-        <button class="qo" data-correct="true"  onclick="sel(this)">C. Le listener <code>onAuthStateChanged</code> reçoit <code>null</code> → <code>setUser(null)</code> → <code>!!user</code> est <code>false</code> → React affiche <code>AuthStack</code><span class="mk"></span></button>
-        <button class="qo" data-correct="false" onclick="sel(this)">D. React Navigation détecte automatiquement la déconnexion<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">A. Un middleware Firebase<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">B. <code>navigation.replace('Login')</code><span class="mk"></span></button>
+        <button class="qo" data-correct="true"  onclick="sel(this)">C. <code>onAuthStateChanged</code> reçoit <code>null</code> → <code>setUser(null)</code> → <code>!!user</code> est <code>false</code> → AuthStack s'affiche<span class="mk"></span></button>
+        <button class="qo" data-correct="false" onclick="sel(this)">D. React Navigation détecte automatiquement<span class="mk"></span></button>
       </div>
-      <div class="qexpl">C'est la beauté du pattern : signOut() → onAuthStateChanged reçoit null → setUser(null) → React re-render → !!user vaut false → AuthStack s'affiche. Pas besoin de navigation.replace() ni de reset de la pile. L'état pilote l'affichage.</div>
+      <div class="qexpl">signOut() → onAuthStateChanged reçoit null → setUser(null) → !!user = false → AuthStack. Pas de navigation.replace() nécessaire. L'état pilote l'affichage.</div>
     </div>
-
   </div>
   <button class="qcm-submit" id="qcm-submit-btn" onclick="submitQcm()">✔ Valider mes réponses</button>
   <div class="qcm-score" id="qcm-score">
@@ -1075,7 +1050,7 @@ service cloud.firestore {
     <div class="score-pct" id="score-pct">—</div>
     <div class="score-msg" id="score-msg">—</div>
   </div>
-</div><!-- /pratique -->
+</div>
 
 <!-- ══════ GLOSSAIRE ══════ -->
 <div id="tab-glossaire" class="pan">
@@ -1087,36 +1062,36 @@ service cloud.firestore {
   <div style="margin-bottom:1.5rem">
     <p style="font-size:.78rem;color:var(--txm);margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600">🔐 Firebase Auth</p>
     <div class="gloss-grid">
-      <div class="gc"><div class="gt">Firebase Auth <span class="gcat">Firebase</span></div><div class="gd">Service Firebase qui gère l'authentification des utilisateurs. Stocke les comptes (email + hash du mot de passe), génère les tokens JWT et gère les sessions. Ne stocke pas les données métier — ça c'est Firestore.</div><div class="ge">Penser "videur de boîte" : vérifie l'identité, délivre un bracelet (token).</div></div>
-      <div class="gc"><div class="gt">createUserWithEmailAndPassword <span class="gcat">Auth</span></div><div class="gd">Crée un nouveau compte Firebase. Retourne une Promise avec UserCredential. Lance une erreur si l'email est déjà utilisé ou si le mot de passe est trop court (min 6 caractères).</div><div class="ge">Après l'appel : user.uid est disponible pour créer le profil Firestore.</div></div>
-      <div class="gc"><div class="gt">onAuthStateChanged <span class="gcat">Auth</span></div><div class="gd">Listener temps réel qui notifie l'app à chaque changement d'état d'authentification. Reçoit un objet User (connecté) ou null (déconnecté). Remplace le booléen mock de J2.</div><div class="ge">Toujours unsubscribe dans le cleanup de useEffect pour éviter les fuites mémoire.</div></div>
-      <div class="gc"><div class="gt">UserCredential <span class="gcat">Auth</span></div><div class="gd">Objet retourné par createUser() et signIn() en cas de succès. Contient la propriété .user avec uid, email, displayName, emailVerified… C'est via cet objet qu'on récupère l'uid pour Firestore.</div><div class="ge">const {'{'} user {'}'} = await signInWithEmailAndPassword(...)</div></div>
-      <div class="gc"><div class="gt">auth.currentUser <span class="gcat">Auth</span></div><div class="gd">Propriété synchrone qui retourne l'utilisateur Firebase actuellement connecté, ou null. Utile pour accéder rapidement à l'uid sans passer par le listener.</div><div class="ge">auth.currentUser?.uid — opérateur ?. pour éviter les crash si null.</div></div>
-      <div class="gc"><div class="gt">Persistance de session <span class="gcat">Auth</span></div><div class="gd">Mécanisme qui sauvegarde le token d'auth entre les relances de l'app. En React Native, on utilise AsyncStorage comme support de persistance via getReactNativePersistence().</div><div class="ge">Sans persistance : l'utilisateur se reconnecte à chaque ouverture de l'app.</div></div>
+      <div class="gc"><div class="gt">Firebase Auth <span class="gcat">Firebase</span></div><div class="gd">Service Firebase qui gère l'authentification. Stocke les comptes, génère les tokens JWT et gère les sessions.</div><div class="ge">Penser "videur de boîte" : vérifie l'identité, délivre un bracelet (token).</div></div>
+      <div class="gc"><div class="gt">createUserWithEmailAndPassword <span class="gcat">Auth</span></div><div class="gd">Crée un nouveau compte Firebase. Retourne une Promise avec UserCredential. Lance une erreur si l'email est déjà utilisé ou mot de passe trop court.</div><div class="ge">Après l'appel : user.uid disponible pour créer le profil Firestore.</div></div>
+      <div class="gc"><div class="gt">onAuthStateChanged <span class="gcat">Auth</span></div><div class="gd">Listener temps réel qui notifie à chaque changement d'état d'auth. Reçoit un objet User (connecté) ou null (déconnecté).</div><div class="ge">Toujours unsubscribe dans le cleanup de useEffect.</div></div>
+      <div class="gc"><div class="gt">UserCredential <span class="gcat">Auth</span></div><div class="gd">Objet retourné par createUser() et signIn(). Contient .user avec uid, email, displayName…</div><div class="ge">const { user } = await signInWithEmailAndPassword(...)</div></div>
+      <div class="gc"><div class="gt">auth.currentUser <span class="gcat">Auth</span></div><div class="gd">Propriété synchrone qui retourne l'utilisateur connecté, ou null.</div><div class="ge">auth.currentUser?.uid — opérateur ?. pour éviter les crash si null.</div></div>
+      <div class="gc"><div class="gt">Persistance de session <span class="gcat">Auth</span></div><div class="gd">Mécanisme qui sauvegarde le token entre les relances de l'app. En React Native, on utilise AsyncStorage via getReactNativePersistence().</div><div class="ge">Sans persistance : reconnexion à chaque ouverture.</div></div>
     </div>
   </div>
 
   <div style="margin-bottom:1.5rem">
     <p style="font-size:.78rem;color:var(--txm);margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600">🗄 Cloud Firestore</p>
     <div class="gloss-grid">
-      <div class="gc"><div class="gt">Collection <span class="gcat">Firestore</span></div><div class="gd">Conteneur de documents dans Firestore — l'équivalent d'une table SQL. Une collection ne peut contenir que des documents. Ex : themes, questions, users.</div><div class="ge">collection(db, 'themes') — crée une référence vers la collection.</div></div>
-      <div class="gc"><div class="gt">Document <span class="gcat">Firestore</span></div><div class="gd">Unité de stockage dans Firestore — l'équivalent d'une ligne SQL. Contient des champs (paires clé/valeur). Peut avoir un ID personnalisé ou auto-généré. Max 1 Mo par document.</div><div class="ge">doc(db, 'users', uid) — référence vers un document précis.</div></div>
-      <div class="gc"><div class="gt">getDocs <span class="gcat">Firestore</span></div><div class="gd">Requête one-shot qui récupère tous les documents d'une collection ou d'une query filtrée. Retourne un QuerySnapshot. À utiliser pour les données qui changent rarement.</div><div class="ge">const snap = await getDocs(collection(db, 'themes'))</div></div>
-      <div class="gc"><div class="gt">onSnapshot <span class="gcat">Firestore</span></div><div class="gd">Listener temps réel. La callback est appelée immédiatement puis à chaque modification de la collection/document. Retourne une fonction unsubscribe à appeler dans le cleanup.</div><div class="ge">Idéal pour l'historique, le classement, tout ce qui change en direct.</div></div>
-      <div class="gc"><div class="gt">serverTimestamp <span class="gcat">Firestore</span></div><div class="gd">Fonction qui génère un horodatage côté serveur Firebase (pas l'heure du téléphone). Garantit la cohérence des dates entre tous les appareils — évite les problèmes de fuseaux horaires.</div><div class="ge">createdAt: serverTimestamp() — toujours préférer au new Date()</div></div>
-      <div class="gc"><div class="gt">QuerySnapshot <span class="gcat">Firestore</span></div><div class="gd">Résultat retourné par getDocs() ou onSnapshot(). Contient un tableau .docs de DocumentSnapshot. Chaque DocumentSnapshot a un .id et une méthode .data() qui retourne les champs.</div><div class="ge">snap.docs.map(doc => ({'{'} id: doc.id, ...doc.data() {'}'})))</div></div>
+      <div class="gc"><div class="gt">Collection <span class="gcat">Firestore</span></div><div class="gd">Conteneur de documents — l'équivalent d'une table SQL. Ex : themes, questions, users.</div><div class="ge">collection(db, 'themes') — crée une référence.</div></div>
+      <div class="gc"><div class="gt">Document <span class="gcat">Firestore</span></div><div class="gd">Unité de stockage — l'équivalent d'une ligne SQL. Contient des champs. Max 1 Mo.</div><div class="ge">doc(db, 'users', uid) — référence vers un document précis.</div></div>
+      <div class="gc"><div class="gt">getDocs <span class="gcat">Firestore</span></div><div class="gd">Requête one-shot qui récupère tous les documents. À utiliser pour les données qui changent rarement.</div><div class="ge">const snap = await getDocs(collection(db, 'themes'))</div></div>
+      <div class="gc"><div class="gt">onSnapshot <span class="gcat">Firestore</span></div><div class="gd">Listener temps réel. Callback appelée immédiatement puis à chaque modification. Retourne unsubscribe.</div><div class="ge">Idéal pour l'historique, classement, données dynamiques.</div></div>
+      <div class="gc"><div class="gt">serverTimestamp <span class="gcat">Firestore</span></div><div class="gd">Génère un horodatage côté serveur Firebase. Garantit la cohérence entre tous les appareils.</div><div class="ge">createdAt: serverTimestamp() — toujours préférer au new Date()</div></div>
+      <div class="gc"><div class="gt">QuerySnapshot <span class="gcat">Firestore</span></div><div class="gd">Résultat de getDocs(). Contient .docs de DocumentSnapshot. Chaque doc a .id et .data().</div><div class="ge">snap.docs.map(doc => ({ id: doc.id, ...doc.data() }))</div></div>
     </div>
   </div>
 
   <div>
     <p style="font-size:.78rem;color:var(--txm);margin-bottom:.9rem;text-transform:uppercase;letter-spacing:.07em;font-weight:600">🛡 Sécurité & Architecture</p>
     <div class="gloss-grid">
-      <div class="gc"><div class="gt">Règles de sécurité Firestore <span class="gcat">Sécurité</span></div><div class="gd">Langage déclaratif qui définit qui peut lire/écrire quoi dans Firestore. Côté serveur — ne peuvent pas être contournées par le code client. À configurer dans la console Firebase.</div><div class="ge">allow read: if request.auth != null; — lecture si connecté.</div></div>
-      <div class="gc"><div class="gt">request.auth.uid <span class="gcat">Sécurité</span></div><div class="gd">Dans les règles Firestore, l'uid de l'utilisateur qui fait la requête. À comparer avec l'ID du document pour s'assurer que chaque utilisateur n'accède qu'à ses propres données.</div><div class="ge">request.auth.uid == userId — règle d'isolation des données par utilisateur.</div></div>
-      <div class="gc"><div class="gt">updateDoc vs setDoc <span class="gcat">Firestore</span></div><div class="gd">updateDoc modifie seulement les champs spécifiés — les autres champs sont préservés. setDoc remplace le document entièrement (les champs non mentionnés sont perdus). setDoc avec {'{'}merge:true{'}'} fusionne.</div><div class="ge">Pour modifier un pseudo : updateDoc, pas setDoc.</div></div>
+      <div class="gc"><div class="gt">Règles de sécurité Firestore <span class="gcat">Sécurité</span></div><div class="gd">Langage déclaratif qui définit qui peut lire/écrire dans Firestore. Côté serveur — ne peuvent pas être contournées par le client.</div><div class="ge">allow read: if request.auth != null;</div></div>
+      <div class="gc"><div class="gt">request.auth.uid <span class="gcat">Sécurité</span></div><div class="gd">Dans les règles, l'uid de l'utilisateur qui fait la requête. À comparer avec l'ID du document pour isoler les données par utilisateur.</div><div class="ge">request.auth.uid == userId</div></div>
+      <div class="gc"><div class="gt">updateDoc vs setDoc <span class="gcat">Firestore</span></div><div class="gd">updateDoc modifie seulement les champs spécifiés. setDoc remplace le document entièrement. setDoc avec {merge:true} fusionne.</div><div class="ge">Pour modifier un pseudo : updateDoc, pas setDoc.</div></div>
     </div>
   </div>
-</div><!-- /glossaire -->
+</div>
 
 </main>
 
