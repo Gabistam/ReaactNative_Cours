@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TP Extra — App Multi-pages Fetch & Listes · B3 Dev Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#1e40af;--pl:#3b82f6;--pll:#93c5fd;
+  --g:#059669;--gl:#34d399;
+  --a:#d97706;--al:#fbbf24;
+  --r:#dc2626;--rl:#fca5a5;
+  --v:#7c3aed;--vl:#c4b5fd;
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#162032;--bg4:#0d1117;
+  --bd:#334155;
+  --tx:#f1f5f9;--txm:#94a3b8;--txd:#64748b;
+  --ff:'Sora',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--ff);background:var(--bg);color:var(--tx);line-height:1.65;min-height:100vh}
+.hdr{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e40af 100%);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;border-bottom:1px solid rgba(59,130,246,.3)}
+.hdr::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 75% 40%,rgba(59,130,246,.15),transparent)}
+.hdr-in{max-width:1160px;margin:0 auto;position:relative}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(30,64,175,.4);border:1px solid rgba(59,130,246,.4);border-radius:999px;padding:.3rem .9rem;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#93c5fd;margin-bottom:1.1rem}
+.badge b{color:#fbbf24}
+h1{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:.5rem}
+h1 em{font-style:normal;color:#60a5fa}
+.hdr-sub{font-size:.9rem;color:var(--txm);margin-bottom:1.4rem;font-weight:300}
+.pills{display:flex;flex-wrap:wrap;gap:.45rem}
+.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .8rem;border-radius:999px;font-size:.75rem;font-weight:500;font-family:var(--fm)}
+.pb{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+.pg{background:rgba(5,150,105,.25);border:1px solid rgba(16,185,129,.35);color:#6ee7b7}
+.pa{background:rgba(217,119,6,.25);border:1px solid rgba(245,158,11,.35);color:#fcd34d}
+.pp{background:rgba(124,58,237,.25);border:1px solid rgba(139,92,246,.35);color:#c4b5fd}
+.nav-wrap{background:rgba(15,23,42,.9);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;backdrop-filter:blur(14px)}
+.nav-tabs{max-width:1160px;margin:0 auto;display:flex;padding:0 1rem;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tb{padding:.9rem 1.15rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--txm);font-family:var(--ff);font-size:.79rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:.35rem}
+.tb:hover{color:var(--tx)}.tb.active{color:#60a5fa;border-bottom-color:var(--pl);font-weight:600}
+.main{max-width:1160px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.pan{display:none}.pan.active{display:block}
+.sh{display:flex;align-items:center;gap:.9rem;margin-bottom:1.6rem;padding-bottom:.9rem;border-bottom:1px solid var(--bd)}
+.ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.ib{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3)}
+.ig{background:rgba(5,150,105,.3);border:1px solid rgba(16,185,129,.3)}
+.ia{background:rgba(217,119,6,.3);border:1px solid rgba(245,158,11,.3)}
+.ip{background:rgba(124,58,237,.3);border:1px solid rgba(139,92,246,.3)}
+.si h2{font-size:1.2rem;font-weight:700}.si p{font-size:.8rem;color:var(--txm);margin-top:.1rem}
+.pw{background:rgba(255,255,255,.05);border-radius:999px;height:3px;margin-bottom:1.8rem}
+.pb2{height:100%;background:linear-gradient(90deg,var(--p),var(--pl));border-radius:999px}
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem;transition:border-color .2s}
+.card:hover{border-color:rgba(59,130,246,.25)}
+.ct{font-size:.93rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+ul.cl{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+ul.cl li{display:flex;align-items:flex-start;flex-wrap:wrap;gap:.4rem .55rem;font-size:.87rem;color:#cbd5e1;line-height:1.6;min-width:0}
+ul.cl li::before{content:'▸';color:var(--pl);font-size:.72rem;margin-top:.28rem;flex-shrink:0}
+ul.cl li b{color:var(--tx)}
+ul.cl li code{white-space:normal;word-break:break-word;overflow-wrap:anywhere;flex-shrink:1;min-width:0}
+code{font-family:var(--fm);font-size:.81em;background:rgba(59,130,246,.1);color:#93c5fd;padding:.1em .38em;border-radius:4px;border:1px solid rgba(59,130,246,.2);word-break:break-word;overflow-wrap:anywhere}
+code.r{background:rgba(220,38,38,.12);color:#fca5a5;border-color:rgba(220,38,38,.2)}
+code.g{background:rgba(5,150,105,.12);color:#6ee7b7;border-color:rgba(16,185,129,.2)}
+code.a{background:rgba(217,119,6,.12);color:#fcd34d;border-color:rgba(245,158,11,.2)}
+code.v{background:rgba(124,58,237,.12);color:#c4b5fd;border-color:rgba(139,92,246,.2)}
+.cb{background:var(--bg4);border:1px solid rgba(59,130,246,.15);border-radius:10px;padding:1.1rem 1.3rem;margin:.8rem 0;overflow-x:auto}
+.cb pre{font-family:var(--fm);font-size:.81rem;line-height:1.85;color:#e2e8f0;white-space:pre}
+.cb .kw{color:#c792ea}.cb .fn{color:#82aaff}.cb .st{color:#c3e88d}.cb .cm{color:#546e7a;font-style:italic}
+.cb .tg{color:#f07178}.cb .at{color:#ffcb6b}.cb .nm{color:#f78c6c}.cb .cp{color:#89ddff}
+.cl2{font-family:var(--fm);font-size:.68rem;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.cl2::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--pl);flex-shrink:0}
+.call{border-radius:10px;padding:.95rem 1.1rem;margin:.9rem 0;display:flex;gap:.75rem;align-items:flex-start;font-size:.86rem;line-height:1.55}
+.ci{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.cbl{background:rgba(30,64,175,.15);border:1px solid rgba(59,130,246,.25)}
+.cam{background:rgba(217,119,6,.15);border:1px solid rgba(245,158,11,.25)}
+.cgr{background:rgba(5,150,105,.15);border:1px solid rgba(16,185,129,.25)}
+.crd{background:rgba(220,38,38,.15);border:1px solid rgba(239,68,68,.25)}
+.cpu{background:rgba(124,58,237,.15);border:1px solid rgba(139,92,246,.25)}
+.tbl{width:100%;border-collapse:collapse;font-size:.83rem;margin:.8rem 0}
+.tbl th{background:rgba(30,64,175,.2);padding:.6rem .9rem;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd;border-bottom:1px solid rgba(59,130,246,.2)}
+.tbl td{padding:.55rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);color:#cbd5e1;vertical-align:top}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.ok{color:var(--gl)}.ko{color:var(--rl)}
+.steps{counter-reset:st;display:flex;flex-direction:column;gap:.65rem}
+.step{counter-increment:st;display:flex;align-items:flex-start;gap:.75rem;font-size:.87rem;color:#cbd5e1}
+.step::before{content:counter(st);min-width:24px;height:24px;background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#93c5fd;flex-shrink:0;margin-top:.12rem}
+.tp-step-num{min-width:28px;height:28px;background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.4);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800;color:#93c5fd;flex-shrink:0;font-family:var(--fm)}
+.sw{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1.2rem;margin:.8rem 0;overflow:hidden}
+.sw svg{display:block;max-width:100%;height:auto}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+@media(max-width:720px){.g2{grid-template-columns:1fr}}
+.accordion{margin:.9rem 0;border:1px solid var(--bd);border-radius:10px;overflow:hidden}
+.acc-item{border-bottom:1px solid var(--bd)}
+.acc-item:last-child{border-bottom:none}
+.acc-btn{width:100%;background:var(--bg3);border:none;padding:.85rem 1.1rem;display:flex;justify-content:space-between;align-items:center;cursor:pointer;color:var(--tx);font-family:var(--ff);font-size:.86rem;font-weight:600;transition:background .2s;text-align:left;gap:.5rem}
+.acc-btn:hover{background:rgba(59,130,246,.06)}
+.acc-btn .acc-arrow{font-size:.75rem;color:var(--txm);transition:transform .25s;flex-shrink:0}
+.acc-btn.open{background:rgba(59,130,246,.06);color:#60a5fa}
+.acc-btn.open .acc-arrow{transform:rotate(90deg);color:#60a5fa}
+.acc-content{display:none;padding:1rem 1.2rem;border-top:1px solid var(--bd);background:var(--bg4);overflow-wrap:anywhere;word-break:break-word}
+.acc-content.open{display:block}
+.acc-content p,.acc-content ul{overflow-wrap:anywhere;word-break:break-word}
+.analogy{background:linear-gradient(135deg,rgba(124,58,237,.1),rgba(139,92,246,.05));border:1px solid rgba(139,92,246,.3);border-radius:12px;padding:1.1rem 1.3rem;margin:.9rem 0}
+.analogy-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--vl);margin-bottom:.45rem;display:flex;align-items:center;gap:.4rem}
+.analogy p{font-size:.86rem;color:#cbd5e1;line-height:1.6}
+.explain-box{background:var(--bg3);border:1px solid var(--bd);border-radius:12px;padding:1rem 1.2rem;margin:.8rem 0}
+.explain-step{display:flex;gap:.85rem;align-items:flex-start;padding:.65rem 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.explain-step:last-child{border-bottom:none;padding-bottom:0}
+.explain-num{min-width:26px;height:26px;background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:800;color:#93c5fd;flex-shrink:0;margin-top:.1rem}
+.explain-step h4{font-size:.86rem;font-weight:700;color:var(--tx);margin-bottom:.2rem}
+.explain-step p{font-size:.82rem;color:var(--txm);line-height:1.55}
+.phone{max-width:280px;margin:0 auto;background:#0d1117;border:8px solid #1e293b;border-radius:28px;padding:0;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.4)}
+.phone-status{background:#161b22;height:24px;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#64748b;font-family:var(--fm)}
+.phone-screen{padding:.8rem;min-height:340px}
+.phone-tabbar{background:#161b22;border-top:1px solid #334155;display:flex;justify-content:space-around;padding:.5rem 0}
+.phone-tab{display:flex;flex-direction:column;align-items:center;gap:.15rem;font-size:.6rem;color:#64748b}
+.phone-tab.active{color:#60a5fa}
+.mock-item{background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.6rem .8rem;margin-bottom:.45rem}
+.mock-item-title{font-size:.75rem;font-weight:700;color:#e2e8f0;margin-bottom:.15rem}
+.mock-item-body{font-size:.65rem;color:#94a3b8;line-height:1.35}
+.mock-section{font-size:.68rem;font-weight:700;color:#60a5fa;margin:.5rem 0 .3rem;text-transform:uppercase;letter-spacing:.04em}
+.mock-todo{display:flex;align-items:center;gap:.5rem;background:#1e293b;border:1px solid #334155;border-radius:8px;padding:.5rem .7rem;margin-bottom:.4rem;font-size:.72rem;color:#cbd5e1}
+.mock-check{width:14px;height:14px;border-radius:4px;border:1.5px solid #475569;flex-shrink:0}
+.mock-check.done{background:#34d399;border-color:#34d399}
+.mock-profile-card{background:#1e293b;border:1px solid #334155;border-radius:10px;padding:1rem;text-align:center}
+.mock-avatar{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#3b82f6,#7c3aed);margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:#fff}
+.tag{display:inline-block;font-family:var(--fm);font-size:.68rem;padding:.15rem .5rem;border-radius:5px;font-weight:600}
+.t-easy{background:rgba(5,150,105,.2);color:#6ee7b7;border:1px solid rgba(16,185,129,.3)}
+.t-mid{background:rgba(217,119,6,.2);color:#fcd34d;border:1px solid rgba(245,158,11,.3)}
+.t-hard{background:rgba(220,38,38,.2);color:#fca5a5;border:1px solid rgba(239,68,68,.3)}
+.page-badge{display:inline-flex;align-items:center;gap:.4rem;font-family:var(--fm);font-size:.72rem;font-weight:700;padding:.3rem .8rem;border-radius:999px}
+.pg-flat{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.4);color:#93c5fd}
+.pg-section{background:rgba(124,58,237,.3);border:1px solid rgba(139,92,246,.4);color:#c4b5fd}
+.pg-scroll{background:rgba(5,150,105,.3);border:1px solid rgba(16,185,129,.4);color:#6ee7b7}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="badge">📱 TP Extra &nbsp;·&nbsp; <b>B3 Dev Web 2025-2026</b></div>
+    <h1>App <em>Multi-pages</em> — Fetch & Listes</h1>
+    <p class="hdr-sub">3 écrans, 3 fetchs, 3 types de listes — naviguer entre eux avec un Tab Navigator</p>
+    <div class="pills">
+      <span class="pill pb">🌐 JSONPlaceholder</span>
+      <span class="pill pg">FlatList · SectionList · ScrollView</span>
+      <span class="pill pa">Tab Navigator</span>
+      <span class="pill pp">🕐 ~3h</span>
+    </div>
+  </div>
+</header>
+
+<div class="nav-wrap">
+  <nav class="nav-tabs">
+    <button class="tb active" onclick="sw('setup',this)">🏗 Création du projet</button>
+    <button class="tb" onclick="sw('nav',this)">🧭 Navigation entre pages</button>
+    <button class="tb" onclick="sw('p1',this)">📰 Page 1 · Articles</button>
+    <button class="tb" onclick="sw('p2',this)">✅ Page 2 · Tâches</button>
+    <button class="tb" onclick="sw('p3',this)">👤 Page 3 · Profil</button>
+    <button class="tb" onclick="sw('defis',this)">🎯 Défis bonus</button>
+  </nav>
+</div>
+
+<main class="main">
+
+<!-- ══════ SETUP ══════ -->
+<div id="tab-setup" class="pan active">
+  <div class="sh"><div class="ico ib">🏗</div>
+    <div class="si"><h2>Étape 0 — Créer le projet</h2><p>Rappel complet de la mise en place avant de coder les écrans</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="card">
+    <div class="ct">🎯 Ce qu'on va construire</div>
+    <div class="analogy">
+      <div class="analogy-lbl">💡 Vue d'ensemble</div>
+      <p>Une app à <b>3 onglets</b> en bas de l'écran. Chaque onglet est un écran indépendant qui va chercher des données différentes sur internet et les affiche avec un type de liste différent. C'est exactement la structure d'une vraie app : plusieurs sections, chacune avec son propre contenu et sa propre façon de l'afficher.</p>
+    </div>
+    <table class="tbl">
+      <thead><tr><th>Page</th><th>Données (API)</th><th>Type de liste</th><th>Notion appris</th></tr></thead>
+      <tbody>
+        <tr><td>📰 Articles</td><td><code>/posts</code> — 100 articles</td><td><span class="page-badge pg-flat">FlatList</span></td><td>Liste simple, performante</td></tr>
+        <tr><td>✅ Tâches</td><td><code>/todos</code> — 200 tâches</td><td><span class="page-badge pg-section">SectionList</span></td><td>Groupement par statut</td></tr>
+        <tr><td>👤 Profil</td><td><code>/users/1</code> — 1 utilisateur</td><td><span class="page-badge pg-scroll">ScrollView</span></td><td>Contenu fixe, pas de liste</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Étape 1 : créer le projet -->
+  <div class="card">
+    <div class="ct"><span class="tp-step-num" style="margin-right:.2rem">1</span> Créer le projet Expo</div>
+    <p style="font-size:.86rem;color:#cbd5e1;margin-bottom:.6rem">Rappel : on utilise le template <code>blank</code> pour avoir un simple <code>App.js</code>, sans Expo Router.</p>
+    <div class="cb">
+      <div class="cl2">Terminal — création et installation</div>
+      <pre><span class="cm"># 1. Créer le projet avec le template blank (pas Expo Router)</span>
+npx create-expo-app MultiListesApp --template blank
+<span class="kw">cd</span> MultiListesApp
+
+<span class="cm"># 2. Installer React Navigation (cœur + dépendances natives)</span>
+npx expo install @react-navigation/native
+npx expo install react-native-screens react-native-safe-area-context
+
+<span class="cm"># 3. Installer le Tab Navigator</span>
+npm install @react-navigation/bottom-tabs
+
+<span class="cm"># 4. Les icônes Ionicons sont déjà incluses avec Expo — rien à installer
+
+# 5. Lancer le projet pour vérifier que tout fonctionne</span>
+npx expo start</pre>
+    </div>
+    <div class="call cgr"><span class="ci">✅</span><span><b>Vérification :</b> l'app doit démarrer sans erreur et afficher l'écran par défaut "Open up App.js to start working on your app!".</span></div>
+  </div>
+
+  <!-- Étape 2 : structure des dossiers -->
+  <div class="card">
+    <div class="ct"><span class="tp-step-num" style="margin-right:.2rem">2</span> Créer la structure des dossiers</div>
+    <div class="cb">
+      <div class="cl2">Arborescence à créer</div>
+      <pre>MultiListesApp/
+├── App.js                    <span class="cm">← NavigationContainer + TabNavigator</span>
+├── navigation/
+│   └── TabNavigator.js       <span class="cm">← déclare les 3 onglets</span>
+└── screens/
+    ├── ArticlesScreen.js      <span class="cm">← Page 1 · FlatList</span>
+    ├── TachesScreen.js        <span class="cm">← Page 2 · SectionList</span>
+    └── ProfilScreen.js        <span class="cm">← Page 3 · ScrollView</span></pre>
+    </div>
+    <div class="call cbl"><span class="ci">💡</span><span>Chaque écran est un fichier séparé. Ça garde le code lisible — tu sais immédiatement où trouver le code de chaque page.</span></div>
+  </div>
+
+  <!-- Étape 3 : App.js -->
+  <div class="card">
+    <div class="ct"><span class="tp-step-num" style="margin-right:.2rem">3</span> Configurer App.js</div>
+    <p style="font-size:.86rem;color:#cbd5e1;margin-bottom:.6rem">Le point d'entrée reste minimal : il importe le TabNavigator et l'enveloppe dans le NavigationContainer.</p>
+    <div class="cb">
+      <div class="cl2">App.js</div>
+      <pre><span class="cm">// ─── IMPORTS ────────────────────────────────────────────────────────────────
+// NavigationContainer : le conteneur obligatoire qui active toute la navigation
+// Une seule fois dans toute l'app, ici dans App.js</span>
+<span class="kw">import</span> { <span class="cp">NavigationContainer</span> } <span class="kw">from</span> <span class="st">'@react-navigation/native'</span>;
+
+<span class="cm">// Notre Tab Navigator défini dans navigation/TabNavigator.js</span>
+<span class="kw">import</span> { <span class="cp">TabNavigator</span> } <span class="kw">from</span> <span class="st">'./navigation/TabNavigator'</span>;
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    <span class="cm">// NavigationContainer entoure TOUT — c'est lui qui permet
+    // à n'importe quel écran enfant d'utiliser navigation.navigate()</span>
+    <span class="tg">&lt;NavigationContainer&gt;</span>
+      <span class="tg">&lt;TabNavigator</span> /&gt;
+    <span class="tg">&lt;/NavigationContainer&gt;</span>
+  );
+}</pre>
+    </div>
+  </div>
+
+</div><!-- /setup -->
+
+<!-- ══════ NAVIGATION ══════ -->
+<div id="tab-nav" class="pan">
+  <div class="sh"><div class="ico ip">🧭</div>
+    <div class="si"><h2>Navigation entre les 3 pages</h2><p>Tab Navigator avec icônes — un onglet par type de liste</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="card">
+    <div class="ct">🗂 TabNavigator.js — les 3 onglets</div>
+    <div class="explain-box">
+      <div class="explain-step"><div class="explain-num">1</div><div>
+        <h4>Pourquoi un Tab Navigator plutôt qu'un Stack ?</h4>
+        <p>Les 3 pages ne sont pas liées par un parcours ("d'abord ça, puis ça") — elles sont <b>indépendantes</b>. C'est exactement le cas d'usage du Tab Navigator : plusieurs sections accessibles à tout moment, sans ordre imposé.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">2</div><div>
+        <h4>Chaque onglet garde son état en mémoire</h4>
+        <p>Une fois qu'un onglet a chargé ses données (fetch terminé), passer à un autre onglet puis revenir ne relance <b>pas</b> le fetch — l'écran est resté monté en arrière-plan.</p>
+      </div></div>
+    </div>
+    <div class="cb">
+      <div class="cl2">navigation/TabNavigator.js</div>
+      <pre><span class="cm">// ─── IMPORTS ────────────────────────────────────────────────────────────────</span>
+<span class="kw">import</span> { <span class="cp">createBottomTabNavigator</span> } <span class="kw">from</span> <span class="st">'@react-navigation/bottom-tabs'</span>;
+<span class="cm">// Ionicons : bibliothèque d'icônes incluse avec Expo</span>
+<span class="kw">import</span> { <span class="cp">Ionicons</span> } <span class="kw">from</span> <span class="st">'@expo/vector-icons'</span>;
+
+<span class="cm">// On importe les 3 écrans qu'on va créer dans les onglets suivants</span>
+<span class="kw">import</span> <span class="cp">ArticlesScreen</span> <span class="kw">from</span> <span class="st">'../screens/ArticlesScreen'</span>;
+<span class="kw">import</span> <span class="cp">TachesScreen</span>   <span class="kw">from</span> <span class="st">'../screens/TachesScreen'</span>;
+<span class="kw">import</span> <span class="cp">ProfilScreen</span>   <span class="kw">from</span> <span class="st">'../screens/ProfilScreen'</span>;
+
+<span class="cm">// createBottomTabNavigator() retourne un objet avec Tab.Navigator et Tab.Screen</span>
+<span class="kw">const</span> Tab = <span class="fn">createBottomTabNavigator</span>();
+
+<span class="kw">export function</span> <span class="fn">TabNavigator</span>() {
+  <span class="kw">return</span> (
+    <span class="tg">&lt;Tab.Navigator</span>
+      <span class="cm">// screenOptions : fonction appelée pour CHAQUE onglet
+      // "route" contient route.name = le nom de l'onglet courant</span>
+      <span class="at">screenOptions</span>={({ route }) => ({
+
+        <span class="cm">// tabBarIcon : quelle icône afficher pour cet onglet
+        // focused = true si l'onglet est actif</span>
+        tabBarIcon: ({ focused, color, size }) => {
+          <span class="kw">const</span> icons = {
+            Articles: focused ? <span class="st">'newspaper'</span>      : <span class="st">'newspaper-outline'</span>,
+            Taches:   focused ? <span class="st">'checkbox'</span>       : <span class="st">'checkbox-outline'</span>,
+            Profil:   focused ? <span class="st">'person'</span>         : <span class="st">'person-outline'</span>,
+          };
+          <span class="kw">return</span> <span class="tg">&lt;Ionicons</span> <span class="at">name</span>={icons[route.name]} <span class="at">size</span>={size} <span class="at">color</span>={color} /&gt;;
+        },
+
+        <span class="cm">// Couleurs de la tab bar</span>
+        tabBarActiveTintColor:   <span class="st">'#3b82f6'</span>,
+        tabBarInactiveTintColor: <span class="st">'#64748b'</span>,
+        tabBarStyle: { backgroundColor: <span class="st">'#1e293b'</span>, borderTopColor: <span class="st">'#334155'</span> },
+
+        <span class="cm">// Header en haut de chaque écran</span>
+        headerStyle:     { backgroundColor: <span class="st">'#0f172a'</span> },
+        headerTintColor: <span class="st">'#f1f5f9'</span>,
+      })}
+    &gt;
+      <span class="cm">// Chaque Tab.Screen = un onglet · name = utilisé pour l'icône au-dessus
+      // options.title = le texte affiché sous l'icône et dans le header</span>
+      <span class="tg">&lt;Tab.Screen</span> <span class="at">name</span>=<span class="st">"Articles"</span> <span class="at">component</span>={ArticlesScreen} <span class="at">options</span>={{ title: <span class="st">'Articles'</span> }} /&gt;
+      <span class="tg">&lt;Tab.Screen</span> <span class="at">name</span>=<span class="st">"Taches"</span>   <span class="at">component</span>={TachesScreen}   <span class="at">options</span>={{ title: <span class="st">'Tâches'</span> }}   /&gt;
+      <span class="tg">&lt;Tab.Screen</span> <span class="at">name</span>=<span class="st">"Profil"</span>   <span class="at">component</span>={ProfilScreen}   <span class="at">options</span>={{ title: <span class="st">'Profil'</span> }}   /&gt;
+    <span class="tg">&lt;/Tab.Navigator&gt;</span>
+  );
+}</pre>
+    </div>
+  </div>
+
+  <!-- Aperçu visuel -->
+  <div class="card">
+    <div class="ct">📱 Aperçu — la tab bar finale</div>
+    <div class="phone">
+      <div class="phone-status">9:41</div>
+      <div class="phone-screen" style="display:flex;align-items:center;justify-content:center;color:#475569;font-size:.78rem;text-align:center">
+        L'écran actif s'affiche ici<br>selon l'onglet sélectionné
+      </div>
+      <div class="phone-tabbar">
+        <div class="phone-tab active">📰<span>Articles</span></div>
+        <div class="phone-tab">✅<span>Tâches</span></div>
+        <div class="phone-tab">👤<span>Profil</span></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /nav -->
+
+<!-- ══════ PAGE 1 — ARTICLES (FlatList) ══════ -->
+<div id="tab-p1" class="pan">
+  <div class="sh"><div class="ico ib">📰</div>
+    <div class="si"><h2>Page 1 — Articles <span class="page-badge pg-flat" style="margin-left:.5rem">FlatList</span></h2><p>Fetch /posts · liste simple et performante</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="card">
+    <div class="ct">🎯 Pourquoi FlatList ici ?</div>
+    <p style="font-size:.86rem;color:#cbd5e1">100 articles à afficher, tous structurés de la même façon (titre + corps de texte). C'est le cas d'usage parfait pour <code>FlatList</code> : une liste homogène, potentiellement longue, qui doit rester fluide.</p>
+  </div>
+
+  <div class="card">
+    <div class="ct">📱 Aperçu</div>
+    <div class="phone">
+      <div class="phone-status">9:41</div>
+      <div class="phone-screen">
+        <div style="font-size:.8rem;font-weight:700;color:#e2e8f0;margin-bottom:.6rem">📰 Articles (100)</div>
+        <div class="mock-item"><div class="mock-item-title">1 · sunt aut facere repellat...</div><div class="mock-item-body">quia et suscipit suscipit recusandae...</div></div>
+        <div class="mock-item"><div class="mock-item-title">2 · qui est esse</div><div class="mock-item-body">est rerum tempore vitae sequi sint...</div></div>
+        <div class="mock-item"><div class="mock-item-title">3 · ea molestias quasi...</div><div class="mock-item-body">et iusto sed quo iure voluptatem...</div></div>
+      </div>
+      <div class="phone-tabbar">
+        <div class="phone-tab active">📰<span>Articles</span></div>
+        <div class="phone-tab">✅<span>Tâches</span></div>
+        <div class="phone-tab">👤<span>Profil</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">💻 ArticlesScreen.js — code complet commenté</div>
+    <div class="cb">
+      <div class="cl2">screens/ArticlesScreen.js</div>
+      <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="st">'react'</span>;
+<span class="kw">import</span> {
+  <span class="cp">View</span>, <span class="cp">Text</span>, <span class="cp">FlatList</span>,
+  <span class="cp">ActivityIndicator</span>, <span class="cp">StyleSheet</span>,
+} <span class="kw">from</span> <span class="st">'react-native'</span>;
+
+<span class="kw">export default function</span> <span class="fn">ArticlesScreen</span>() {
+  <span class="cm">// ─── LES 3 ÉTATS DU FETCH ──────────────────────────────────────────────
+  // articles : tableau des articles · loading : chargement en cours ?
+  // error : message d'erreur ou null si tout va bien</span>
+  <span class="kw">const</span> [articles, setArticles] = <span class="fn">useState</span>([]);
+  <span class="kw">const</span> [loading,  setLoading]  = <span class="fn">useState</span>(<span class="nm">true</span>);
+  <span class="kw">const</span> [error,    setError]    = <span class="fn">useState</span>(<span class="nm">null</span>);
+
+  <span class="cm">// useEffect avec [] : ne s'exécute qu'une fois, au montage de l'écran</span>
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="fn">fetchArticles</span> = <span class="kw">async</span> () => {
+      <span class="kw">try</span> {
+        <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'https://jsonplaceholder.typicode.com/posts'</span>);
+        <span class="kw">if</span> (!response.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="st">'Erreur '</span> + response.status);
+        <span class="kw">const</span> data = <span class="kw">await</span> response.<span class="fn">json</span>();
+        <span class="fn">setArticles</span>(data);
+      } <span class="kw">catch</span> (err) {
+        <span class="fn">setError</span>(<span class="st">'Impossible de charger les articles.'</span>);
+      } <span class="kw">finally</span> {
+        <span class="fn">setLoading</span>(<span class="nm">false</span>);  <span class="cm">// dans tous les cas, on arrête le spinner</span>
+      }
+    };
+    <span class="fn">fetchArticles</span>();
+  }, []);
+
+  <span class="cm">// CAS 1 : chargement → spinner centré</span>
+  <span class="kw">if</span> (loading) <span class="kw">return</span> (
+    <span class="tg">&lt;View</span> <span class="at">style</span>={[styles.container, styles.center]}&gt;
+      <span class="tg">&lt;ActivityIndicator</span> <span class="at">size</span>=<span class="st">"large"</span> <span class="at">color</span>=<span class="st">"#3b82f6"</span> /&gt;
+    <span class="tg">&lt;/View&gt;</span>
+  );
+
+  <span class="cm">// CAS 2 : erreur → message rouge</span>
+  <span class="kw">if</span> (error) <span class="kw">return</span> (
+    <span class="tg">&lt;View</span> <span class="at">style</span>={[styles.container, styles.center]}&gt;
+      <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.error}&gt;⚠ {'{'}error{'}'}<span class="tg">&lt;/Text&gt;</span>
+    <span class="tg">&lt;/View&gt;</span>
+  );
+
+  <span class="cm">// CAS 3 : données prêtes → FlatList</span>
+  <span class="kw">return</span> (
+    <span class="tg">&lt;View</span> <span class="at">style</span>={styles.container}&gt;
+      <span class="tg">&lt;FlatList</span>
+        <span class="cm">// data : le tableau à afficher</span>
+        <span class="at">data</span>={articles}
+        <span class="cm">// keyExtractor : clé unique par ligne (obligatoire)</span>
+        <span class="at">keyExtractor</span>={(item) => item.id.<span class="fn">toString</span>()}
+        <span class="cm">// ListHeaderComponent : en-tête qui défile AVEC la liste</span>
+        <span class="at">ListHeaderComponent</span>={
+          <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.header}&gt;📰 Articles ({'{'}articles.length{'}'})<span class="tg">&lt;/Text&gt;</span>
+        }
+        <span class="cm">// renderItem : comment dessiner CHAQUE article</span>
+        <span class="at">renderItem</span>={({ item }) => (
+          <span class="tg">&lt;View</span> <span class="at">style</span>={styles.card}&gt;
+            <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.cardTitle}&gt;{'{'}item.id{'}'} · {'{'}item.title{'}'}<span class="tg">&lt;/Text&gt;</span>
+            <span class="cm">{/* numberOfLines={2} : tronque à 2 lignes max */}</span>
+            <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.cardBody} <span class="at">numberOfLines</span>={<span class="nm">2</span>}&gt;{'{'}item.body{'}'}<span class="tg">&lt;/Text&gt;</span>
+          <span class="tg">&lt;/View&gt;</span>
+        )}
+      /&gt;
+    <span class="tg">&lt;/View&gt;</span>
+  );
+}
+
+<span class="kw">const</span> styles = StyleSheet.<span class="fn">create</span>({
+  container: { flex: <span class="nm">1</span>, backgroundColor: <span class="st">'#0f172a'</span> },
+  center:    { justifyContent: <span class="st">'center'</span>, alignItems: <span class="st">'center'</span> },
+  header:    { fontSize: <span class="nm">18</span>, fontWeight: <span class="st">'700'</span>, color: <span class="st">'#f1f5f9'</span>, padding: <span class="nm">12</span> },
+  error:     { color: <span class="st">'#fca5a5'</span>, fontSize: <span class="nm">15</span> },
+  card:      { backgroundColor: <span class="st">'#1e293b'</span>, borderRadius: <span class="nm">10</span>, padding: <span class="nm">14</span>, marginHorizontal: <span class="nm">12</span>, marginBottom: <span class="nm">10</span>, borderLeftWidth: <span class="nm">3</span>, borderLeftColor: <span class="st">'#3b82f6'</span> },
+  cardTitle: { fontSize: <span class="nm">14</span>, fontWeight: <span class="st">'700'</span>, color: <span class="st">'#e2e8f0'</span>, marginBottom: <span class="nm">4</span> },
+  cardBody:  { fontSize: <span class="nm">12.5</span>, color: <span class="st">'#94a3b8'</span>, lineHeight: <span class="nm">18</span> },
+});</pre>
+    </div>
+  </div>
+</div><!-- /p1 -->
+
+<!-- ══════ PAGE 2 — TÂCHES (SectionList) ══════ -->
+<div id="tab-p2" class="pan">
+  <div class="sh"><div class="ico ip">✅</div>
+    <div class="si"><h2>Page 2 — Tâches <span class="page-badge pg-section" style="margin-left:.5rem">SectionList</span></h2><p>Fetch /todos · groupées par statut (faites / à faire)</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="card">
+    <div class="ct">🎯 Pourquoi SectionList ici ?</div>
+    <p style="font-size:.86rem;color:#cbd5e1">L'API renvoie 200 tâches "à plat", chacune avec un champ <code>completed</code> (true/false). On veut les afficher groupées avec un titre de section — <b>exactement</b> le cas d'usage de <code>SectionList</code>.</p>
+  </div>
+
+  <div class="card">
+    <div class="ct">📱 Aperçu</div>
+    <div class="phone">
+      <div class="phone-status">9:41</div>
+      <div class="phone-screen">
+        <div class="mock-section">⏳ À faire (3)</div>
+        <div class="mock-todo"><span class="mock-check"></span>delectus aut autem</div>
+        <div class="mock-todo"><span class="mock-check"></span>quis ut nam facilis...</div>
+        <div class="mock-todo"><span class="mock-check"></span>fugiat veniam minus</div>
+        <div class="mock-section">✅ Terminées (2)</div>
+        <div class="mock-todo"><span class="mock-check done"></span>et porro tempora</div>
+        <div class="mock-todo"><span class="mock-check done"></span>laboriosam mollitia...</div>
+      </div>
+      <div class="phone-tabbar">
+        <div class="phone-tab">📰<span>Articles</span></div>
+        <div class="phone-tab active">✅<span>Tâches</span></div>
+        <div class="phone-tab">👤<span>Profil</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">💻 TachesScreen.js — code complet commenté</div>
+    <div class="explain-box">
+      <div class="explain-step"><div class="explain-num">1</div><div>
+        <h4>Étape 1 — récupérer les données à plat</h4>
+        <p>L'API renvoie un simple tableau de tâches, sans groupement. C'est à nous de les organiser.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">2</div><div>
+        <h4>Étape 2 — transformer en sections</h4>
+        <p>On sépare les tâches en deux groupes selon <code>completed</code>, puis on construit le tableau de sections attendu par <code>SectionList</code>.</p>
+      </div></div>
+    </div>
+    <div class="cb">
+      <div class="cl2">screens/TachesScreen.js</div>
+      <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="st">'react'</span>;
+<span class="kw">import</span> {
+  <span class="cp">View</span>, <span class="cp">Text</span>, <span class="cp">SectionList</span>,
+  <span class="cp">ActivityIndicator</span>, <span class="cp">StyleSheet</span>,
+} <span class="kw">from</span> <span class="st">'react-native'</span>;
+
+<span class="kw">export default function</span> <span class="fn">TachesScreen</span>() {
+  <span class="cm">// On stocke directement les SECTIONS (déjà groupées), pas le tableau brut</span>
+  <span class="kw">const</span> [sections, setSections] = <span class="fn">useState</span>([]);
+  <span class="kw">const</span> [loading,  setLoading]  = <span class="fn">useState</span>(<span class="nm">true</span>);
+  <span class="kw">const</span> [error,    setError]    = <span class="fn">useState</span>(<span class="nm">null</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="fn">fetchTaches</span> = <span class="kw">async</span> () => {
+      <span class="kw">try</span> {
+        <span class="cm">// On limite à 30 tâches avec _limit pour ne pas surcharger l'écran
+        // (l'API en a 200 par défaut)</span>
+        <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(
+          <span class="st">'https://jsonplaceholder.typicode.com/todos?_limit=30'</span>
+        );
+        <span class="kw">if</span> (!response.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="st">'Erreur '</span> + response.status);
+        <span class="kw">const</span> data = <span class="kw">await</span> response.<span class="fn">json</span>();  <span class="cm">// tableau plat de 30 tâches</span>
+
+        <span class="cm">// ─── GROUPEMENT EN SECTIONS ──────────────────────────────────────
+        // .filter() garde uniquement les tâches qui correspondent à la condition</span>
+        <span class="kw">const</span> aFaire    = data.<span class="fn">filter</span>((tache) => !tache.completed);
+        <span class="kw">const</span> terminees = data.<span class="fn">filter</span>((tache) => tache.completed);
+
+        <span class="cm">// On construit le tableau de sections attendu par SectionList :
+        // [{ title, data }, { title, data }]</span>
+        <span class="fn">setSections</span>([
+          { title: <span class="st">`⏳ À faire (${'{'}aFaire.length{'}'})`</span>,    data: aFaire },
+          { title: <span class="st">`✅ Terminées (${'{'}terminees.length{'}'})`</span>, data: terminees },
+        ]);
+
+      } <span class="kw">catch</span> (err) {
+        <span class="fn">setError</span>(<span class="st">'Impossible de charger les tâches.'</span>);
+      } <span class="kw">finally</span> {
+        <span class="fn">setLoading</span>(<span class="nm">false</span>);
+      }
+    };
+    <span class="fn">fetchTaches</span>();
+  }, []);
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> (
+    <span class="tg">&lt;View</span> <span class="at">style</span>={[styles.container, styles.center]}&gt;
+      <span class="tg">&lt;ActivityIndicator</span> <span class="at">size</span>=<span class="st">"large"</span> <span class="at">color</span>=<span class="st">"#7c3aed"</span> /&gt;
+    <span class="tg">&lt;/View&gt;</span>
+  );
+
+  <span class="kw">if</span> (error) <span class="kw">return</span> (
+    <span class="tg">&lt;View</span> <span class="at">style</span>={[styles.container, styles.center]}&gt;
+      <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.error}&gt;⚠ {'{'}error{'}'}<span class="tg">&lt;/Text&gt;</span>
+    <span class="tg">&lt;/View&gt;</span>
+  );
+
+  <span class="kw">return</span> (
+    <span class="tg">&lt;SectionList</span>
+      <span class="at">style</span>={styles.container}
+      <span class="cm">// sections : le tableau [{ title, data }] qu'on a construit</span>
+      <span class="at">sections</span>={sections}
+      <span class="at">keyExtractor</span>={(item) => item.id.<span class="fn">toString</span>()}
+
+      <span class="cm">// renderSectionHeader : dessine le TITRE de chaque section
+      // { section } donne accès au "title" de la section courante</span>
+      <span class="at">renderSectionHeader</span>={({ section }) => (
+        <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.sectionTitle}&gt;{'{'}section.title{'}'}<span class="tg">&lt;/Text&gt;</span>
+      )}
+
+      <span class="cm">// renderItem : dessine CHAQUE tâche (comme dans FlatList)</span>
+      <span class="at">renderItem</span>={({ item }) => (
+        <span class="tg">&lt;View</span> <span class="at">style</span>={styles.todoRow}&gt;
+          <span class="cm">{/* Pastille colorée selon l'état completed */}</span>
+          <span class="tg">&lt;View</span> <span class="at">style</span>={[
+            styles.checkbox,
+            item.completed && styles.checkboxDone,  <span class="cm">// style conditionnel</span>
+          ]} /&gt;
+          <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.todoText} <span class="at">numberOfLines</span>={<span class="nm">1</span>}&gt;
+            {'{'}item.title{'}'}
+          <span class="tg">&lt;/Text&gt;</span>
+        <span class="tg">&lt;/View&gt;</span>
+      )}
+    /&gt;
+  );
+}
+
+<span class="kw">const</span> styles = StyleSheet.<span class="fn">create</span>({
+  container:     { flex: <span class="nm">1</span>, backgroundColor: <span class="st">'#0f172a'</span> },
+  center:        { justifyContent: <span class="st">'center'</span>, alignItems: <span class="st">'center'</span> },
+  error:         { color: <span class="st">'#fca5a5'</span> },
+  sectionTitle:  { fontSize: <span class="nm">13</span>, fontWeight: <span class="st">'700'</span>, color: <span class="st">'#c4b5fd'</span>, backgroundColor: <span class="st">'#0f172a'</span>, padding: <span class="nm">10</span>, paddingTop: <span class="nm">16</span> },
+  todoRow:       { flexDirection: <span class="st">'row'</span>, alignItems: <span class="st">'center'</span>, gap: <span class="nm">10</span>, backgroundColor: <span class="st">'#1e293b'</span>, marginHorizontal: <span class="nm">12</span>, marginBottom: <span class="nm">6</span>, padding: <span class="nm">10</span>, borderRadius: <span class="nm">8</span> },
+  checkbox:      { width: <span class="nm">16</span>, height: <span class="nm">16</span>, borderRadius: <span class="nm">4</span>, borderWidth: <span class="nm">1.5</span>, borderColor: <span class="st">'#475569'</span> },
+  checkboxDone:  { backgroundColor: <span class="st">'#34d399'</span>, borderColor: <span class="st">'#34d399'</span> },
+  todoText:      { color: <span class="st">'#cbd5e1'</span>, fontSize: <span class="nm">13</span>, flex: <span class="nm">1</span> },
+});</pre>
+    </div>
+    <div class="call cam"><span class="ci">⚠️</span><span><b>Piège fréquent :</b> oublier que <code>SectionList</code> attend <code>sections</code> (pluriel) et pas <code>data</code> comme FlatList. La structure attendue est précise : <code>[{'{'} title, data: [...] {'}'}]</code>.</span></div>
+  </div>
+</div><!-- /p2 -->
+
+<!-- ══════ PAGE 3 — PROFIL (ScrollView) ══════ -->
+<div id="tab-p3" class="pan">
+  <div class="sh"><div class="ico ip">👤</div>
+    <div class="si"><h2>Page 3 — Profil <span class="page-badge pg-scroll" style="margin-left:.5rem">ScrollView</span></h2><p>Fetch /users/1 · un seul objet, pas une liste</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="card">
+    <div class="ct">🎯 Pourquoi ScrollView ici (et pas FlatList) ?</div>
+    <p style="font-size:.86rem;color:#cbd5e1">Cette fois, l'API renvoie <b>un seul objet</b> (un utilisateur), pas un tableau d'éléments similaires. Il n'y a rien à "lister" — juste plusieurs blocs d'informations différents à empiler verticalement. C'est le cas d'usage typique de <code>ScrollView</code>.</p>
+    <div class="call cbl"><span class="ci">💡</span><span>Règle de décision : si tu réponds "j'affiche le MÊME composant plusieurs fois avec des données différentes" → FlatList/SectionList. Si tu réponds "j'affiche des informations différentes une seule fois chacune" → ScrollView.</span></div>
+  </div>
+
+  <div class="card">
+    <div class="ct">📱 Aperçu</div>
+    <div class="phone">
+      <div class="phone-status">9:41</div>
+      <div class="phone-screen">
+        <div class="mock-profile-card">
+          <div class="mock-avatar">LB</div>
+          <div style="font-size:.85rem;font-weight:700;color:#e2e8f0">Leanne Graham</div>
+          <div style="font-size:.68rem;color:#64748b;margin-top:.1rem">@Bret</div>
+        </div>
+        <div class="mock-section" style="margin-top:.8rem">📧 Contact</div>
+        <div class="mock-item"><div class="mock-item-body">Sincere@april.biz</div></div>
+        <div class="mock-item"><div class="mock-item-body">📞 1-770-736-8031</div></div>
+        <div class="mock-section">📍 Adresse</div>
+        <div class="mock-item"><div class="mock-item-body">Kulas Light, Apt. 556<br>Gwenborough, 92998-3874</div></div>
+      </div>
+      <div class="phone-tabbar">
+        <div class="phone-tab">📰<span>Articles</span></div>
+        <div class="phone-tab">✅<span>Tâches</span></div>
+        <div class="phone-tab active">👤<span>Profil</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">💻 ProfilScreen.js — code complet commenté</div>
+    <div class="explain-box">
+      <div class="explain-step"><div class="explain-num">1</div><div>
+        <h4>Différence avec les pages précédentes</h4>
+        <p>Pas de tableau, pas de <code>keyExtractor</code>, pas de <code>renderItem</code>. L'état <code>user</code> contient directement <b>un objet</b>, pas un tableau. On accède à ses champs avec <code>user.name</code>, <code>user.email</code>, etc.</p>
+      </div></div>
+      <div class="explain-step"><div class="explain-num">2</div><div>
+        <h4>Structure imbriquée de la réponse API</h4>
+        <p>L'objet utilisateur contient lui-même des objets imbriqués : <code>user.address.city</code>, <code>user.address.geo.lat</code>. Il faut bien suivre la hiérarchie des accolades pour accéder à la bonne donnée.</p>
+      </div></div>
+    </div>
+    <div class="cb">
+      <div class="cl2">screens/ProfilScreen.js</div>
+      <pre><span class="kw">import</span> { useState, useEffect } <span class="kw">from</span> <span class="st">'react'</span>;
+<span class="kw">import</span> {
+  <span class="cp">View</span>, <span class="cp">Text</span>, <span class="cp">ScrollView</span>,
+  <span class="cp">ActivityIndicator</span>, <span class="cp">StyleSheet</span>,
+} <span class="kw">from</span> <span class="st">'react-native'</span>;
+
+<span class="kw">export default function</span> <span class="fn">ProfilScreen</span>() {
+  <span class="cm">// user : null au départ, puis l'objet utilisateur complet une fois chargé
+  // (PAS un tableau — un seul objet)</span>
+  <span class="kw">const</span> [user,    setUser]    = <span class="fn">useState</span>(<span class="nm">null</span>);
+  <span class="kw">const</span> [loading, setLoading] = <span class="fn">useState</span>(<span class="nm">true</span>);
+  <span class="kw">const</span> [error,   setError]   = <span class="fn">useState</span>(<span class="nm">null</span>);
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="fn">fetchUser</span> = <span class="kw">async</span> () => {
+      <span class="kw">try</span> {
+        <span class="cm">// /users/1 : on demande l'utilisateur n°1 précisément
+        // (au lieu de /users qui renverrait TOUS les utilisateurs)</span>
+        <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'https://jsonplaceholder.typicode.com/users/1'</span>);
+        <span class="kw">if</span> (!response.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="st">'Erreur '</span> + response.status);
+        <span class="kw">const</span> data = <span class="kw">await</span> response.<span class="fn">json</span>();  <span class="cm">// UN objet, pas un tableau</span>
+        <span class="fn">setUser</span>(data);
+      } <span class="kw">catch</span> (err) {
+        <span class="fn">setError</span>(<span class="st">'Impossible de charger le profil.'</span>);
+      } <span class="kw">finally</span> {
+        <span class="fn">setLoading</span>(<span class="nm">false</span>);
+      }
+    };
+    <span class="fn">fetchUser</span>();
+  }, []);
+
+  <span class="kw">if</span> (loading) <span class="kw">return</span> (
+    <span class="tg">&lt;View</span> <span class="at">style</span>={[styles.container, styles.center]}&gt;
+      <span class="tg">&lt;ActivityIndicator</span> <span class="at">size</span>=<span class="st">"large"</span> <span class="at">color</span>=<span class="st">"#3b82f6"</span> /&gt;
+    <span class="tg">&lt;/View&gt;</span>
+  );
+
+  <span class="kw">if</span> (error) <span class="kw">return</span> (
+    <span class="tg">&lt;View</span> <span class="at">style</span>={[styles.container, styles.center]}&gt;
+      <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.error}&gt;⚠ {'{'}error{'}'}<span class="tg">&lt;/Text&gt;</span>
+    <span class="tg">&lt;/View&gt;</span>
+  );
+
+  <span class="cm">// ─── CAS 3 : user contient l'objet complet ────────────────────────────
+  // On accède directement aux champs : user.name, user.email, user.address...</span>
+  <span class="kw">return</span> (
+    <span class="tg">&lt;ScrollView</span> <span class="at">style</span>={styles.container} <span class="at">contentContainerStyle</span>={{ padding: <span class="nm">16</span> }}&gt;
+
+      <span class="cm">{/* Carte d'identité */}</span>
+      <span class="tg">&lt;View</span> <span class="at">style</span>={styles.avatarCard}&gt;
+        <span class="tg">&lt;View</span> <span class="at">style</span>={styles.avatar}&gt;
+          <span class="cm">{/* Initiales : 1ère lettre du prénom + 1ère lettre du nom de famille
+              .split(' ') sépare "Leanne Graham" en ['Leanne', 'Graham']
+              [0][0] prend la 1ère lettre du 1er mot */}</span>
+          <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.avatarText}&gt;
+            {'{'}user.name.<span class="fn">split</span>(<span class="st">' '</span>)[<span class="nm">0</span>][<span class="nm">0</span>]{'}'}{'{'}user.name.<span class="fn">split</span>(<span class="st">' '</span>)[<span class="nm">1</span>]?.[<span class="nm">0</span>] ?? <span class="st">''</span>{'}'}
+          <span class="tg">&lt;/Text&gt;</span>
+        <span class="tg">&lt;/View&gt;</span>
+        <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.name}&gt;{'{'}user.name{'}'}<span class="tg">&lt;/Text&gt;</span>
+        <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.username}&gt;@{'{'}user.username{'}'}<span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;/View&gt;</span>
+
+      <span class="cm">{/* Section Contact */}</span>
+      <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.sectionTitle}&gt;📧 Contact<span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;View</span> <span class="at">style</span>={styles.infoBox}&gt;
+        <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.infoText}&gt;{'{'}user.email{'}'}<span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;/View&gt;</span>
+      <span class="tg">&lt;View</span> <span class="at">style</span>={styles.infoBox}&gt;
+        <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.infoText}&gt;📞 {'{'}user.phone{'}'}<span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;/View&gt;</span>
+
+      <span class="cm">{/* Section Adresse — accès aux champs imbriqués user.address.xxx */}</span>
+      <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.sectionTitle}&gt;📍 Adresse<span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;View</span> <span class="at">style</span>={styles.infoBox}&gt;
+        <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.infoText}&gt;
+          {'{'}user.address.street{'}'}, {'{'}user.address.suite{'}'}{'\n'}
+          {'{'}user.address.city{'}'}, {'{'}user.address.zipcode{'}'}
+        <span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;/View&gt;</span>
+
+      <span class="cm">{/* Section Entreprise */}</span>
+      <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.sectionTitle}&gt;🏢 Entreprise<span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;View</span> <span class="at">style</span>={styles.infoBox}&gt;
+        <span class="tg">&lt;Text</span> <span class="at">style</span>={styles.infoText}&gt;{'{'}user.company.name{'}'}<span class="tg">&lt;/Text&gt;</span>
+      <span class="tg">&lt;/View&gt;</span>
+
+    <span class="tg">&lt;/ScrollView&gt;</span>
+  );
+}
+
+<span class="kw">const</span> styles = StyleSheet.<span class="fn">create</span>({
+  container:    { flex: <span class="nm">1</span>, backgroundColor: <span class="st">'#0f172a'</span> },
+  center:       { justifyContent: <span class="st">'center'</span>, alignItems: <span class="st">'center'</span> },
+  error:        { color: <span class="st">'#fca5a5'</span> },
+  avatarCard:   { alignItems: <span class="st">'center'</span>, backgroundColor: <span class="st">'#1e293b'</span>, borderRadius: <span class="nm">12</span>, padding: <span class="nm">20</span>, marginBottom: <span class="nm">16</span> },
+  avatar:       { width: <span class="nm">64</span>, height: <span class="nm">64</span>, borderRadius: <span class="nm">32</span>, backgroundColor: <span class="st">'#3b82f6'</span>, justifyContent: <span class="st">'center'</span>, alignItems: <span class="st">'center'</span>, marginBottom: <span class="nm">10</span> },
+  avatarText:   { color: <span class="st">'#fff'</span>, fontSize: <span class="nm">22</span>, fontWeight: <span class="st">'700'</span> },
+  name:         { color: <span class="st">'#f1f5f9'</span>, fontSize: <span class="nm">17</span>, fontWeight: <span class="st">'700'</span> },
+  username:     { color: <span class="st">'#64748b'</span>, fontSize: <span class="nm">13</span>, marginTop: <span class="nm">2</span> },
+  sectionTitle: { color: <span class="st">'#93c5fd'</span>, fontSize: <span class="nm">13</span>, fontWeight: <span class="st">'700'</span>, marginBottom: <span class="nm">8</span>, marginTop: <span class="nm">6</span> },
+  infoBox:      { backgroundColor: <span class="st">'#1e293b'</span>, borderRadius: <span class="nm">8</span>, padding: <span class="nm">12</span>, marginBottom: <span class="nm">8</span> },
+  infoText:     { color: <span class="st">'#cbd5e1'</span>, fontSize: <span class="nm">13</span>, lineHeight: <span class="nm">19</span> },
+});</pre>
+    </div>
+    <div class="call cam"><span class="ci">⚠️</span><span><b>Piège fréquent :</b> oublier le <code>?.</code> (optional chaining) sur <code>user.name.split(' ')[1]?.[0]</code>. Si le nom n'a qu'un seul mot, <code>[1]</code> serait <code>undefined</code> et <code>[0]</code> sur <code>undefined</code> ferait planter l'app. <code>?? ''</code> donne une valeur de secours.</span></div>
+  </div>
+</div><!-- /p3 -->
+
+<!-- ══════ DÉFIS ══════ -->
+<div id="tab-defis" class="pan">
+  <div class="sh"><div class="ico ia">🎯</div>
+    <div class="si"><h2>Défis bonus — enrichir l'app</h2><p>Pour aller plus loin · sans correction</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="card">
+    <div class="ct">🎯 6 défis progressifs</div>
+    <p style="font-size:.85rem;color:var(--txm);margin-bottom:1rem">Chaque défi s'appuie sur l'app à 3 onglets construite dans ce TP.</p>
+    <div class="accordion">
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="tag t-easy" style="margin-right:.5rem">Facile</span> Défi 1 — Pull-to-refresh sur Articles</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl">
+            <li>Ajouter un <code>RefreshControl</code> sur la FlatList de la page Articles</li>
+            <li>Tirer vers le bas relance le fetch</li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="tag t-easy" style="margin-right:.5rem">Facile</span> Défi 2 — Compteur dans la tab bar</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl">
+            <li>Sur l'onglet Tâches, afficher un badge avec le nombre de tâches "à faire"</li>
+            <li>Indice : prop <code>tabBarBadge</code> sur <code>Tab.Screen</code></li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="tag t-mid" style="margin-right:.5rem">Moyen</span> Défi 3 — Cocher une tâche</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl">
+            <li>Rendre chaque tâche cliquable (<code>TouchableOpacity</code>)</li>
+            <li>Au clic, basculer son état <code>completed</code> localement (pas besoin de sauvegarder côté serveur, JSONPlaceholder ne persiste rien)</li>
+            <li>La tâche doit changer de section (passer de "à faire" à "terminées")</li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="tag t-mid" style="margin-right:.5rem">Moyen</span> Défi 4 — Liste des autres utilisateurs</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl">
+            <li>Ajouter un 4ᵉ onglet "Équipe" qui fetch <code>/users</code> (tous les utilisateurs, sans <code>/1</code>)</li>
+            <li>Les afficher en FlatList avec nom + entreprise</li>
+            <li>Au clic sur un utilisateur, naviguer vers un écran détail qui réutilise la mise en page du Profil</li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="tag t-hard" style="margin-right:.5rem">Difficile</span> Défi 5 — Recherche globale</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl">
+            <li>Ajouter un champ de recherche sur la page Articles qui filtre par titre</li>
+            <li>Idem sur la page Tâches qui filtre par texte de la tâche</li>
+            <li>Le filtre doit fonctionner même après le groupement en sections (recalculer les sections à chaque frappe)</li>
+          </ul>
+        </div>
+      </div>
+      <div class="acc-item">
+        <button class="acc-btn" onclick="acc(this)"><span><span class="tag t-hard" style="margin-right:.5rem">Difficile</span> Défi 6 — Stack imbriqué sur l'onglet Articles</span><span class="acc-arrow">▶</span></button>
+        <div class="acc-content">
+          <ul class="cl">
+            <li>Transformer l'onglet Articles en Stack interne : ArticlesScreen → ArticleDetailScreen</li>
+            <li>Au clic sur un article, naviguer vers le détail avec <code>fetch('/posts/{'{id}'}')</code> + ses commentaires <code>/posts/{'{id}'}/comments</code></li>
+            <li>Revoir le schéma d'imbrication Tab + Stack vu en J2 si besoin</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div><!-- /defis -->
+
+</main>
+
+<script>
+function sw(name, btn) {
+  document.querySelectorAll('.pan').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function acc(btn) {
+  const content = btn.nextElementSibling;
+  const isOpen  = btn.classList.contains('open');
+  const a       = btn.closest('.accordion');
+  a.querySelectorAll('.acc-btn').forEach(b => b.classList.remove('open'));
+  a.querySelectorAll('.acc-content').forEach(c => c.classList.remove('open'));
+  if (!isOpen) { btn.classList.add('open'); content.classList.add('open'); }
+}
+</script>
+</body>
+</html>
