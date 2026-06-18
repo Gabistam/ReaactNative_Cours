@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S10 — Évaluation Mini-App · React Native · B3 Dev Web</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p:#1e40af;--pl:#3b82f6;--pll:#93c5fd;
+  --g:#059669;--gl:#34d399;
+  --a:#d97706;--al:#fbbf24;
+  --r:#dc2626;--rl:#fca5a5;
+  --v:#7c3aed;--vl:#c4b5fd;
+  --bg:#0f172a;--bg2:#1e293b;--bg3:#162032;--bg4:#0d1117;
+  --bd:#334155;
+  --tx:#f1f5f9;--txm:#94a3b8;--txd:#64748b;
+  --ff:'Sora',sans-serif;--fm:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth}
+body{font-family:var(--ff);background:var(--bg);color:var(--tx);line-height:1.65;min-height:100vh}
+
+/* HEADER */
+.hdr{background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#1e40af 100%);padding:2.5rem 2rem 2rem;position:relative;overflow:hidden;border-bottom:1px solid rgba(59,130,246,.3)}
+.hdr::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 75% 40%,rgba(59,130,246,.18),transparent)}
+.hdr-in{max-width:1160px;margin:0 auto;position:relative}
+.badge{display:inline-flex;align-items:center;gap:.4rem;background:rgba(30,64,175,.4);border:1px solid rgba(59,130,246,.4);border-radius:999px;padding:.3rem .9rem;font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:#93c5fd;margin-bottom:1.1rem}
+.badge b{color:var(--gl)}
+h1{font-size:clamp(1.9rem,4vw,2.9rem);font-weight:800;letter-spacing:-.02em;line-height:1.1;margin-bottom:.5rem}
+h1 em{font-style:normal;color:#60a5fa}
+.hdr-sub{font-size:.9rem;color:var(--txm);margin-bottom:1.4rem;font-weight:300}
+.pills{display:flex;flex-wrap:wrap;gap:.45rem}
+.pill{display:inline-flex;align-items:center;gap:.35rem;padding:.28rem .8rem;border-radius:999px;font-size:.75rem;font-weight:500;font-family:var(--fm)}
+.pb{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3);color:#93c5fd}
+.pg{background:rgba(5,150,105,.25);border:1px solid rgba(16,185,129,.35);color:#6ee7b7}
+.pa{background:rgba(217,119,6,.25);border:1px solid rgba(245,158,11,.35);color:#fcd34d}
+.pr{background:rgba(220,38,38,.25);border:1px solid rgba(239,68,68,.35);color:#fca5a5}
+.pp{background:rgba(124,58,237,.25);border:1px solid rgba(139,92,246,.35);color:#c4b5fd}
+
+/* TABS */
+.nav-wrap{background:rgba(15,23,42,.9);border-bottom:1px solid var(--bd);position:sticky;top:0;z-index:100;backdrop-filter:blur(14px)}
+.nav-tabs{max-width:1160px;margin:0 auto;display:flex;padding:0 1rem;overflow-x:auto;scrollbar-width:none}
+.nav-tabs::-webkit-scrollbar{display:none}
+.tb{padding:.9rem 1.15rem;background:none;border:none;border-bottom:2px solid transparent;color:var(--txm);font-family:var(--ff);font-size:.79rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:all .2s;display:flex;align-items:center;gap:.35rem}
+.tb:hover{color:var(--tx)}.tb.active{color:#60a5fa;border-bottom-color:var(--pl);font-weight:600}
+
+/* LAYOUT */
+.main{max-width:1160px;margin:0 auto;padding:2rem 1.5rem 5rem}
+.pan{display:none}.pan.active{display:block}
+.sh{display:flex;align-items:center;gap:.9rem;margin-bottom:1.6rem;padding-bottom:.9rem;border-bottom:1px solid var(--bd)}
+.ico{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;flex-shrink:0}
+.ib{background:rgba(30,64,175,.3);border:1px solid rgba(59,130,246,.3)}
+.ig{background:rgba(5,150,105,.3);border:1px solid rgba(16,185,129,.3)}
+.ia{background:rgba(217,119,6,.3);border:1px solid rgba(245,158,11,.3)}
+.ir{background:rgba(220,38,38,.3);border:1px solid rgba(239,68,68,.3)}
+.ip{background:rgba(124,58,237,.3);border:1px solid rgba(139,92,246,.3)}
+.si h2{font-size:1.2rem;font-weight:700}.si p{font-size:.8rem;color:var(--txm);margin-top:.1rem}
+.pw{background:rgba(255,255,255,.05);border-radius:999px;height:3px;margin-bottom:1.8rem}
+.pb2{height:100%;background:linear-gradient(90deg,var(--g),var(--gl));border-radius:999px}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem;transition:border-color .2s}
+.card:hover{border-color:rgba(59,130,246,.35)}
+.ct{font-size:.93rem;font-weight:700;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+
+/* LISTS */
+ul.cl{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+ul.cl li{display:flex;align-items:flex-start;gap:.55rem;font-size:.87rem;color:#cbd5e1;line-height:1.55}
+ul.cl li::before{content:'▸';color:var(--pl);font-size:.72rem;margin-top:.25rem;flex-shrink:0}
+ul.cl li b{color:var(--tx)}
+code{font-family:var(--fm);font-size:.81em;background:rgba(59,130,246,.12);color:#93c5fd;padding:.1em .38em;border-radius:4px;border:1px solid rgba(59,130,246,.2)}
+code.r{background:rgba(220,38,38,.12);color:#fca5a5;border-color:rgba(220,38,38,.2)}
+code.g{background:rgba(5,150,105,.12);color:#6ee7b7;border-color:rgba(16,185,129,.2)}
+
+/* CODE BLOCKS */
+.cb{background:var(--bg4);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:1.1rem 1.3rem;margin:.8rem 0;overflow-x:auto}
+.cb pre{font-family:var(--fm);font-size:.81rem;line-height:1.75;color:#e2e8f0;white-space:pre}
+.cb .kw{color:#c792ea}.cb .fn{color:#82aaff}.cb .st{color:#c3e88d}.cb .cm{color:#4a5568;font-style:italic}
+.cb .tg{color:#f07178}.cb .at{color:#ffcb6b}.cb .nm{color:#f78c6c}.cb .cp{color:#89ddff}
+.cl2{font-family:var(--fm);font-size:.68rem;color:var(--txm);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.cl2::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--g);flex-shrink:0}
+
+/* CALLOUTS */
+.call{border-radius:10px;padding:.95rem 1.1rem;margin:.9rem 0;display:flex;gap:.75rem;align-items:flex-start;font-size:.86rem;line-height:1.55}
+.ci{font-size:1rem;flex-shrink:0;margin-top:.05rem}
+.cbl{background:rgba(30,64,175,.15);border:1px solid rgba(59,130,246,.25)}
+.cam{background:rgba(217,119,6,.15);border:1px solid rgba(245,158,11,.25)}
+.cgr{background:rgba(5,150,105,.15);border:1px solid rgba(16,185,129,.25)}
+.crd{background:rgba(220,38,38,.15);border:1px solid rgba(239,68,68,.25)}
+.cpu{background:rgba(124,58,237,.15);border:1px solid rgba(139,92,246,.25)}
+
+/* TABLES */
+.tbl{width:100%;border-collapse:collapse;font-size:.83rem;margin:.8rem 0}
+.tbl th{background:rgba(30,64,175,.25);padding:.6rem .9rem;text-align:left;font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:#93c5fd;border-bottom:1px solid rgba(59,130,246,.3)}
+.tbl td{padding:.55rem .9rem;border-bottom:1px solid rgba(255,255,255,.05);color:#cbd5e1;vertical-align:top}
+.tbl tr:hover td{background:rgba(255,255,255,.02)}
+.ok{color:var(--gl)}.ko{color:var(--rl)}
+
+/* STEPS */
+.steps{counter-reset:st;display:flex;flex-direction:column;gap:.65rem}
+.step{counter-increment:st;display:flex;align-items:flex-start;gap:.75rem;font-size:.87rem;color:#cbd5e1}
+.step::before{content:counter(st);min-width:24px;height:24px;background:rgba(30,64,175,.4);border:1px solid rgba(59,130,246,.4);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#93c5fd;flex-shrink:0;margin-top:.12rem}
+
+/* EXO/CONSIGNE BLOCKS */
+.exo-block{background:var(--bg3);border:1px solid var(--bd);border-radius:14px;padding:1.4rem;margin-bottom:1.3rem;border-left:4px solid var(--pl)}
+.exo-block.amber{border-left-color:var(--a)}
+.exo-block.green{border-left-color:var(--g)}
+.exo-block.purple{border-left-color:var(--v)}
+.exo-block.red{border-left-color:var(--r)}
+.exo-header{display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;flex-wrap:wrap}
+.exo-num-badge{background:rgba(30,64,175,.35);border:1px solid rgba(59,130,246,.4);color:#93c5fd;font-family:var(--fm);font-size:.72rem;font-weight:700;padding:.3rem .75rem;border-radius:999px;white-space:nowrap}
+.exo-num-badge.amber{background:rgba(217,119,6,.3);border-color:rgba(245,158,11,.4);color:#fcd34d}
+.exo-num-badge.green{background:rgba(5,150,105,.3);border-color:rgba(16,185,129,.4);color:#6ee7b7}
+.exo-num-badge.purple{background:rgba(124,58,237,.3);border-color:rgba(139,92,246,.4);color:#c4b5fd}
+.exo-num-badge.red{background:rgba(220,38,38,.3);border-color:rgba(239,68,68,.4);color:#fca5a5}
+.points-badge{margin-left:auto;background:rgba(5,150,105,.25);border:1px solid rgba(16,185,129,.35);color:#6ee7b7;font-family:var(--fm);font-size:.72rem;font-weight:700;padding:.3rem .75rem;border-radius:999px;white-space:nowrap}
+.points-badge.bonus{background:rgba(124,58,237,.25);border-color:rgba(139,92,246,.35);color:#c4b5fd}
+.exo-title{font-size:.95rem;font-weight:700;color:var(--tx)}
+.exo-desc{font-size:.85rem;color:var(--txm);margin-bottom:.8rem;line-height:1.55}
+
+/* FAMILLE TAGS */
+.ftag{display:inline-flex;align-items:center;gap:.3rem;font-family:var(--fm);font-size:.68rem;font-weight:700;padding:.22rem .6rem;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.f1{background:rgba(30,64,175,.25);border:1px solid rgba(59,130,246,.35);color:#93c5fd}
+.f2{background:rgba(5,150,105,.25);border:1px solid rgba(16,185,129,.35);color:#6ee7b7}
+.f3{background:rgba(217,119,6,.25);border:1px solid rgba(245,158,11,.35);color:#fcd34d}
+.f4{background:rgba(124,58,237,.25);border:1px solid rgba(139,92,246,.35);color:#c4b5fd}
+.f5{background:rgba(220,38,38,.25);border:1px solid rgba(239,68,68,.35);color:#fca5a5}
+
+/* BARÈME TABLE */
+.bareme-total{display:flex;justify-content:space-between;align-items:center;background:rgba(5,150,105,.15);border:1px solid rgba(16,185,129,.3);border-radius:10px;padding:1rem 1.3rem;margin-top:1rem;font-weight:700}
+.bareme-total .n{font-family:var(--fm);font-size:1.3rem;color:var(--gl)}
+
+/* RESULT PANEL (rappel visuel des consignes de rendu) */
+.result-panel{background:var(--bg4);border:1px solid var(--bd);border-radius:14px;padding:1.6rem;margin-top:1rem}
+.result-panel .rt{font-size:.95rem;font-weight:700;margin-bottom:.8rem;color:var(--tx)}
+
+/* TIMELINE */
+.tl{display:flex;flex-direction:column;gap:0}
+.tl-item{display:flex;gap:1rem;padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.tl-item:last-child{border-bottom:none}
+.tl-time{font-family:var(--fm);font-size:.78rem;color:var(--al);font-weight:700;min-width:90px;flex-shrink:0}
+.tl-content{font-size:.86rem;color:#cbd5e1}
+.tl-content b{color:var(--tx)}
+
+/* GLOSSARY GRID */
+.gg{display:flex;flex-direction:column;gap:.7rem}
+.gc{background:var(--bg3);border:1px solid var(--bd);border-radius:10px;padding:1rem 1.2rem}
+.gt{font-weight:700;font-size:.86rem;color:var(--tx);display:flex;align-items:center;gap:.5rem}
+.gcat{font-size:.65rem;font-family:var(--fm);color:var(--txm);background:rgba(255,255,255,.05);padding:.15rem .5rem;border-radius:6px;text-transform:uppercase;letter-spacing:.04em}
+.gd{font-size:.82rem;color:#cbd5e1;margin-top:.4rem;line-height:1.5}
+
+@media(max-width:680px){.bareme-total{flex-direction:column;align-items:flex-start;gap:.4rem}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="badge">📱 React Native &nbsp;·&nbsp; <b>B3 Dev Web 2025-2026</b> &nbsp;·&nbsp; S10</div>
+    <h1>Évaluation — <em>Mini-App</em> Gestion de Projets</h1>
+    <p class="hdr-sub">Mini-app pratique individuelle · Navigation par tabs · Double fetch API · Auth Firebase</p>
+    <div class="pills">
+      <span class="pill pb">🕐 3h30 — demi-journée</span>
+      <span class="pill pr">🔒 Individuel — consultation interdite</span>
+      <span class="pill pg">/20 points</span>
+      <span class="pill pa">📦 2 APIs REST</span>
+    </div>
+  </div>
+</header>
+
+<div class="nav-wrap">
+  <nav class="nav-tabs">
+    <button class="tb active" onclick="sw('contexte',this)">📖 Contexte & Sujet</button>
+    <button class="tb" onclick="sw('archi',this)">🏗️ Architecture attendue</button>
+    <button class="tb" onclick="sw('apis',this)">📦 Ressources API</button>
+    <button class="tb" onclick="sw('consignes',this)">✅ Consignes détaillées</button>
+    <button class="tb" onclick="sw('bareme',this)">🎯 Barème</button>
+    <button class="tb" onclick="sw('rendu',this)">📤 Modalités de rendu</button>
+  </nav>
+</div>
+
+<main class="main">
+
+<!-- ══════ CONTEXTE & SUJET ══════ -->
+<div id="tab-contexte" class="pan active">
+  <div class="sh"><div class="ico ib">📖</div>
+    <div class="si"><h2>Contexte du sujet</h2><p>Mise en situation client · Objectif de la mini-app</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:16%"></div></div>
+
+  <div class="card">
+    <div class="ct">🎯 Mise en situation</div>
+    <p style="font-size:.88rem;color:#cbd5e1;line-height:1.7">
+      L'organisme de formation <b>WebCraft Academy</b> souhaite disposer d'une application mobile permettant à ses apprenants et son équipe pédagogique de consulter, en mobilité, les <b>projets en cours</b> de l'école ainsi que le <b>catalogue de formations</b> proposé. L'accès à l'application doit être réservé aux utilisateurs authentifiés.
+    </p>
+    <div class="call cbl" style="margin-top:1rem"><span class="ci">💼</span>
+      <span>Tu es le développeur mobile en charge de produire un <b>prototype fonctionnel</b> de cette application, à présenter à l'équipe pédagogique en fin de session.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">📋 Sujet — ce que l'application doit faire</div>
+    <ul class="cl">
+      <li>Un <b>écran d'authentification</b> (connexion / inscription) via Firebase Auth, avant tout accès au contenu de l'app</li>
+      <li>Une fois connecté, l'utilisateur accède à une <b>navigation par onglets (Bottom Tabs)</b> avec au minimum <b>3 écrans</b></li>
+      <li>L'écran <b>Liste des projets</b> doit exploiter l'<b>API 1</b> et permettre d'accéder à un <b>écran de détail</b> au clic sur un projet (navigation imbriquée Stack dans le Tab)</li>
+      <li>Un second écran doit exploiter l'<b>API 2</b> (formations) — structure libre, à toi de proposer une UX pertinente</li>
+      <li>Les <b>deux APIs</b> doivent être appelées avec une gestion d'erreur <code>try/catch</code> — c'est une <b>obligation</b>, pas une option</li>
+    </ul>
+    <div class="call cam" style="margin-top:1rem"><span class="ci">⚠️</span>
+      <span>La structure exacte du 3ᵉ écran (et au-delà) ainsi que le niveau de finition de l'Auth Firebase sont <b>laissés à ton appréciation</b>. Une appli simple mais entièrement fonctionnelle vaut mieux qu'une appli ambitieuse mais cassée.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">🧰 Stack imposée</div>
+    <p style="font-size:.85rem;color:var(--txm);margin-bottom:.8rem">Tu dois utiliser exclusivement les briques vues pendant le module — aucune librairie tierce non enseignée.</p>
+    <ul class="cl">
+      <li>React Native + Expo (SDK vu en cours)</li>
+      <li>React Navigation v7 — <code>native-stack</code> + <code>bottom-tabs</code></li>
+      <li>Firebase JS SDK — Auth (email/mot de passe)</li>
+      <li><code>fetch()</code> natif pour la consommation des deux APIs (pas d'axios)</li>
+      <li>Architecture à plat : pas de dossier <code>services/</code> ni <code>hooks/</code> — la logique reste dans les écrans</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════ ARCHITECTURE ATTENDUE ══════ -->
+<div id="tab-archi" class="pan">
+  <div class="sh"><div class="ico ig">🏗️</div>
+    <div class="si"><h2>Architecture de navigation attendue</h2><p>AppNavigator · AuthStack · AppStack · Bottom Tabs</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:32%"></div></div>
+
+  <div class="card">
+    <div class="ct">🧭 Schéma de navigation</div>
+    <p style="font-size:.86rem;color:#cbd5e1;margin-bottom:1rem">
+      Rappel du principe vu en cours : <b>AppNavigator</b> est l'orchestrateur qui bascule entre <b>AuthStack</b> (non connecté) et <b>AppStack</b> (connecté) selon l'état d'authentification Firebase.
+    </p>
+    <div class="cb">
+      <div class="cl2">Arborescence cible</div>
+      <pre>AppNavigator (orchestrateur — bascule selon état Auth)
+│
+├── AuthStack (utilisateur non connecté)
+│     ├── LoginScreen
+│     └── SignupScreen
+│
+└── AppStack → BottomTabNavigator (utilisateur connecté)
+      ├── Tab "Accueil"      → HomeScreen
+      ├── Tab "Projets"      → ProjectsStackNavigator
+      │                            ├── ProjectsListScreen   (API 1)
+      │                            └── ProjectDetailScreen  (détail au clic)
+      └── Tab "Formations"   → CoursesScreen (API 2 — structure libre)</pre>
+    </div>
+    <div class="call cgr" style="margin-top:1rem"><span class="ci">✅</span>
+      <span>Le point clé évalué ici : la <b>Stack imbriquée dans le Tab "Projets"</b> doit fonctionner — liste → détail → retour, sans casser la barre de tabs.</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">🔐 Logique d'authentification minimale</div>
+    <ul class="cl">
+      <li>Un état global (ex: <code>useState</code> + <code>onAuthStateChanged</code>) détermine si l'utilisateur est connecté</li>
+      <li>Tant qu'il n'est pas connecté → impossible d'accéder aux Tabs (route protégée de fait, via l'AppNavigator)</li>
+      <li>Niveau d'exigence : <b>Auth Firebase basique suffit</b> (inscription + connexion). Déconnexion et gestion d'erreurs de saisie sont un plus, mais ne sont pas obligatoires.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════ RESSOURCES API ══════ -->
+<div id="tab-apis" class="pan">
+  <div class="sh"><div class="ico ia">📦</div>
+    <div class="si"><h2>Ressources fournies — 2 APIs REST</h2><p>Données à fetch obligatoirement avec gestion d'erreur</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:48%"></div></div>
+
+  <div class="call crd"><span class="ci">⚠️</span>
+    <span><b>Obligation :</b> charger et exploiter les <b>DEUX APIs</b> ci-dessous avec gestion d'erreur (<code>try/catch</code>). C'est un critère noté indépendamment de la navigation.</span>
+  </div>
+
+  <div class="exo-block">
+    <div class="exo-header">
+      <span class="exo-num-badge">API 1</span>
+      <div class="exo-title">Projets</div>
+    </div>
+    <div class="cb">
+      <div class="cl2">Endpoint</div>
+      <pre>GET https://webcraft-api.vercel.app/data/projects.json</pre>
+    </div>
+    <div class="exo-desc">Retourne : <code>projects[]</code>, <code>technologies[]</code>, <code>categories[]</code></div>
+    <span class="ftag f1">Utilisée pour l'écran Liste + Détail des projets</span>
+  </div>
+
+  <div class="exo-block amber">
+    <div class="exo-header">
+      <span class="exo-num-badge amber">API 2</span>
+      <div class="exo-title">Formations</div>
+    </div>
+    <div class="cb">
+      <div class="cl2">Endpoint</div>
+      <pre>GET https://webcraft-api.vercel.app/data/courses.json</pre>
+    </div>
+    <div class="exo-desc">Retourne : <code>courses[]</code>, <code>categories[]</code>, <code>levels[]</code>, <code>technologies[]</code></div>
+    <span class="ftag f3">Utilisée pour le 2ᵉ écran de contenu (structure libre)</span>
+  </div>
+
+  <div class="card">
+    <div class="ct">🛡️ Rappel — pattern de fetch attendu</div>
+    <p style="font-size:.85rem;color:var(--txm);margin-bottom:.6rem">Le <code>try/catch</code> est obligatoire. La gestion visuelle d'un état loading/erreur à l'écran est un <b>bonus</b>, pas une obligation.</p>
+    <div class="cb">
+      <div class="cl2">Squelette minimal exigé</div>
+      <pre><span class="kw">useEffect</span>(() => {
+  <span class="kw">const</span> <span class="fn">fetchProjects</span> = <span class="kw">async</span> () => {
+    <span class="kw">try</span> {
+      <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'https://webcraft-api.vercel.app/data/projects.json'</span>);
+      <span class="kw">const</span> data = <span class="kw">await</span> response.<span class="fn">json</span>();
+      <span class="fn">setProjects</span>(data.projects);
+    } <span class="kw">catch</span> (error) {
+      <span class="cm">// Obligatoire : capturer l'erreur réseau / parsing</span>
+      console.<span class="fn">log</span>(<span class="st">'Erreur API Projets :'</span>, error);
+    }
+  };
+  <span class="fn">fetchProjects</span>();
+}, []);</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ CONSIGNES DÉTAILLÉES ══════ -->
+<div id="tab-consignes" class="pan">
+  <div class="sh"><div class="ico ip">✅</div>
+    <div class="si"><h2>Consignes détaillées</h2><p>Obligatoire vs bonus — par écran</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:64%"></div></div>
+
+  <div class="exo-block">
+    <div class="exo-header">
+      <span class="exo-num-badge">Écran 1</span>
+      <div class="exo-title">Authentification (AuthStack)</div>
+      <span class="points-badge">Obligatoire</span>
+    </div>
+    <div class="exo-desc">Accès à l'application conditionné par la connexion Firebase.</div>
+    <ul class="cl">
+      <li>Formulaire de connexion (email + mot de passe) relié à Firebase Auth</li>
+      <li>Formulaire d'inscription (peut être un second écran ou un toggle sur le même écran)</li>
+      <li>Navigation automatique vers l'AppStack une fois connecté</li>
+    </ul>
+    <div class="call cpu" style="margin-top:.8rem"><span class="ci">⭐</span>
+      <span><b>Bonus possible :</b> bouton de déconnexion accessible, messages d'erreur de saisie (email invalide, mot de passe trop court…).</span>
+    </div>
+  </div>
+
+  <div class="exo-block green">
+    <div class="exo-header">
+      <span class="exo-num-badge green">Écran 2</span>
+      <div class="exo-title">Accueil (Tab)</div>
+      <span class="points-badge">Obligatoire</span>
+    </div>
+    <div class="exo-desc">Écran d'accueil de l'application — contenu libre.</div>
+    <ul class="cl">
+      <li>Doit exister comme tab distinct et être fonctionnel (pas de crash à l'ouverture)</li>
+      <li>Contenu libre : message de bienvenue, résumé, raccourcis vers les autres tabs… à toi de juger</li>
+    </ul>
+  </div>
+
+  <div class="exo-block">
+    <div class="exo-header">
+      <span class="exo-num-badge">Écran 3</span>
+      <div class="exo-title">Liste des projets + Détail (Tab → Stack imbriqué)</div>
+      <span class="points-badge">Obligatoire</span>
+    </div>
+    <div class="exo-desc">Le cœur technique de l'évaluation — navigation Stack imbriquée dans un Tab.</div>
+    <ul class="cl">
+      <li>Fetch de l'<b>API 1</b> au chargement de l'écran (<code>useEffect</code> + <code>try/catch</code>)</li>
+      <li>Affichage de la liste des projets via <code>FlatList</code> (pas de <code>.map()</code> dans un <code>ScrollView</code>)</li>
+      <li>Au clic sur un projet → navigation vers un écran <b>ProjectDetailScreen</b> affichant les informations complètes (passage de paramètres via <code>route.params</code> ou re-fetch par id)</li>
+      <li>Le retour à la liste depuis le détail doit fonctionner correctement (header natif ou bouton retour)</li>
+    </ul>
+    <div class="call cpu" style="margin-top:.8rem"><span class="ci">⭐</span>
+      <span><b>Bonus possible :</b> état de chargement (spinner/texte "Chargement…") et message d'erreur visible à l'écran en cas d'échec du fetch.</span>
+    </div>
+  </div>
+
+  <div class="exo-block amber">
+    <div class="exo-header">
+      <span class="exo-num-badge amber">Écran 4</span>
+      <div class="exo-title">Formations (Tab)</div>
+      <span class="points-badge">Obligatoire</span>
+    </div>
+    <div class="exo-desc">Exploitation de la seconde API — structure laissée libre.</div>
+    <ul class="cl">
+      <li>Fetch de l'<b>API 2</b> au chargement de l'écran (<code>try/catch</code> obligatoire)</li>
+      <li>Affichage des formations sous une forme de ton choix (liste simple, cards, regroupement par catégorie/niveau…)</li>
+      <li>Pas d'obligation de navigation vers un détail ici — la simple exploitation des données suffit</li>
+    </ul>
+    <div class="call cpu" style="margin-top:.8rem"><span class="ci">⭐</span>
+      <span><b>Bonus possible :</b> filtrage ou regroupement par <code>categories</code>/<code>levels</code>/<code>technologies</code>, recherche de l'écran de détail pour ce module également.</span>
+    </div>
+  </div>
+
+  <div class="exo-block red">
+    <div class="exo-header">
+      <span class="exo-num-badge red">Transversal</span>
+      <div class="exo-title">Qualité de code & UX mobile</div>
+      <span class="points-badge">Obligatoire</span>
+    </div>
+    <ul class="cl">
+      <li>Aucun crash pendant la démonstration (un crash ponctuel géré gracieusement vaut mieux qu'un écran blanc)</li>
+      <li>Styles via <code>StyleSheet.create()</code> — pas de styles inline en dur partout</li>
+      <li>Zones tactiles confortables, lisibilité correcte sur mobile</li>
+      <li>Code commenté de manière pertinente (pas nécessaire ligne à ligne, mais les choix clés expliqués)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════ BARÈME ══════ -->
+<div id="tab-bareme" class="pan">
+  <div class="sh"><div class="ico ir">🎯</div>
+    <div class="si"><h2>Barème — /20 points</h2><p>Répartition par bloc de compétence</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:84%"></div></div>
+
+  <div class="card">
+    <div class="ct">📊 Grille de notation</div>
+    <table class="tbl">
+      <tr><th>Bloc évalué</th><th>Détail</th><th>Points</th></tr>
+      <tr><td><b>Authentification Firebase</b></td><td>Connexion/inscription fonctionnelle, accès conditionné à l'app</td><td class="ok">3 pts</td></tr>
+      <tr><td><b>Navigation globale</b></td><td>Bottom Tabs (3 écrans min.) + Stack imbriqué Projets fonctionnel (liste → détail → retour)</td><td class="ok">5 pts</td></tr>
+      <tr><td><b>Exploitation API 1 — Projets</b></td><td>Fetch + try/catch + affichage liste (FlatList) + écran détail correct</td><td class="ok">4 pts</td></tr>
+      <tr><td><b>Exploitation API 2 — Formations</b></td><td>Fetch + try/catch + affichage exploitable des données</td><td class="ok">4 pts</td></tr>
+      <tr><td><b>Qualité de code & UX mobile</b></td><td>StyleSheet, lisibilité, absence de crash, ergonomie tactile</td><td class="ok">3 pts</td></tr>
+      <tr><td><b>Bonus</b></td><td>Loading/erreur visibles, déconnexion, filtrage formations, écran détail formations…</td><td class="ko">+1 pt max</td></tr>
+    </table>
+    <div class="bareme-total">
+      <span>Total noté sur</span>
+      <span class="n">20 points</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">⚖️ Précisions de correction</div>
+    <ul class="cl">
+      <li>Une fonctionnalité <b>partiellement</b> implémentée (ex: fetch qui marche mais affichage figé) rapporte une partie des points du bloc — la grille n'est pas tout-ou-rien</li>
+      <li>L'absence totale de <code>try/catch</code> sur l'une des deux APIs entraîne une pénalité sur le bloc API concerné, même si le fetch "fonctionne" en démo</li>
+      <li>Un crash bloquant qui empêche la démonstration d'une fonctionnalité = 0 point sur ce bloc précis (le reste de l'app reste noté normalement)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════ MODALITÉS DE RENDU ══════ -->
+<div id="tab-rendu" class="pan">
+  <div class="sh"><div class="ico ib">📤</div>
+    <div class="si"><h2>Modalités de rendu</h2><p>Timing de la demi-journée · Format de remise</p></div>
+  </div>
+  <div class="pw"><div class="pb2" style="width:100%"></div></div>
+
+  <div class="card">
+    <div class="ct">⏱️ Déroulé — 3h30</div>
+    <div class="tl">
+      <div class="tl-item"><div class="tl-time">0:00</div><div class="tl-content"><b>Lecture du sujet</b> — questions de compréhension uniquement (pas d'aide technique)</div></div>
+      <div class="tl-item"><div class="tl-time">0:15</div><div class="tl-content"><b>Initialisation du projet</b> — <code>create-expo-app</code>, structure des dossiers, installation des dépendances (Navigation, Firebase)</div></div>
+      <div class="tl-item"><div class="tl-time">0:45 → 3:00</div><div class="tl-content"><b>Développement individuel</b> — sans consultation entre élèves</div></div>
+      <div class="tl-item"><div class="tl-time">3:00 → 3:30</div><div class="tl-content"><b>Finalisation & export</b> — vérification du build, dépôt du rendu</div></div>
+    </div>
+  </div>
+
+  <div class="result-panel">
+    <div class="rt">📦 Format de remise attendu</div>
+    <ul class="cl">
+      <li>Dépôt du code source sur un <b>repository GitHub</b> (lien transmis au formateur en fin de séance)</li>
+      <li>Le projet doit pouvoir se lancer avec <code>npm install</code> puis <code>npx expo start</code> sans configuration supplémentaire</li>
+      <li>Aucune clé API/secret Firebase ne doit être poussée en clair si le repo est public — utiliser les pratiques vues en cours</li>
+    </ul>
+    <div class="call cam" style="margin-top:1rem"><span class="ci">⚠️</span>
+      <span>Aucun rendu après l'heure de fin ne sera accepté, sauf incident technique signalé immédiatement au formateur.</span>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<script>
+function sw(name, btn) {
+  document.querySelectorAll('.pan').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+
+</body>
+</html>
